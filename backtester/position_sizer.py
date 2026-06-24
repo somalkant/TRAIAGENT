@@ -1,0 +1,22 @@
+"""Position sizing: min(Rs 3.33L, base_risk × conviction_mult / stop_pct)."""
+from config.settings import MAX_POSITION_SIZE, MAX_LOSS_PER_TRADE
+
+
+def position_size(entry: float, stop: float, conviction_mult: float = 1.0) -> tuple[float, int]:
+    """
+    Returns (rupee_size, shares).
+    conviction_mult scales base risk up for high-confidence driver strategies:
+      1.0 = STANDARD (Rs 20k risk)
+      1.5 = MEDIUM   (Rs 30k risk)
+      2.0 = HIGH     (Rs 40k risk)
+    """
+    if entry <= 0 or stop <= 0 or entry == stop:
+        return 0.0, 0
+    stop_pct  = abs(entry - stop) / entry
+    if stop_pct == 0:
+        return 0.0, 0
+    base_risk = MAX_LOSS_PER_TRADE * conviction_mult
+    risk_size = base_risk / stop_pct
+    rs_value  = min(MAX_POSITION_SIZE, risk_size)
+    shares    = max(1, int(rs_value / entry))
+    return round(shares * entry, 2), shares

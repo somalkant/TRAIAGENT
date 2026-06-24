@@ -1,0 +1,945 @@
+10:34:51 INFO ============================================================
+10:34:51 INFO PHASE 2 TESTING — frozen weights, 1 trade/day
+10:34:51 INFO Years       : [2023]
+10:34:51 INFO Pre-filter  : ON
+10:34:51 INFO Paper trades: C:\Users\somal\Downloads\AI_ML\TradingAgent\data\trade_logs\paper_trades.csv
+10:34:51 INFO ============================================================
+10:34:51 INFO Windows sleep prevention: ON
+10:34:53 INFO 
+==================================================
+10:34:53 INFO Starting testing year: 2023
+10:34:53 INFO ==================================================
+10:34:53 INFO Starting 2023 [TESTING] — weights FROZEN — pre-filter ON
+10:34:53 INFO Loading stock data into memory...
+10:35:11 INFO Loaded 446 stocks for 2023 (with prev-year indicator warmup)
+10:35:25 INFO Pre-market 2023-01-02: 446 stocks → 131 liquid+signal → 25 watchlist
+10:35:48 INFO Pre-market 2023-01-03: 446 stocks → 149 liquid+signal → 25 watchlist
+10:36:09 INFO Pre-market 2023-01-04: 446 stocks → 154 liquid+signal → 25 watchlist
+10:36:29 INFO Pre-market 2023-01-05: 446 stocks → 141 liquid+signal → 25 watchlist
+10:36:50 INFO Pre-market 2023-01-06: 446 stocks → 177 liquid+signal → 25 watchlist
+10:37:14 INFO Pre-market 2023-01-09: 446 stocks → 151 liquid+signal → 25 watchlist
+10:37:35 INFO Pre-market 2023-01-10: 446 stocks → 172 liquid+signal → 25 watchlist
+10:37:56 INFO Pre-market 2023-01-11: 446 stocks → 180 liquid+signal → 25 watchlist
+10:38:16 INFO Pre-market 2023-01-12: 446 stocks → 187 liquid+signal → 25 watchlist
+10:38:37 INFO Pre-market 2023-01-13: 446 stocks → 205 liquid+signal → 25 watchlist
+10:38:59 INFO Pre-market 2023-01-16: 446 stocks → 221 liquid+signal → 25 watchlist
+10:39:24 INFO Pre-market 2023-01-17: 446 stocks → 219 liquid+signal → 25 watchlist
+10:39:47 INFO Pre-market 2023-01-18: 446 stocks → 217 liquid+signal → 25 watchlist
+10:40:08 INFO Pre-market 2023-01-19: 446 stocks → 236 liquid+signal → 25 watchlist
+10:40:31 INFO Pre-market 2023-01-20: 446 stocks → 233 liquid+signal → 25 watchlist
+10:40:52 INFO Pre-market 2023-01-23: 446 stocks → 233 liquid+signal → 25 watchlist
+10:41:13 INFO Pre-market 2023-01-24: 446 stocks → 224 liquid+signal → 25 watchlist
+10:41:35 INFO Pre-market 2023-01-25: 446 stocks → 211 liquid+signal → 25 watchlist
+10:41:57 INFO Pre-market 2023-01-27: 446 stocks → 199 liquid+signal → 25 watchlist
+10:42:19 INFO Pre-market 2023-01-30: 446 stocks → 171 liquid+signal → 25 watchlist
+10:42:41 INFO Pre-market 2023-01-31: 446 stocks → 156 liquid+signal → 25 watchlist
+10:43:02 INFO Pre-market 2023-02-01: 446 stocks → 177 liquid+signal → 25 watchlist
+10:43:24 INFO Pre-market 2023-02-02: 446 stocks → 132 liquid+signal → 25 watchlist
+10:43:47 INFO Pre-market 2023-02-03: 446 stocks → 147 liquid+signal → 25 watchlist
+10:44:09 INFO Pre-market 2023-02-06: 446 stocks → 131 liquid+signal → 25 watchlist
+10:44:30 INFO Pre-market 2023-02-07: 446 stocks → 136 liquid+signal → 25 watchlist
+10:44:52 INFO Pre-market 2023-02-08: 446 stocks → 135 liquid+signal → 25 watchlist
+10:45:14 INFO Pre-market 2023-02-09: 446 stocks → 157 liquid+signal → 25 watchlist
+10:45:37 INFO Pre-market 2023-02-10: 446 stocks → 157 liquid+signal → 25 watchlist
+10:45:59 INFO Pre-market 2023-02-13: 446 stocks → 164 liquid+signal → 25 watchlist
+10:46:24 INFO Pre-market 2023-02-14: 446 stocks → 146 liquid+signal → 25 watchlist
+10:46:48 INFO Pre-market 2023-02-15: 446 stocks → 152 liquid+signal → 25 watchlist
+10:47:12 INFO Pre-market 2023-02-16: 446 stocks → 174 liquid+signal → 25 watchlist
+10:47:35 INFO Pre-market 2023-02-17: 446 stocks → 184 liquid+signal → 25 watchlist
+10:47:57 INFO Pre-market 2023-02-20: 446 stocks → 182 liquid+signal → 25 watchlist
+10:48:20 INFO Pre-market 2023-02-21: 446 stocks → 180 liquid+signal → 25 watchlist
+10:48:42 INFO Pre-market 2023-02-22: 446 stocks → 199 liquid+signal → 25 watchlist
+10:49:05 INFO Pre-market 2023-02-23: 446 stocks → 178 liquid+signal → 25 watchlist
+10:49:27 INFO Pre-market 2023-02-24: 446 stocks → 176 liquid+signal → 25 watchlist
+10:49:50 INFO Pre-market 2023-02-27: 446 stocks → 159 liquid+signal → 25 watchlist
+10:50:12 INFO Pre-market 2023-02-28: 446 stocks → 152 liquid+signal → 25 watchlist
+10:50:35 INFO Pre-market 2023-03-01: 446 stocks → 140 liquid+signal → 25 watchlist
+10:50:58 INFO Pre-market 2023-03-02: 446 stocks → 172 liquid+signal → 25 watchlist
+10:51:22 INFO Pre-market 2023-03-03: 446 stocks → 164 liquid+signal → 25 watchlist
+10:51:45 INFO Pre-market 2023-03-06: 446 stocks → 205 liquid+signal → 25 watchlist
+10:52:08 INFO Pre-market 2023-03-08: 446 stocks → 227 liquid+signal → 25 watchlist
+10:52:30 INFO Pre-market 2023-03-09: 446 stocks → 240 liquid+signal → 25 watchlist
+10:52:53 INFO Pre-market 2023-03-10: 446 stocks → 199 liquid+signal → 25 watchlist
+10:53:15 INFO Pre-market 2023-03-13: 446 stocks → 213 liquid+signal → 25 watchlist
+10:53:38 INFO Pre-market 2023-03-14: 446 stocks → 159 liquid+signal → 25 watchlist
+10:54:00 INFO Pre-market 2023-03-15: 446 stocks → 160 liquid+signal → 25 watchlist
+10:54:22 INFO Pre-market 2023-03-16: 446 stocks → 171 liquid+signal → 25 watchlist
+10:54:45 INFO Pre-market 2023-03-17: 446 stocks → 159 liquid+signal → 25 watchlist
+10:55:08 INFO Pre-market 2023-03-20: 446 stocks → 169 liquid+signal → 25 watchlist
+10:55:31 INFO Pre-market 2023-03-21: 446 stocks → 143 liquid+signal → 25 watchlist
+10:55:53 INFO Pre-market 2023-03-22: 446 stocks → 155 liquid+signal → 25 watchlist
+10:56:16 INFO Pre-market 2023-03-23: 446 stocks → 157 liquid+signal → 25 watchlist
+10:56:39 INFO Pre-market 2023-03-24: 446 stocks → 167 liquid+signal → 25 watchlist
+10:57:02 INFO Pre-market 2023-03-27: 446 stocks → 134 liquid+signal → 25 watchlist
+10:57:25 INFO Pre-market 2023-03-28: 446 stocks → 114 liquid+signal → 25 watchlist
+10:57:48 INFO Pre-market 2023-03-29: 446 stocks → 111 liquid+signal → 25 watchlist
+10:58:11 INFO Pre-market 2023-03-31: 446 stocks → 142 liquid+signal → 25 watchlist
+10:58:33 INFO Pre-market 2023-04-03: 446 stocks → 171 liquid+signal → 25 watchlist
+10:58:56 INFO Pre-market 2023-04-05: 446 stocks → 212 liquid+signal → 25 watchlist
+10:59:19 INFO Pre-market 2023-04-06: 446 stocks → 236 liquid+signal → 25 watchlist
+10:59:42 INFO Pre-market 2023-04-10: 446 stocks → 248 liquid+signal → 25 watchlist
+11:00:05 INFO Pre-market 2023-04-11: 446 stocks → 260 liquid+signal → 25 watchlist
+11:00:28 INFO Pre-market 2023-04-12: 446 stocks → 279 liquid+signal → 25 watchlist
+11:00:51 INFO Pre-market 2023-04-13: 446 stocks → 305 liquid+signal → 25 watchlist
+11:01:13 INFO Pre-market 2023-04-17: 446 stocks → 311 liquid+signal → 25 watchlist
+11:01:36 INFO Pre-market 2023-04-18: 446 stocks → 320 liquid+signal → 25 watchlist
+11:01:59 INFO Pre-market 2023-04-19: 446 stocks → 336 liquid+signal → 25 watchlist
+11:02:22 INFO Pre-market 2023-04-20: 446 stocks → 339 liquid+signal → 25 watchlist
+11:02:45 INFO Pre-market 2023-04-21: 446 stocks → 349 liquid+signal → 25 watchlist
+11:03:08 INFO Pre-market 2023-04-24: 446 stocks → 349 liquid+signal → 25 watchlist
+11:03:31 INFO Pre-market 2023-04-25: 446 stocks → 349 liquid+signal → 25 watchlist
+11:03:54 INFO Pre-market 2023-04-26: 446 stocks → 341 liquid+signal → 25 watchlist
+11:04:17 INFO Pre-market 2023-04-27: 446 stocks → 344 liquid+signal → 25 watchlist
+11:04:40 INFO Pre-market 2023-04-28: 446 stocks → 361 liquid+signal → 25 watchlist
+11:05:03 INFO Pre-market 2023-05-02: 446 stocks → 372 liquid+signal → 25 watchlist
+11:05:27 INFO Pre-market 2023-05-03: 446 stocks → 378 liquid+signal → 25 watchlist
+11:05:49 INFO Pre-market 2023-05-04: 446 stocks → 369 liquid+signal → 25 watchlist
+11:06:12 INFO Pre-market 2023-05-05: 446 stocks → 372 liquid+signal → 25 watchlist
+11:06:35 INFO Pre-market 2023-05-08: 446 stocks → 356 liquid+signal → 25 watchlist
+11:06:58 INFO Pre-market 2023-05-09: 446 stocks → 374 liquid+signal → 25 watchlist
+11:07:20 INFO Pre-market 2023-05-10: 446 stocks → 364 liquid+signal → 25 watchlist
+11:07:43 INFO Pre-market 2023-05-11: 446 stocks → 365 liquid+signal → 25 watchlist
+11:08:06 INFO Pre-market 2023-05-12: 446 stocks → 361 liquid+signal → 25 watchlist
+11:08:29 INFO Pre-market 2023-05-15: 446 stocks → 357 liquid+signal → 25 watchlist
+11:08:52 INFO Pre-market 2023-05-16: 446 stocks → 353 liquid+signal → 25 watchlist
+11:09:14 INFO Pre-market 2023-05-17: 446 stocks → 357 liquid+signal → 25 watchlist
+11:09:37 INFO Pre-market 2023-05-18: 446 stocks → 346 liquid+signal → 25 watchlist
+11:10:00 INFO Pre-market 2023-05-19: 446 stocks → 315 liquid+signal → 25 watchlist
+11:10:23 INFO Pre-market 2023-05-22: 446 stocks → 321 liquid+signal → 25 watchlist
+11:10:46 INFO Pre-market 2023-05-23: 446 stocks → 321 liquid+signal → 25 watchlist
+11:11:09 INFO Pre-market 2023-05-24: 446 stocks → 327 liquid+signal → 25 watchlist
+11:11:31 INFO Pre-market 2023-05-25: 446 stocks → 317 liquid+signal → 25 watchlist
+11:11:54 INFO Pre-market 2023-05-26: 446 stocks → 331 liquid+signal → 25 watchlist
+11:12:17 INFO Pre-market 2023-05-29: 446 stocks → 329 liquid+signal → 25 watchlist
+11:12:40 INFO Pre-market 2023-05-30: 446 stocks → 329 liquid+signal → 25 watchlist
+11:13:03 INFO Pre-market 2023-05-31: 446 stocks → 321 liquid+signal → 25 watchlist
+11:13:26 INFO Pre-market 2023-06-01: 446 stocks → 325 liquid+signal → 25 watchlist
+11:13:49 INFO Pre-market 2023-06-02: 446 stocks → 325 liquid+signal → 25 watchlist
+11:14:14 INFO Pre-market 2023-06-05: 446 stocks → 349 liquid+signal → 25 watchlist
+11:14:37 INFO Pre-market 2023-06-06: 446 stocks → 353 liquid+signal → 25 watchlist
+11:15:01 INFO Pre-market 2023-06-07: 446 stocks → 364 liquid+signal → 25 watchlist
+11:15:24 INFO Pre-market 2023-06-08: 446 stocks → 385 liquid+signal → 25 watchlist
+11:15:47 INFO Pre-market 2023-06-09: 446 stocks → 365 liquid+signal → 25 watchlist
+11:16:11 INFO Pre-market 2023-06-12: 446 stocks → 351 liquid+signal → 25 watchlist
+11:16:35 INFO Pre-market 2023-06-13: 446 stocks → 363 liquid+signal → 25 watchlist
+11:16:58 INFO Pre-market 2023-06-14: 446 stocks → 368 liquid+signal → 25 watchlist
+11:17:21 INFO Pre-market 2023-06-15: 446 stocks → 374 liquid+signal → 25 watchlist
+11:17:44 INFO Pre-market 2023-06-16: 446 stocks → 365 liquid+signal → 25 watchlist
+11:18:08 INFO Pre-market 2023-06-19: 446 stocks → 375 liquid+signal → 25 watchlist
+11:18:31 INFO Pre-market 2023-06-20: 446 stocks → 370 liquid+signal → 25 watchlist
+11:18:54 INFO Pre-market 2023-06-21: 446 stocks → 369 liquid+signal → 25 watchlist
+11:19:18 INFO Pre-market 2023-06-22: 446 stocks → 371 liquid+signal → 25 watchlist
+11:19:41 INFO Pre-market 2023-06-23: 446 stocks → 354 liquid+signal → 25 watchlist
+11:20:05 INFO Pre-market 2023-06-26: 446 stocks → 321 liquid+signal → 25 watchlist
+11:20:29 INFO Pre-market 2023-06-27: 446 stocks → 333 liquid+signal → 25 watchlist
+11:20:53 INFO Pre-market 2023-06-28: 446 stocks → 332 liquid+signal → 25 watchlist
+11:21:16 INFO Pre-market 2023-06-30: 446 stocks → 338 liquid+signal → 25 watchlist
+11:21:40 INFO Pre-market 2023-07-03: 446 stocks → 343 liquid+signal → 25 watchlist
+11:22:03 INFO Pre-market 2023-07-04: 446 stocks → 348 liquid+signal → 25 watchlist
+11:22:26 INFO Pre-market 2023-07-05: 446 stocks → 333 liquid+signal → 25 watchlist
+11:22:50 INFO Pre-market 2023-07-06: 446 stocks → 349 liquid+signal → 25 watchlist
+11:23:13 INFO Pre-market 2023-07-07: 446 stocks → 358 liquid+signal → 25 watchlist
+11:23:37 INFO Pre-market 2023-07-10: 446 stocks → 336 liquid+signal → 25 watchlist
+11:24:02 INFO Pre-market 2023-07-11: 446 stocks → 330 liquid+signal → 25 watchlist
+11:24:26 INFO Pre-market 2023-07-12: 446 stocks → 345 liquid+signal → 25 watchlist
+11:24:50 INFO Pre-market 2023-07-13: 446 stocks → 351 liquid+signal → 25 watchlist
+11:25:13 INFO Pre-market 2023-07-14: 446 stocks → 334 liquid+signal → 25 watchlist
+11:25:41 INFO Pre-market 2023-07-17: 446 stocks → 362 liquid+signal → 25 watchlist
+11:26:06 INFO Pre-market 2023-07-18: 446 stocks → 358 liquid+signal → 25 watchlist
+11:26:30 INFO Pre-market 2023-07-19: 446 stocks → 342 liquid+signal → 25 watchlist
+11:26:53 INFO Pre-market 2023-07-20: 446 stocks → 350 liquid+signal → 25 watchlist
+11:27:17 INFO Pre-market 2023-07-21: 446 stocks → 340 liquid+signal → 25 watchlist
+11:27:41 INFO Pre-market 2023-07-24: 446 stocks → 334 liquid+signal → 25 watchlist
+11:28:05 INFO Pre-market 2023-07-25: 446 stocks → 341 liquid+signal → 25 watchlist
+11:28:29 INFO Pre-market 2023-07-26: 446 stocks → 339 liquid+signal → 25 watchlist
+11:28:54 INFO Pre-market 2023-07-27: 446 stocks → 340 liquid+signal → 25 watchlist
+11:29:17 INFO Pre-market 2023-07-28: 446 stocks → 339 liquid+signal → 25 watchlist
+11:29:42 INFO Pre-market 2023-07-31: 446 stocks → 344 liquid+signal → 25 watchlist
+11:30:07 INFO Pre-market 2023-08-01: 446 stocks → 353 liquid+signal → 25 watchlist
+11:30:31 INFO Pre-market 2023-08-02: 446 stocks → 349 liquid+signal → 25 watchlist
+11:30:55 INFO Pre-market 2023-08-03: 446 stocks → 316 liquid+signal → 25 watchlist
+11:31:19 INFO Pre-market 2023-08-04: 446 stocks → 302 liquid+signal → 25 watchlist
+11:31:43 INFO Pre-market 2023-08-07: 446 stocks → 314 liquid+signal → 25 watchlist
+11:32:07 INFO Pre-market 2023-08-08: 446 stocks → 315 liquid+signal → 25 watchlist
+11:32:30 INFO Pre-market 2023-08-09: 446 stocks → 323 liquid+signal → 25 watchlist
+11:32:54 INFO Pre-market 2023-08-10: 446 stocks → 321 liquid+signal → 25 watchlist
+11:33:18 INFO Pre-market 2023-08-11: 446 stocks → 320 liquid+signal → 25 watchlist
+11:33:41 INFO Pre-market 2023-08-14: 446 stocks → 302 liquid+signal → 25 watchlist
+11:34:06 INFO Pre-market 2023-08-16: 446 stocks → 275 liquid+signal → 25 watchlist
+11:34:34 INFO Pre-market 2023-08-17: 446 stocks → 279 liquid+signal → 25 watchlist
+11:35:00 INFO Pre-market 2023-08-18: 446 stocks → 269 liquid+signal → 25 watchlist
+11:35:25 INFO Pre-market 2023-08-21: 446 stocks → 257 liquid+signal → 25 watchlist
+11:35:51 INFO Pre-market 2023-08-22: 446 stocks → 277 liquid+signal → 25 watchlist
+11:36:15 INFO Pre-market 2023-08-23: 446 stocks → 294 liquid+signal → 25 watchlist
+11:36:39 INFO Pre-market 2023-08-24: 446 stocks → 305 liquid+signal → 25 watchlist
+11:37:08 INFO Pre-market 2023-08-25: 446 stocks → 301 liquid+signal → 25 watchlist
+11:37:33 INFO Pre-market 2023-08-28: 446 stocks → 272 liquid+signal → 25 watchlist
+11:37:57 INFO Pre-market 2023-08-29: 446 stocks → 281 liquid+signal → 25 watchlist
+11:38:22 INFO Pre-market 2023-08-30: 446 stocks → 304 liquid+signal → 25 watchlist
+11:38:47 INFO Pre-market 2023-08-31: 446 stocks → 313 liquid+signal → 25 watchlist
+11:39:12 INFO Pre-market 2023-09-01: 446 stocks → 320 liquid+signal → 25 watchlist
+11:39:36 INFO Pre-market 2023-09-04: 446 stocks → 338 liquid+signal → 25 watchlist
+11:40:02 INFO Pre-market 2023-09-05: 446 stocks → 350 liquid+signal → 25 watchlist
+11:40:26 INFO Pre-market 2023-09-06: 446 stocks → 361 liquid+signal → 25 watchlist
+11:40:51 INFO Pre-market 2023-09-07: 446 stocks → 367 liquid+signal → 25 watchlist
+11:41:16 INFO Pre-market 2023-09-08: 446 stocks → 378 liquid+signal → 25 watchlist
+11:41:41 INFO Pre-market 2023-09-11: 446 stocks → 382 liquid+signal → 25 watchlist
+11:42:06 INFO Pre-market 2023-09-12: 446 stocks → 392 liquid+signal → 25 watchlist
+11:42:30 INFO Pre-market 2023-09-13: 446 stocks → 332 liquid+signal → 25 watchlist
+11:42:55 INFO Pre-market 2023-09-14: 446 stocks → 343 liquid+signal → 25 watchlist
+11:43:20 INFO Pre-market 2023-09-15: 446 stocks → 366 liquid+signal → 25 watchlist
+11:43:44 INFO Pre-market 2023-09-18: 446 stocks → 364 liquid+signal → 25 watchlist
+11:44:09 INFO Pre-market 2023-09-20: 446 stocks → 338 liquid+signal → 25 watchlist
+11:44:34 INFO Pre-market 2023-09-21: 446 stocks → 314 liquid+signal → 25 watchlist
+11:45:00 INFO Pre-market 2023-09-22: 446 stocks → 277 liquid+signal → 25 watchlist
+11:45:25 INFO Pre-market 2023-09-25: 446 stocks → 254 liquid+signal → 25 watchlist
+11:45:50 INFO Pre-market 2023-09-26: 446 stocks → 267 liquid+signal → 25 watchlist
+11:46:15 INFO Pre-market 2023-09-27: 446 stocks → 256 liquid+signal → 25 watchlist
+11:46:40 INFO Pre-market 2023-09-28: 446 stocks → 276 liquid+signal → 25 watchlist
+11:47:06 INFO Pre-market 2023-09-29: 446 stocks → 249 liquid+signal → 25 watchlist
+11:47:31 INFO Pre-market 2023-10-03: 446 stocks → 256 liquid+signal → 25 watchlist
+11:47:56 INFO Pre-market 2023-10-04: 446 stocks → 246 liquid+signal → 25 watchlist
+11:48:21 INFO Pre-market 2023-10-05: 446 stocks → 230 liquid+signal → 25 watchlist
+11:48:46 INFO Pre-market 2023-10-06: 446 stocks → 224 liquid+signal → 25 watchlist
+11:49:12 INFO Pre-market 2023-10-09: 446 stocks → 233 liquid+signal → 25 watchlist
+11:49:37 INFO Pre-market 2023-10-10: 446 stocks → 186 liquid+signal → 25 watchlist
+11:50:03 INFO Pre-market 2023-10-11: 446 stocks → 232 liquid+signal → 25 watchlist
+11:50:29 INFO Pre-market 2023-10-12: 446 stocks → 232 liquid+signal → 25 watchlist
+11:50:55 INFO Pre-market 2023-10-13: 446 stocks → 285 liquid+signal → 25 watchlist
+11:51:20 INFO Pre-market 2023-10-16: 446 stocks → 278 liquid+signal → 25 watchlist
+11:51:46 INFO Pre-market 2023-10-17: 446 stocks → 272 liquid+signal → 25 watchlist
+11:52:12 INFO Pre-market 2023-10-18: 446 stocks → 287 liquid+signal → 25 watchlist
+11:52:38 INFO Pre-market 2023-10-19: 446 stocks → 263 liquid+signal → 25 watchlist
+11:53:03 INFO Pre-market 2023-10-20: 446 stocks → 273 liquid+signal → 25 watchlist
+11:53:29 INFO Pre-market 2023-10-23: 446 stocks → 249 liquid+signal → 25 watchlist
+11:53:54 INFO Pre-market 2023-10-25: 446 stocks → 171 liquid+signal → 25 watchlist
+11:54:20 INFO Pre-market 2023-10-26: 446 stocks → 157 liquid+signal → 25 watchlist
+11:54:46 INFO Pre-market 2023-10-27: 446 stocks → 129 liquid+signal → 25 watchlist
+11:55:12 INFO Pre-market 2023-10-30: 446 stocks → 133 liquid+signal → 25 watchlist
+11:55:39 INFO Pre-market 2023-10-31: 446 stocks → 154 liquid+signal → 25 watchlist
+11:56:04 INFO Pre-market 2023-11-01: 446 stocks → 140 liquid+signal → 25 watchlist
+11:56:30 INFO Pre-market 2023-11-02: 446 stocks → 127 liquid+signal → 25 watchlist
+11:56:56 INFO Pre-market 2023-11-03: 446 stocks → 165 liquid+signal → 25 watchlist
+11:57:22 INFO Pre-market 2023-11-06: 446 stocks → 178 liquid+signal → 25 watchlist
+11:57:47 INFO Pre-market 2023-11-07: 446 stocks → 200 liquid+signal → 25 watchlist
+11:58:13 INFO Pre-market 2023-11-08: 446 stocks → 230 liquid+signal → 25 watchlist
+11:58:39 INFO Pre-market 2023-11-09: 446 stocks → 240 liquid+signal → 25 watchlist
+11:59:05 INFO Pre-market 2023-11-10: 446 stocks → 225 liquid+signal → 25 watchlist
+11:59:32 INFO Pre-market 2023-11-12: 446 stocks → 254 liquid+signal → 25 watchlist
+11:59:58 INFO Pre-market 2023-11-13: 446 stocks → 301 liquid+signal → 25 watchlist
+12:00:24 INFO Pre-market 2023-11-15: 446 stocks → 289 liquid+signal → 25 watchlist
+12:00:50 INFO Pre-market 2023-11-16: 446 stocks → 328 liquid+signal → 25 watchlist
+12:01:16 INFO Pre-market 2023-11-17: 446 stocks → 334 liquid+signal → 25 watchlist
+12:01:43 INFO Pre-market 2023-11-20: 446 stocks → 344 liquid+signal → 25 watchlist
+12:02:09 INFO Pre-market 2023-11-21: 446 stocks → 351 liquid+signal → 25 watchlist
+12:02:35 INFO Pre-market 2023-11-22: 446 stocks → 378 liquid+signal → 25 watchlist
+12:03:01 INFO Pre-market 2023-11-23: 446 stocks → 366 liquid+signal → 25 watchlist
+12:03:27 INFO Pre-market 2023-11-24: 446 stocks → 371 liquid+signal → 25 watchlist
+12:03:53 INFO Pre-market 2023-11-28: 446 stocks → 364 liquid+signal → 25 watchlist
+12:04:20 INFO Pre-market 2023-11-29: 446 stocks → 373 liquid+signal → 25 watchlist
+12:04:46 INFO Pre-market 2023-11-30: 446 stocks → 382 liquid+signal → 25 watchlist
+12:05:13 INFO Pre-market 2023-12-01: 446 stocks → 395 liquid+signal → 25 watchlist
+12:05:41 INFO Pre-market 2023-12-04: 446 stocks → 393 liquid+signal → 25 watchlist
+12:06:07 INFO Pre-market 2023-12-05: 446 stocks → 405 liquid+signal → 25 watchlist
+12:06:34 INFO Pre-market 2023-12-06: 446 stocks → 408 liquid+signal → 25 watchlist
+12:07:00 INFO Pre-market 2023-12-07: 446 stocks → 402 liquid+signal → 25 watchlist
+12:07:26 INFO Pre-market 2023-12-08: 446 stocks → 407 liquid+signal → 25 watchlist
+12:07:53 INFO Pre-market 2023-12-11: 446 stocks → 389 liquid+signal → 25 watchlist
+12:08:20 INFO Pre-market 2023-12-12: 446 stocks → 377 liquid+signal → 25 watchlist
+12:08:46 INFO Pre-market 2023-12-13: 446 stocks → 369 liquid+signal → 25 watchlist
+12:09:12 INFO Pre-market 2023-12-14: 446 stocks → 382 liquid+signal → 25 watchlist
+12:09:39 INFO Pre-market 2023-12-15: 446 stocks → 391 liquid+signal → 25 watchlist
+12:10:06 INFO Pre-market 2023-12-18: 446 stocks → 393 liquid+signal → 25 watchlist
+12:10:32 INFO Pre-market 2023-12-19: 446 stocks → 385 liquid+signal → 25 watchlist
+12:10:58 INFO Pre-market 2023-12-20: 446 stocks → 377 liquid+signal → 25 watchlist
+12:11:25 INFO Pre-market 2023-12-21: 446 stocks → 307 liquid+signal → 25 watchlist
+12:11:51 INFO Pre-market 2023-12-22: 446 stocks → 339 liquid+signal → 25 watchlist
+12:12:18 INFO Pre-market 2023-12-26: 446 stocks → 336 liquid+signal → 25 watchlist
+12:12:45 INFO Pre-market 2023-12-27: 446 stocks → 348 liquid+signal → 25 watchlist
+12:13:11 INFO Pre-market 2023-12-28: 446 stocks → 360 liquid+signal → 25 watchlist
+12:13:38 INFO Pre-market 2023-12-29: 446 stocks → 358 liquid+signal → 25 watchlist
+12:13:51 INFO Year 2023 complete: 245 trades | effective win rate 59.2% (36.3% TARGET_HIT + profitable exits) | P&L Rs 414,598
+12:13:51 INFO 
+--- 2023 RESULTS ---
+12:13:51 INFO Total trades   : 245
+12:13:51 INFO EXACT_WIN      : 89  (36.3%)   — target hit
+12:13:51 INFO WIN (partial)  : 56  (22.9%)   — profitable TIME_EXIT
+12:13:51 INFO LOSS           : 100  (40.8%)   — stopped or exit at loss
+12:13:51 INFO Effective WR   : 59.2%  (EXACT_WIN + WIN)
+12:13:51 INFO Total P&L      : Rs 414,598
+12:13:51 INFO Paper trades   : C:\Users\somal\Downloads\AI_ML\TradingAgent\data\trade_logs\paper_trades.csv
+12:13:51 INFO Windows sleep prevention: OFF
+15:32:37 INFO ============================================================
+15:32:37 INFO TESTING — WF-5 frozen weights, 1 trade/day
+15:32:37 INFO Years       : [2023]
+15:32:37 INFO Pre-filter  : ON
+15:32:37 INFO Paper trades: C:\Users\somal\Downloads\AI_ML\TradingAgent\data\trade_logs\paper_trades.csv
+15:32:37 INFO WF weights  : C:\Users\somal\Downloads\AI_ML\TradingAgent\checkpoints\wf5_weights.json
+15:32:37 INFO ============================================================
+15:32:37 INFO Windows sleep prevention: ON
+15:32:38 INFO 
+==================================================
+15:32:38 INFO Starting testing year: 2023
+15:32:38 INFO ==================================================
+15:32:38 INFO Starting 2023 [TESTING] — weights FROZEN — SHORT ON — pre-filter ON
+15:32:38 INFO Loading stock data into memory...
+15:32:49 INFO Loaded 446 stocks for 2023 (with prev-year warmup)
+15:32:59 INFO Pre-market 2023-01-02: 446 stocks → 170 liquid+signal (53 bull / 117 bear) → 153 watchlist
+15:33:46 INFO TRADE 2023-01-02  BRITANNIA    SHORT driver=FIRST-CANDLE     entry=4323.85@09:30  exit=4291.55@15:15  TIME_EXIT   P&L Rs +2,991
+15:33:53 INFO Pre-market 2023-01-03: 446 stocks → 168 liquid+signal (66 bull / 102 bear) → 166 watchlist
+15:34:42 INFO TRADE 2023-01-03  UNITDSPR     SHORT driver=FIRST-CANDLE     entry=870.00@09:45  exit=861.80@12:10  TARGET_HIT  P&L Rs +3,981
+15:34:50 INFO Pre-market 2023-01-04: 446 stocks → 169 liquid+signal (75 bull / 94 bear) → 169 watchlist
+15:35:41 INFO TRADE 2023-01-04  BRITANNIA    SHORT driver=FIRST-CANDLE     entry=4250.05@09:35  exit=4239.60@15:15  TIME_EXIT   P&L Rs +498
+15:35:50 INFO Pre-market 2023-01-05: 446 stocks → 174 liquid+signal (65 bull / 109 bear) → 165 watchlist
+15:36:42 INFO TRADE 2023-01-05  AUBANK       SHORT driver=FIRST-CANDLE     entry=638.95@09:20  exit=628.25@09:55  TARGET_HIT  P&L Rs +7,644
+15:36:50 INFO Pre-market 2023-01-06: 446 stocks → 166 liquid+signal (81 bull / 85 bear) → 166 watchlist
+15:37:42 INFO TRADE 2023-01-06  FEDERALBNK   SHORT driver=FIRST-CANDLE     entry=136.55@09:20  exit=134.75@10:35  TARGET_HIT  P&L Rs +5,865
+15:37:51 INFO Pre-market 2023-01-09: 446 stocks → 163 liquid+signal (64 bull / 99 bear) → 163 watchlist
+15:38:41 INFO TRADE 2023-01-09  DIXON        SHORT driver=FIRST-CANDLE     entry=3830.00@09:20  exit=3784.40@13:45  TARGET_HIT  P&L Rs +5,205
+15:38:49 INFO Pre-market 2023-01-10: 446 stocks → 162 liquid+signal (83 bull / 79 bear) → 162 watchlist
+15:39:40 INFO TRADE 2023-01-10  PIIND        SHORT driver=FIRST-CANDLE     entry=3321.00@09:20  exit=3290.00@15:15  TIME_EXIT   P&L Rs +3,926
+15:39:48 INFO Pre-market 2023-01-11: 446 stocks → 164 liquid+signal (81 bull / 83 bear) → 164 watchlist
+15:40:40 INFO TRADE 2023-01-11  ASIANPAINT   SHORT driver=FIRST-CANDLE     entry=2962.15@09:20  exit=2940.05@15:15  TIME_EXIT   P&L Rs +2,989
+15:40:48 INFO Pre-market 2023-01-12: 446 stocks → 166 liquid+signal (88 bull / 78 bear) → 166 watchlist
+15:41:41 INFO TRADE 2023-01-12  TATACONSUM   SHORT driver=FIRST-CANDLE     entry=750.00@10:05  exit=742.90@13:10  TARGET_HIT  P&L Rs +4,003
+15:41:49 INFO Pre-market 2023-01-13: 446 stocks → 156 liquid+signal (87 bull / 69 bear) → 156 watchlist
+15:42:39 INFO TRADE 2023-01-13  AUBANK       SHORT driver=FIRST-CANDLE     entry=623.20@09:40  exit=620.20@15:15  TIME_EXIT   P&L Rs +1,679
+15:42:46 INFO Pre-market 2023-01-16: 446 stocks → 156 liquid+signal (93 bull / 63 bear) → 156 watchlist
+15:43:34 INFO TRADE 2023-01-16  TVSMOTOR     SHORT driver=FIRST-CANDLE     entry=1000.50@09:20  exit=982.70@09:50  TARGET_HIT  P&L Rs +8,159
+15:43:42 INFO Pre-market 2023-01-17: 446 stocks → 155 liquid+signal (85 bull / 70 bear) → 155 watchlist
+15:44:31 INFO TRADE 2023-01-17  HAL          SHORT driver=FIRST-CANDLE     entry=1235.50@09:20  exit=1241.90@10:45  STOP_HIT    P&L Rs -3,315
+15:44:39 INFO Pre-market 2023-01-18: 446 stocks → 147 liquid+signal (92 bull / 55 bear) → 147 watchlist
+15:45:25 INFO TRADE 2023-01-18  PIIND        SHORT driver=FIRST-CANDLE     entry=3261.75@09:25  exit=3252.35@15:15  TIME_EXIT   P&L Rs +711
+15:45:33 INFO Pre-market 2023-01-19: 446 stocks → 149 liquid+signal (96 bull / 53 bear) → 149 watchlist
+15:46:19 INFO TRADE 2023-01-19  VOLTAS       SHORT driver=FIRST-CANDLE     entry=795.60@09:20  exit=789.85@15:15  TIME_EXIT   P&L Rs +2,885
+15:46:27 INFO Pre-market 2023-01-20: 446 stocks → 139 liquid+signal (88 bull / 51 bear) → 139 watchlist
+15:47:12 INFO TRADE 2023-01-20  PVRINOX      SHORT driver=FIRST-CANDLE     entry=1685.00@09:25  exit=1635.00@11:50  TARGET_HIT  P&L Rs +14,081
+15:47:19 INFO Pre-market 2023-01-23: 446 stocks → 143 liquid+signal (87 bull / 56 bear) → 143 watchlist
+15:48:05 INFO TRADE 2023-01-23  ADANIPOWER   SHORT driver=DESC-TRI         entry=54.45@12:55  exit=54.65@15:15  TIME_EXIT   P&L Rs -2,030
+15:48:13 INFO Pre-market 2023-01-24: 446 stocks → 136 liquid+signal (83 bull / 53 bear) → 136 watchlist
+15:48:56 INFO TRADE 2023-01-24  RECLTD       SHORT driver=FIRST-CANDLE     entry=124.10@09:25  exit=122.70@11:55  TARGET_HIT  P&L Rs +4,915
+15:49:04 INFO Pre-market 2023-01-25: 446 stocks → 135 liquid+signal (76 bull / 59 bear) → 135 watchlist
+15:49:54 INFO TRADE 2023-01-25  M&M          SHORT driver=FIRST-CANDLE     entry=1323.90@10:10  exit=1307.70@15:00  TARGET_HIT  P&L Rs +5,383
+15:50:02 INFO Pre-market 2023-01-27: 446 stocks → 137 liquid+signal (68 bull / 69 bear) → 137 watchlist
+15:50:51 INFO TRADE 2023-01-27  BAJFINANCE   SHORT driver=DESC-TRI         entry=583.00@09:15  exit=576.00@15:15  TIME_EXIT   P&L Rs +4,721
+15:51:00 INFO Pre-market 2023-01-30: 446 stocks → 145 liquid+signal (57 bull / 88 bear) → 145 watchlist
+15:51:51 INFO TRADE 2023-01-30  CIPLA        SHORT driver=FIRST-CANDLE     entry=1037.75@10:40  exit=1035.20@15:15  TIME_EXIT   P&L Rs +499
+15:51:59 INFO Pre-market 2023-01-31: 446 stocks → 140 liquid+signal (48 bull / 92 bear) → 140 watchlist
+15:52:50 INFO TRADE 2023-01-31  UNITDSPR     SHORT driver=FIRST-CANDLE     entry=760.30@09:25  exit=768.95@13:35  STOP_HIT    P&L Rs -6,415
+15:52:59 INFO Pre-market 2023-02-01: 446 stocks → 134 liquid+signal (61 bull / 73 bear) → 134 watchlist
+15:53:49 INFO TRADE 2023-02-01  NAUKRI       SHORT driver=DESC-TRI         entry=728.00@13:20  exit=725.00@15:15  TIME_EXIT   P&L Rs +1,066
+15:53:58 INFO Pre-market 2023-02-02: 446 stocks → 152 liquid+signal (48 bull / 104 bear) → 148 watchlist
+15:54:57 INFO TRADE 2023-02-02  NESTLEIND    SHORT driver=FIRST-CANDLE     entry=948.90@09:35  exit=947.90@15:15  TIME_EXIT   P&L Rs -201
+15:55:07 INFO Pre-market 2023-02-03: 446 stocks → 150 liquid+signal (55 bull / 95 bear) → 150 watchlist
+15:55:59 INFO TRADE 2023-02-03  IRFC         SHORT driver=FIRST-CANDLE     entry=31.65@09:35  exit=31.15@15:15  TIME_EXIT   P&L Rs +7,174
+15:56:07 INFO Pre-market 2023-02-06: 446 stocks → 150 liquid+signal (57 bull / 93 bear) → 150 watchlist
+15:56:57 INFO TRADE 2023-02-06  TATACONSUM   SHORT driver=FIRST-CANDLE     entry=717.70@09:25  exit=722.40@11:45  STOP_HIT    P&L Rs -4,001
+15:57:06 INFO Pre-market 2023-02-07: 446 stocks → 143 liquid+signal (62 bull / 81 bear) → 143 watchlist
+15:57:54 INFO TRADE 2023-02-07  TATACONSUM   SHORT driver=FIRST-CANDLE     entry=721.65@09:30  exit=719.30@15:15  TIME_EXIT   P&L Rs +899
+15:58:04 INFO Pre-market 2023-02-08: 446 stocks → 150 liquid+signal (57 bull / 93 bear) → 150 watchlist
+15:58:55 INFO TRADE 2023-02-08  ONGC         SHORT driver=SUPERTREND       entry=130.05@10:20  exit=129.95@15:15  TIME_EXIT   P&L Rs -344
+15:59:03 INFO Pre-market 2023-02-09: 446 stocks → 148 liquid+signal (65 bull / 83 bear) → 148 watchlist
+15:59:51 INFO TRADE 2023-02-09  PAGEIND      SHORT driver=DESC-TRI         entry=39246.60@09:15  exit=37958.00@15:15  TIME_EXIT   P&L Rs +12,311
+15:59:59 INFO Pre-market 2023-02-10: 446 stocks → 149 liquid+signal (70 bull / 79 bear) → 149 watchlist
+16:00:48 INFO TRADE 2023-02-10  INDIGO       SHORT driver=STOCHASTIC       entry=2042.45@13:45  exit=2043.35@15:15  TIME_EXIT   P&L Rs -946
+16:00:55 INFO Pre-market 2023-02-13: 446 stocks → 148 liquid+signal (65 bull / 83 bear) → 148 watchlist
+16:01:44 INFO TRADE 2023-02-13  AXISBANK     SHORT driver=FIRST-CANDLE     entry=867.25@09:25  exit=861.85@11:30  TARGET_HIT  P&L Rs +2,384
+16:01:52 INFO Pre-market 2023-02-14: 446 stocks → 150 liquid+signal (57 bull / 93 bear) → 150 watchlist
+16:02:42 INFO TRADE 2023-02-14  SAMMAANCAP   SHORT driver=DESC-TRI         entry=101.30@09:15  exit=98.50@15:15  TIME_EXIT   P&L Rs +7,126
+16:02:50 INFO Pre-market 2023-02-15: 446 stocks → 151 liquid+signal (62 bull / 89 bear) → 151 watchlist
+16:03:39 INFO TRADE 2023-02-15  INDIGO       SHORT driver=FAILED-BO        entry=2021.15@11:35  exit=1990.45@15:15  TIME_EXIT   P&L Rs +6,859
+16:03:48 INFO Pre-market 2023-02-16: 446 stocks → 145 liquid+signal (75 bull / 70 bear) → 145 watchlist
+16:04:37 INFO TRADE 2023-02-16  HINDUNILVR   SHORT driver=FIRST-CANDLE     entry=2550.15@09:45  exit=2530.45@12:35  TARGET_HIT  P&L Rs +3,135
+16:04:45 INFO Pre-market 2023-02-17: 446 stocks → 143 liquid+signal (76 bull / 67 bear) → 143 watchlist
+16:05:32 INFO TRADE 2023-02-17  APOLLOTYRE   SHORT driver=FIRST-CANDLE     entry=333.50@09:40  exit=330.65@15:15  TIME_EXIT   P&L Rs +3,546
+16:05:41 INFO Pre-market 2023-02-20: 446 stocks → 146 liquid+signal (74 bull / 72 bear) → 146 watchlist
+16:06:35 INFO TRADE 2023-02-20  HINDPETRO    SHORT driver=FIRST-CANDLE     entry=130.70@09:25  exit=129.75@15:15  TIME_EXIT   P&L Rs +2,907
+16:06:44 INFO Pre-market 2023-02-21: 446 stocks → 151 liquid+signal (77 bull / 74 bear) → 151 watchlist
+16:07:41 INFO TRADE 2023-02-21  TCS          SHORT driver=FIRST-CANDLE     entry=3491.05@09:45  exit=3461.85@14:30  TARGET_HIT  P&L Rs +3,450
+16:07:51 INFO Pre-market 2023-02-22: 446 stocks → 152 liquid+signal (86 bull / 66 bear) → 152 watchlist
+16:08:47 INFO TRADE 2023-02-22  AXISBANK     SHORT driver=FIRST-CANDLE     entry=838.80@09:40  exit=832.50@11:00  TARGET_HIT  P&L Rs +3,028
+16:08:56 INFO Pre-market 2023-02-23: 446 stocks → 148 liquid+signal (71 bull / 77 bear) → 148 watchlist
+16:09:51 INFO TRADE 2023-02-23  MAZDOCK      SHORT driver=FIRST-CANDLE     entry=358.00@09:25  exit=354.65@15:15  TIME_EXIT   P&L Rs +3,951
+16:10:00 INFO Pre-market 2023-02-24: 446 stocks → 146 liquid+signal (69 bull / 77 bear) → 146 watchlist
+16:10:53 INFO TRADE 2023-02-24  HDFCBANK     SHORT driver=FIRST-CANDLE     entry=802.10@09:35  exit=795.70@15:15  TIME_EXIT   P&L Rs +3,261
+16:11:03 INFO Pre-market 2023-02-27: 446 stocks → 142 liquid+signal (61 bull / 81 bear) → 142 watchlist
+16:11:57 INFO TRADE 2023-02-27  TITAN        SHORT driver=FIRST-CANDLE     entry=2388.45@09:40  exit=2402.65@15:15  TIME_EXIT   P&L Rs -3,697
+16:12:06 INFO Pre-market 2023-02-28: 446 stocks → 140 liquid+signal (60 bull / 80 bear) → 140 watchlist
+16:12:53 INFO TRADE 2023-02-28  TATACHEM     SHORT driver=FIRST-CANDLE     entry=970.05@09:50  exit=977.15@11:10  STOP_HIT    P&L Rs -4,387
+16:13:00 INFO Pre-market 2023-03-01: 446 stocks → 140 liquid+signal (54 bull / 86 bear) → 140 watchlist
+16:13:48 INFO TRADE 2023-03-01  APOLLOTYRE   SHORT driver=FIRST-CANDLE     entry=313.15@09:20  exit=315.25@10:00  STOP_HIT    P&L Rs -4,082
+16:13:56 INFO Pre-market 2023-03-02: 446 stocks → 134 liquid+signal (70 bull / 64 bear) → 134 watchlist
+16:14:41 INFO TRADE 2023-03-02  UNITDSPR     SHORT driver=FIRST-CANDLE     entry=743.90@09:20  exit=739.20@10:35  TARGET_HIT  P&L Rs +2,431
+16:14:50 INFO Pre-market 2023-03-03: 446 stocks → 141 liquid+signal (60 bull / 81 bear) → 141 watchlist
+16:15:37 INFO TRADE 2023-03-03  PAGEIND      SHORT driver=FIRST-CANDLE     entry=37586.85@09:35  exit=37081.95@12:35  TARGET_HIT  P&L Rs +5,854
+16:15:45 INFO Pre-market 2023-03-06: 446 stocks → 137 liquid+signal (80 bull / 57 bear) → 137 watchlist
+16:16:30 INFO TRADE 2023-03-06  PAGEIND      SHORT driver=FIRST-CANDLE     entry=37312.15@09:45  exit=37331.10@15:15  TIME_EXIT   P&L Rs -955
+16:16:38 INFO Pre-market 2023-03-08: 446 stocks → 147 liquid+signal (87 bull / 60 bear) → 147 watchlist
+16:17:27 INFO TRADE 2023-03-08  ZEEL         SHORT driver=FIRST-CANDLE     entry=193.78@09:30  exit=192.56@15:15  TIME_EXIT   P&L Rs +2,421
+16:17:36 INFO Pre-market 2023-03-09: 446 stocks → 138 liquid+signal (86 bull / 52 bear) → 138 watchlist
+16:18:22 INFO TRADE 2023-03-09  SBILIFE      SHORT driver=FIRST-CANDLE     entry=1121.00@09:20  exit=1098.20@15:10  TARGET_HIT  P&L Rs +9,446
+16:18:30 INFO Pre-market 2023-03-10: 446 stocks → 142 liquid+signal (69 bull / 73 bear) → 142 watchlist
+16:19:18 INFO TRADE 2023-03-10  M&MFIN       SHORT driver=FIRST-CANDLE     entry=227.05@09:35  exit=226.65@15:15  TIME_EXIT   P&L Rs +152
+16:19:26 INFO Pre-market 2023-03-13: 446 stocks → 123 liquid+signal (67 bull / 56 bear) → 123 watchlist
+16:20:09 INFO TRADE 2023-03-13  RELIANCE     SHORT driver=SUPERTREND       entry=1109.90@09:35  exit=1090.48@14:30  TARGET_HIT  P&L Rs +8,018
+16:20:16 INFO Pre-market 2023-03-14: 446 stocks → 152 liquid+signal (52 bull / 100 bear) → 152 watchlist
+16:21:06 INFO TRADE 2023-03-14  DRREDDY      SHORT driver=FIRST-CANDLE     entry=876.85@09:20  exit=862.15@13:30  TARGET_HIT  P&L Rs +7,655
+16:21:14 INFO Pre-market 2023-03-15: 446 stocks → 136 liquid+signal (51 bull / 85 bear) → 136 watchlist
+16:21:59 INFO TRADE 2023-03-15  WIPRO        SHORT driver=FIRST-CANDLE     entry=182.70@09:20  exit=181.40@09:55  TARGET_HIT  P&L Rs +2,830
+16:22:07 INFO Pre-market 2023-03-16: 446 stocks → 144 liquid+signal (53 bull / 91 bear) → 144 watchlist
+16:23:02 INFO TRADE 2023-03-16  GRASIM       SHORT driver=FIRST-CANDLE     entry=1543.25@09:30  exit=1525.55@10:00  TARGET_HIT  P&L Rs +4,994
+16:23:12 INFO Pre-market 2023-03-17: 446 stocks → 137 liquid+signal (60 bull / 77 bear) → 137 watchlist
+16:24:05 INFO TRADE 2023-03-17  POLYCAB      SHORT driver=FIRST-CANDLE     entry=2893.50@09:55  exit=2914.60@10:45  STOP_HIT    P&L Rs -4,357
+16:24:14 INFO Pre-market 2023-03-20: 446 stocks → 141 liquid+signal (65 bull / 76 bear) → 141 watchlist
+16:25:09 INFO TRADE 2023-03-20  TATACHEM     SHORT driver=FIRST-CANDLE     entry=955.10@09:20  exit=951.80@15:15  TIME_EXIT   P&L Rs +999
+16:25:18 INFO Pre-market 2023-03-21: 446 stocks → 144 liquid+signal (57 bull / 87 bear) → 144 watchlist
+16:26:14 INFO TRADE 2023-03-21  NMDC         SHORT driver=FIRST-CANDLE     entry=32.65@09:35  exit=32.35@15:15  TIME_EXIT   P&L Rs +3,868
+16:26:23 INFO Pre-market 2023-03-22: 446 stocks → 140 liquid+signal (62 bull / 78 bear) → 140 watchlist
+16:27:17 INFO TRADE 2023-03-22  BHARTIARTL   SHORT driver=FIRST-CANDLE     entry=760.05@09:25  exit=753.75@11:00  TARGET_HIT  P&L Rs +3,413
+16:27:26 INFO Pre-market 2023-03-23: 446 stocks → 138 liquid+signal (63 bull / 75 bear) → 138 watchlist
+16:27:40 INFO Interrupted by user — checkpoint saved, safe to resume.
+16:27:40 INFO Windows sleep prevention: OFF
+16:28:28 INFO ============================================================
+16:28:28 INFO TESTING — WF-5 frozen weights, 1 trade/day
+16:28:28 INFO Years       : [2023]
+16:28:28 INFO Pre-filter  : ON
+16:28:28 INFO Paper trades: C:\Users\somal\Downloads\AI_ML\TradingAgent\data\trade_logs\paper_trades.csv
+16:28:28 INFO WF weights  : C:\Users\somal\Downloads\AI_ML\TradingAgent\checkpoints\wf5_weights.json
+16:28:28 INFO ============================================================
+16:28:28 INFO Windows sleep prevention: ON
+16:28:30 INFO 
+==================================================
+16:28:30 INFO Starting testing year: 2023
+16:28:30 INFO ==================================================
+16:28:30 INFO Starting 2023 [TESTING] — weights FROZEN — SHORT ON — pre-filter ON
+16:28:30 INFO Loading stock data into memory...
+16:28:46 INFO Loaded 446 stocks for 2023 (with prev-year warmup)
+16:28:58 INFO Pre-market 2023-01-02: 446 stocks → 170 liquid+signal (53 bull / 117 bear) → 153 watchlist
+16:29:47 INFO TRADE 2023-01-02  BRITANNIA    SHORT driver=FIRST-CANDLE     entry=4323.85@09:30  exit=4291.55@15:15  TIME_EXIT   P&L Rs +2,991
+16:29:55 INFO Pre-market 2023-01-03: 446 stocks → 168 liquid+signal (66 bull / 102 bear) → 166 watchlist
+16:30:46 INFO TRADE 2023-01-03  PIDILITIND   SHORT driver=STOCHASTIC       entry=1265.40@12:40  exit=1268.80@15:15  TIME_EXIT   P&L Rs -2,072
+16:30:54 INFO Pre-market 2023-01-04: 446 stocks → 169 liquid+signal (75 bull / 94 bear) → 169 watchlist
+16:31:48 INFO TRADE 2023-01-04  BRITANNIA    SHORT driver=FIRST-CANDLE     entry=4250.05@09:35  exit=4239.60@15:15  TIME_EXIT   P&L Rs +498
+16:31:56 INFO Pre-market 2023-01-05: 446 stocks → 174 liquid+signal (65 bull / 109 bear) → 165 watchlist
+16:32:51 INFO TRADE 2023-01-05  AUBANK       SHORT driver=FIRST-CANDLE     entry=638.95@09:20  exit=628.25@09:55  TARGET_HIT  P&L Rs +7,644
+16:32:59 INFO Pre-market 2023-01-06: 446 stocks → 166 liquid+signal (81 bull / 85 bear) → 166 watchlist
+16:33:43 INFO Interrupted by user — checkpoint saved, safe to resume.
+16:33:43 INFO Windows sleep prevention: OFF
+16:37:44 INFO ============================================================
+16:37:44 INFO TESTING — WF-5 frozen weights, 1 trade/day
+16:37:44 INFO Years       : [2023]
+16:37:44 INFO Pre-filter  : ON
+16:37:44 INFO Paper trades: C:\Users\somal\Downloads\AI_ML\TradingAgent\data\trade_logs\paper_trades.csv
+16:37:44 INFO WF weights  : C:\Users\somal\Downloads\AI_ML\TradingAgent\checkpoints\wf5_weights.json
+16:37:44 INFO ============================================================
+16:37:44 INFO Windows sleep prevention: ON
+16:37:45 INFO 
+==================================================
+16:37:45 INFO Starting testing year: 2023
+16:37:45 INFO ==================================================
+16:37:45 INFO Starting 2023 [TESTING] — weights FROZEN — SHORT ON — pre-filter ON
+16:37:45 INFO Loading stock data into memory...
+16:37:55 INFO Loaded 446 stocks for 2023 (with prev-year warmup)
+16:38:06 INFO Pre-market 2023-01-02: 446 stocks → 170 liquid+signal (53 bull / 117 bear) → 153 watchlist
+16:38:52 INFO TRADE 2023-01-02  BRITANNIA    SHORT driver=FIRST-CANDLE     entry=4323.85@09:30  exit=4291.55@15:15  TIME_EXIT   P&L Rs +2,991
+16:39:00 INFO Pre-market 2023-01-03: 446 stocks → 168 liquid+signal (66 bull / 102 bear) → 166 watchlist
+16:39:51 INFO TRADE 2023-01-03  PIDILITIND   SHORT driver=STOCHASTIC       entry=1265.40@12:40  exit=1268.80@15:15  TIME_EXIT   P&L Rs -2,072
+16:39:59 INFO Pre-market 2023-01-04: 446 stocks → 169 liquid+signal (75 bull / 94 bear) → 169 watchlist
+16:40:52 INFO TRADE 2023-01-04  BRITANNIA    SHORT driver=FIRST-CANDLE     entry=4250.05@09:35  exit=4239.60@15:15  TIME_EXIT   P&L Rs +498
+16:41:00 INFO Pre-market 2023-01-05: 446 stocks → 174 liquid+signal (65 bull / 109 bear) → 165 watchlist
+16:41:50 INFO TRADE 2023-01-05  AUBANK       SHORT driver=FIRST-CANDLE     entry=638.95@09:20  exit=628.25@09:55  TARGET_HIT  P&L Rs +7,644
+16:41:58 INFO Pre-market 2023-01-06: 446 stocks → 166 liquid+signal (81 bull / 85 bear) → 166 watchlist
+16:42:50 INFO TRADE 2023-01-06  FEDERALBNK   SHORT driver=FIRST-CANDLE     entry=136.55@09:20  exit=134.75@10:35  TARGET_HIT  P&L Rs +5,865
+16:42:58 INFO Pre-market 2023-01-09: 446 stocks → 163 liquid+signal (64 bull / 99 bear) → 163 watchlist
+16:43:49 INFO TRADE 2023-01-09  DIXON        SHORT driver=FIRST-CANDLE     entry=3830.00@09:20  exit=3784.40@13:45  TARGET_HIT  P&L Rs +5,205
+16:43:57 INFO Pre-market 2023-01-10: 446 stocks → 162 liquid+signal (83 bull / 79 bear) → 162 watchlist
+16:44:56 INFO TRADE 2023-01-10  PIIND        SHORT driver=FIRST-CANDLE     entry=3321.00@09:20  exit=3290.00@15:15  TIME_EXIT   P&L Rs +3,926
+16:45:05 INFO Pre-market 2023-01-11: 446 stocks → 164 liquid+signal (81 bull / 83 bear) → 164 watchlist
+16:46:02 INFO TRADE 2023-01-11  ASIANPAINT   SHORT driver=FIRST-CANDLE     entry=2962.15@09:20  exit=2940.05@15:15  TIME_EXIT   P&L Rs +2,989
+16:46:11 INFO Pre-market 2023-01-12: 446 stocks → 166 liquid+signal (88 bull / 78 bear) → 166 watchlist
+16:47:10 INFO TRADE 2023-01-12  TATACONSUM   SHORT driver=FIRST-CANDLE     entry=750.00@10:05  exit=742.90@13:10  TARGET_HIT  P&L Rs +4,003
+16:47:19 INFO Pre-market 2023-01-13: 446 stocks → 156 liquid+signal (87 bull / 69 bear) → 156 watchlist
+16:48:14 INFO TRADE 2023-01-13  AUBANK       SHORT driver=FIRST-CANDLE     entry=623.20@09:40  exit=620.20@15:15  TIME_EXIT   P&L Rs +1,679
+16:48:23 INFO Pre-market 2023-01-16: 446 stocks → 156 liquid+signal (93 bull / 63 bear) → 156 watchlist
+16:49:19 INFO TRADE 2023-01-16  BHARTIARTL   SHORT driver=FIRST-CANDLE     entry=765.20@09:20  exit=759.70@11:15  TARGET_HIT  P&L Rs +2,865
+16:49:28 INFO Pre-market 2023-01-17: 446 stocks → 155 liquid+signal (85 bull / 70 bear) → 155 watchlist
+16:50:26 INFO TRADE 2023-01-17  HAL          SHORT driver=FIRST-CANDLE     entry=1235.50@09:20  exit=1241.90@10:45  STOP_HIT    P&L Rs -3,315
+16:50:34 INFO Pre-market 2023-01-18: 446 stocks → 147 liquid+signal (92 bull / 55 bear) → 147 watchlist
+16:51:21 INFO TRADE 2023-01-18  PIIND        SHORT driver=FIRST-CANDLE     entry=3261.75@09:25  exit=3252.35@15:15  TIME_EXIT   P&L Rs +711
+16:51:29 INFO Pre-market 2023-01-19: 446 stocks → 149 liquid+signal (96 bull / 53 bear) → 149 watchlist
+16:52:16 INFO TRADE 2023-01-19  PVRINOX      SHORT driver=FIRST-CANDLE     entry=1656.85@09:25  exit=1672.10@12:00  STOP_HIT    P&L Rs -5,320
+16:52:23 INFO Pre-market 2023-01-20: 446 stocks → 139 liquid+signal (88 bull / 51 bear) → 139 watchlist
+16:53:07 INFO TRADE 2023-01-20  PVRINOX      SHORT driver=FIRST-CANDLE     entry=1685.00@09:25  exit=1635.00@11:50  TARGET_HIT  P&L Rs +14,081
+16:53:15 INFO Pre-market 2023-01-23: 446 stocks → 143 liquid+signal (87 bull / 56 bear) → 143 watchlist
+16:54:00 INFO TRADE 2023-01-23  ADANIPOWER   SHORT driver=DESC-TRI         entry=54.45@12:55  exit=54.65@15:15  TIME_EXIT   P&L Rs -2,030
+16:54:08 INFO Pre-market 2023-01-24: 446 stocks → 136 liquid+signal (83 bull / 53 bear) → 136 watchlist
+16:54:51 INFO TRADE 2023-01-24  AMBUJACEM    SHORT driver=DESC-TRI         entry=504.10@09:15  exit=499.05@15:15  TIME_EXIT   P&L Rs +3,240
+16:54:58 INFO Pre-market 2023-01-25: 446 stocks → 135 liquid+signal (76 bull / 59 bear) → 135 watchlist
+16:55:41 INFO TRADE 2023-01-25  NESTLEIND    SHORT driver=FIRST-CANDLE     entry=960.20@11:45  exit=961.50@15:15  TIME_EXIT   P&L Rs -1,404
+16:55:49 INFO Pre-market 2023-01-27: 446 stocks → 137 liquid+signal (68 bull / 69 bear) → 137 watchlist
+16:56:32 INFO TRADE 2023-01-27  BAJFINANCE   SHORT driver=DESC-TRI         entry=583.00@09:15  exit=576.00@15:15  TIME_EXIT   P&L Rs +4,721
+16:56:40 INFO Pre-market 2023-01-30: 446 stocks → 145 liquid+signal (57 bull / 88 bear) → 145 watchlist
+16:57:26 INFO TRADE 2023-01-30  CIPLA        SHORT driver=FIRST-CANDLE     entry=1037.75@10:40  exit=1035.20@15:15  TIME_EXIT   P&L Rs +499
+16:57:34 INFO Pre-market 2023-01-31: 446 stocks → 140 liquid+signal (48 bull / 92 bear) → 140 watchlist
+16:58:19 INFO TRADE 2023-01-31  UNITDSPR     SHORT driver=FIRST-CANDLE     entry=760.30@09:25  exit=768.95@13:35  STOP_HIT    P&L Rs -6,415
+16:58:26 INFO Pre-market 2023-02-01: 446 stocks → 134 liquid+signal (61 bull / 73 bear) → 134 watchlist
+16:59:09 INFO TRADE 2023-02-01  NESTLEIND    SHORT driver=FIRST-CANDLE     entry=953.10@11:20  exit=955.00@15:15  TIME_EXIT   P&L Rs -1,724
+16:59:16 INFO Pre-market 2023-02-02: 446 stocks → 152 liquid+signal (48 bull / 104 bear) → 148 watchlist
+17:00:04 INFO TRADE 2023-02-02  NESTLEIND    SHORT driver=FIRST-CANDLE     entry=948.90@09:35  exit=947.90@15:15  TIME_EXIT   P&L Rs -201
+17:00:11 INFO Pre-market 2023-02-03: 446 stocks → 150 liquid+signal (55 bull / 95 bear) → 150 watchlist
+17:00:58 INFO TRADE 2023-02-03  IRFC         SHORT driver=FIRST-CANDLE     entry=31.65@09:35  exit=31.15@15:15  TIME_EXIT   P&L Rs +7,174
+17:01:07 INFO Pre-market 2023-02-06: 446 stocks → 150 liquid+signal (57 bull / 93 bear) → 150 watchlist
+17:02:01 INFO TRADE 2023-02-06  TATACONSUM   SHORT driver=FIRST-CANDLE     entry=717.70@09:25  exit=722.40@11:45  STOP_HIT    P&L Rs -4,001
+17:02:10 INFO Pre-market 2023-02-07: 446 stocks → 143 liquid+signal (62 bull / 81 bear) → 143 watchlist
+17:03:01 INFO TRADE 2023-02-07  TATACONSUM   SHORT driver=FIRST-CANDLE     entry=721.65@09:30  exit=719.30@15:15  TIME_EXIT   P&L Rs +899
+17:03:09 INFO Pre-market 2023-02-08: 446 stocks → 150 liquid+signal (57 bull / 93 bear) → 150 watchlist
+17:04:02 INFO TRADE 2023-02-08  ONGC         SHORT driver=SUPERTREND       entry=130.05@10:20  exit=129.95@15:15  TIME_EXIT   P&L Rs -344
+17:04:11 INFO Pre-market 2023-02-09: 446 stocks → 148 liquid+signal (65 bull / 83 bear) → 148 watchlist
+17:05:06 INFO TRADE 2023-02-09  COALINDIA    SHORT driver=FIRST-CANDLE     entry=201.05@09:20  exit=199.45@09:30  TARGET_HIT  P&L Rs +3,251
+17:05:14 INFO Pre-market 2023-02-10: 446 stocks → 149 liquid+signal (70 bull / 79 bear) → 149 watchlist
+17:06:09 INFO TRADE 2023-02-10  INDIGO       SHORT driver=STOCHASTIC       entry=2042.45@13:45  exit=2043.35@15:15  TIME_EXIT   P&L Rs -946
+17:06:18 INFO Pre-market 2023-02-13: 446 stocks → 148 liquid+signal (65 bull / 83 bear) → 148 watchlist
+17:07:12 INFO TRADE 2023-02-13  IRFC         SHORT driver=FIRST-CANDLE     entry=30.20@09:55  exit=30.00@15:15  TIME_EXIT   P&L Rs +2,584
+17:07:21 INFO Pre-market 2023-02-14: 446 stocks → 150 liquid+signal (57 bull / 93 bear) → 150 watchlist
+17:08:09 INFO TRADE 2023-02-14  TATACONSUM   SHORT driver=STOCHASTIC       entry=710.50@10:25  exit=711.65@15:15  TIME_EXIT   P&L Rs -1,537
+17:08:17 INFO Pre-market 2023-02-15: 446 stocks → 151 liquid+signal (62 bull / 89 bear) → 151 watchlist
+17:09:05 INFO TRADE 2023-02-15  INDIGO       SHORT driver=FAILED-BO        entry=2021.15@11:35  exit=1990.45@15:15  TIME_EXIT   P&L Rs +6,859
+17:09:12 INFO Pre-market 2023-02-16: 446 stocks → 145 liquid+signal (75 bull / 70 bear) → 145 watchlist
+17:10:00 INFO TRADE 2023-02-16  HINDUNILVR   SHORT driver=FIRST-CANDLE     entry=2550.15@09:45  exit=2530.45@12:35  TARGET_HIT  P&L Rs +3,135
+17:10:07 INFO Pre-market 2023-02-17: 446 stocks → 143 liquid+signal (76 bull / 67 bear) → 143 watchlist
+17:10:53 INFO TRADE 2023-02-17  APOLLOTYRE   SHORT driver=FIRST-CANDLE     entry=333.50@09:40  exit=330.65@15:15  TIME_EXIT   P&L Rs +3,546
+17:11:01 INFO Pre-market 2023-02-20: 446 stocks → 146 liquid+signal (74 bull / 72 bear) → 146 watchlist
+17:11:47 INFO TRADE 2023-02-20  HINDPETRO    SHORT driver=FIRST-CANDLE     entry=130.70@09:25  exit=129.75@15:15  TIME_EXIT   P&L Rs +2,907
+17:11:55 INFO Pre-market 2023-02-21: 446 stocks → 151 liquid+signal (77 bull / 74 bear) → 151 watchlist
+17:12:42 INFO TRADE 2023-02-21  TCS          SHORT driver=FIRST-CANDLE     entry=3491.05@09:45  exit=3461.85@14:30  TARGET_HIT  P&L Rs +3,450
+17:12:50 INFO Pre-market 2023-02-22: 446 stocks → 152 liquid+signal (86 bull / 66 bear) → 152 watchlist
+17:13:39 INFO TRADE 2023-02-22  AXISBANK     SHORT driver=FIRST-CANDLE     entry=838.80@09:40  exit=832.50@11:00  TARGET_HIT  P&L Rs +3,028
+17:13:46 INFO Pre-market 2023-02-23: 446 stocks → 148 liquid+signal (71 bull / 77 bear) → 148 watchlist
+17:14:33 INFO TRADE 2023-02-23  BPCL         SHORT driver=FAILED-BO        entry=139.15@09:15  exit=138.25@15:15  TIME_EXIT   P&L Rs +2,507
+17:14:41 INFO Pre-market 2023-02-24: 446 stocks → 146 liquid+signal (69 bull / 77 bear) → 146 watchlist
+17:15:28 INFO TRADE 2023-02-24  HDFCBANK     SHORT driver=FIRST-CANDLE     entry=802.10@09:35  exit=795.70@15:15  TIME_EXIT   P&L Rs +3,261
+17:15:35 INFO Pre-market 2023-02-27: 446 stocks → 142 liquid+signal (61 bull / 81 bear) → 142 watchlist
+17:16:22 INFO TRADE 2023-02-27  TITAN        SHORT driver=FIRST-CANDLE     entry=2388.45@09:40  exit=2402.65@15:15  TIME_EXIT   P&L Rs -3,697
+17:16:29 INFO Pre-market 2023-02-28: 446 stocks → 140 liquid+signal (60 bull / 80 bear) → 140 watchlist
+17:17:14 INFO TRADE 2023-02-28  TATACHEM     SHORT driver=FIRST-CANDLE     entry=970.05@09:50  exit=977.15@11:10  STOP_HIT    P&L Rs -4,387
+17:17:22 INFO Pre-market 2023-03-01: 446 stocks → 140 liquid+signal (54 bull / 86 bear) → 140 watchlist
+17:18:08 INFO TRADE 2023-03-01  BIOCON       SHORT driver=FAILED-BO        entry=231.65@09:25  exit=227.05@15:15  TIME_EXIT   P&L Rs +9,204
+17:18:17 INFO Pre-market 2023-03-02: 446 stocks → 134 liquid+signal (70 bull / 64 bear) → 134 watchlist
+17:19:07 INFO TRADE 2023-03-02  UNITDSPR     SHORT driver=FIRST-CANDLE     entry=743.90@09:20  exit=739.20@10:35  TARGET_HIT  P&L Rs +2,431
+17:19:15 INFO Pre-market 2023-03-03: 446 stocks → 141 liquid+signal (60 bull / 81 bear) → 141 watchlist
+17:20:06 INFO TRADE 2023-03-03  PAGEIND      SHORT driver=FIRST-CANDLE     entry=37586.85@09:35  exit=37081.95@12:35  TARGET_HIT  P&L Rs +5,854
+17:20:15 INFO Pre-market 2023-03-06: 446 stocks → 137 liquid+signal (80 bull / 57 bear) → 137 watchlist
+17:21:07 INFO TRADE 2023-03-06  PAGEIND      SHORT driver=FIRST-CANDLE     entry=37312.15@09:45  exit=37331.10@15:15  TIME_EXIT   P&L Rs -955
+17:21:15 INFO Pre-market 2023-03-08: 446 stocks → 147 liquid+signal (87 bull / 60 bear) → 147 watchlist
+17:22:08 INFO TRADE 2023-03-08  DABUR        SHORT driver=FIRST-CANDLE     entry=534.40@09:25  exit=531.80@15:15  TIME_EXIT   P&L Rs +1,704
+17:22:16 INFO Pre-market 2023-03-09: 446 stocks → 138 liquid+signal (86 bull / 52 bear) → 138 watchlist
+17:23:06 INFO TRADE 2023-03-09  HEROMOTOCO   SHORT driver=FIRST-CANDLE     entry=2316.05@09:20  exit=2285.10@15:15  TIME_EXIT   P&L Rs +5,932
+17:23:15 INFO Pre-market 2023-03-10: 446 stocks → 142 liquid+signal (69 bull / 73 bear) → 142 watchlist
+17:24:07 INFO TRADE 2023-03-10  M&MFIN       SHORT driver=FIRST-CANDLE     entry=227.05@09:35  exit=226.65@15:15  TIME_EXIT   P&L Rs +152
+17:24:16 INFO Pre-market 2023-03-13: 446 stocks → 123 liquid+signal (67 bull / 56 bear) → 123 watchlist
+17:24:58 INFO TRADE 2023-03-13  RELIANCE     SHORT driver=SUPERTREND       entry=1109.90@09:35  exit=1090.48@14:30  TARGET_HIT  P&L Rs +8,018
+17:25:06 INFO Pre-market 2023-03-14: 446 stocks → 152 liquid+signal (52 bull / 100 bear) → 152 watchlist
+17:25:56 INFO TRADE 2023-03-14  DRREDDY      SHORT driver=FIRST-CANDLE     entry=876.85@09:20  exit=862.15@13:30  TARGET_HIT  P&L Rs +7,655
+17:26:04 INFO Pre-market 2023-03-15: 446 stocks → 136 liquid+signal (51 bull / 85 bear) → 136 watchlist
+17:26:49 INFO TRADE 2023-03-15  WIPRO        SHORT driver=FIRST-CANDLE     entry=182.70@09:20  exit=181.40@09:55  TARGET_HIT  P&L Rs +2,830
+17:26:57 INFO Pre-market 2023-03-16: 446 stocks → 144 liquid+signal (53 bull / 91 bear) → 144 watchlist
+17:27:44 INFO TRADE 2023-03-16  DRREDDY      SHORT driver=FIRST-CANDLE     entry=881.05@09:20  exit=877.10@15:15  TIME_EXIT   P&L Rs +1,513
+17:27:52 INFO Pre-market 2023-03-17: 446 stocks → 137 liquid+signal (60 bull / 77 bear) → 137 watchlist
+17:28:37 INFO TRADE 2023-03-17  POLYCAB      SHORT driver=FIRST-CANDLE     entry=2893.50@09:55  exit=2914.60@10:45  STOP_HIT    P&L Rs -4,357
+17:28:44 INFO Pre-market 2023-03-20: 446 stocks → 141 liquid+signal (65 bull / 76 bear) → 141 watchlist
+17:29:31 INFO TRADE 2023-03-20  TATACHEM     SHORT driver=FIRST-CANDLE     entry=955.10@09:20  exit=951.80@15:15  TIME_EXIT   P&L Rs +999
+17:29:39 INFO Pre-market 2023-03-21: 446 stocks → 144 liquid+signal (57 bull / 87 bear) → 144 watchlist
+17:30:27 INFO TRADE 2023-03-21  NMDC         SHORT driver=FIRST-CANDLE     entry=32.65@09:35  exit=32.35@15:15  TIME_EXIT   P&L Rs +3,868
+17:30:35 INFO Pre-market 2023-03-22: 446 stocks → 140 liquid+signal (62 bull / 78 bear) → 140 watchlist
+17:31:21 INFO TRADE 2023-03-22  BHARTIARTL   SHORT driver=FIRST-CANDLE     entry=760.05@09:25  exit=753.75@11:00  TARGET_HIT  P&L Rs +3,413
+17:31:29 INFO Pre-market 2023-03-23: 446 stocks → 138 liquid+signal (63 bull / 75 bear) → 138 watchlist
+17:32:14 INFO TRADE 2023-03-23  PFC          SHORT driver=FIRST-CANDLE     entry=122.90@09:35  exit=121.80@15:15  TIME_EXIT   P&L Rs +3,749
+17:32:22 INFO Pre-market 2023-03-24: 446 stocks → 137 liquid+signal (66 bull / 71 bear) → 137 watchlist
+17:33:07 INFO TRADE 2023-03-24  LICI         SHORT driver=DESC-TRI         entry=285.10@09:15  exit=280.00@15:15  TIME_EXIT   P&L Rs +8,217
+17:33:16 INFO Pre-market 2023-03-27: 446 stocks → 140 liquid+signal (49 bull / 91 bear) → 140 watchlist
+17:34:08 INFO TRADE 2023-03-27  CHOLAFIN     SHORT driver=FIRST-CANDLE     entry=720.60@09:20  exit=715.55@15:15  TIME_EXIT   P&L Rs +2,774
+17:34:17 INFO Pre-market 2023-03-28: 446 stocks → 139 liquid+signal (46 bull / 93 bear) → 139 watchlist
+17:35:09 INFO TRADE 2023-03-28  VOLTAS       SHORT driver=FIRST-CANDLE     entry=819.30@09:20  exit=812.30@15:15  TIME_EXIT   P&L Rs +3,544
+17:35:18 INFO Pre-market 2023-03-29: 446 stocks → 137 liquid+signal (42 bull / 95 bear) → 137 watchlist
+17:36:09 INFO TRADE 2023-03-29  HINDALCO     SHORT driver=FIRST-CANDLE     entry=390.95@11:05  exit=394.90@13:45  STOP_HIT    P&L Rs -5,779
+17:36:19 INFO Pre-market 2023-03-31: 446 stocks → 126 liquid+signal (63 bull / 63 bear) → 126 watchlist
+17:37:06 INFO TRADE 2023-03-31  KOTAKBANK    SHORT driver=BEAR-ENGULF      entry=344.50@10:45  exit=346.62@12:20  STOP_HIT    P&L Rs -3,813
+17:37:15 INFO Pre-market 2023-04-03: 446 stocks → 130 liquid+signal (70 bull / 60 bear) → 130 watchlist
+17:38:04 INFO TRADE 2023-04-03  BHEL         SHORT driver=FIRST-CANDLE     entry=70.75@09:35  exit=69.55@13:10  TARGET_HIT  P&L Rs +7,756
+17:38:12 INFO Pre-market 2023-04-05: 446 stocks → 134 liquid+signal (80 bull / 54 bear) → 134 watchlist
+17:39:03 INFO TRADE 2023-04-05  CONCOR       SHORT driver=FIRST-CANDLE     entry=464.20@09:20  exit=460.00@09:40  TARGET_HIT  P&L Rs +3,797
+17:39:12 INFO Pre-market 2023-04-06: 446 stocks → 139 liquid+signal (86 bull / 53 bear) → 139 watchlist
+17:40:00 INFO TRADE 2023-04-06  ADANIENT     SHORT driver=FAILED-BO        entry=1665.50@10:00  exit=1675.84@10:30  STOP_HIT    P&L Rs -3,831
+17:40:08 INFO Pre-market 2023-04-10: 446 stocks → 143 liquid+signal (94 bull / 49 bear) → 143 watchlist
+17:40:55 INFO TRADE 2023-04-10  MOTHERSON    SHORT driver=FIRST-CANDLE     entry=45.17@10:50  exit=45.33@15:15  TIME_EXIT   P&L Rs -2,501
+17:41:03 INFO Pre-market 2023-04-11: 446 stocks → 143 liquid+signal (100 bull / 43 bear) → 143 watchlist
+17:41:51 INFO TRADE 2023-04-11  CUMMINSIND   SHORT driver=FIRST-CANDLE     entry=1576.15@09:20  exit=1579.20@15:15  TIME_EXIT   P&L Rs -1,696
+17:41:58 INFO Pre-market 2023-04-12: 446 stocks → 139 liquid+signal (104 bull / 35 bear) → 135 watchlist
+17:42:43 INFO TRADE 2023-04-12  TATAPOWER    SHORT driver=FIRST-CANDLE     entry=197.50@09:20  exit=197.15@15:15  TIME_EXIT   P&L Rs +158
+17:42:51 INFO Pre-market 2023-04-13: 446 stocks → 134 liquid+signal (113 bull / 21 bear) → 121 watchlist
+17:43:33 INFO TRADE 2023-04-13  SUNPHARMA    SHORT driver=FIRST-CANDLE     entry=1018.25@09:20  exit=1007.25@11:35  TARGET_HIT  P&L Rs +4,675
+17:43:40 INFO Pre-market 2023-04-17: 446 stocks → 140 liquid+signal (114 bull / 26 bear) → 126 watchlist
+17:44:23 INFO TRADE 2023-04-17  UPL          SHORT driver=FIRST-CANDLE     entry=707.70@09:55  exit=707.30@15:15  TIME_EXIT   P&L Rs -446
+17:44:31 INFO Pre-market 2023-04-18: 446 stocks → 146 liquid+signal (121 bull / 25 bear) → 125 watchlist
+17:45:13 INFO TRADE 2023-04-18  ADANIPOWER   SHORT driver=FIRST-CANDLE     entry=38.00@09:20  exit=38.15@09:25  STOP_HIT    P&L Rs -2,704
+17:45:21 INFO Pre-market 2023-04-19: 446 stocks → 147 liquid+signal (125 bull / 22 bear) → 122 watchlist
+17:46:03 INFO TRADE 2023-04-19  MARICO       SHORT driver=FIRST-CANDLE     entry=476.00@09:20  exit=470.90@10:20  TARGET_HIT  P&L Rs +4,629
+17:46:11 INFO Pre-market 2023-04-20: 446 stocks → 143 liquid+signal (120 bull / 23 bear) → 123 watchlist
+17:46:52 INFO TRADE 2023-04-20  BAJAJFINSV   SHORT driver=FIRST-CANDLE     entry=1332.90@10:15  exit=1333.25@15:15  TIME_EXIT   P&L Rs -860
+17:47:00 INFO Pre-market 2023-04-21: 446 stocks → 145 liquid+signal (126 bull / 19 bear) → 119 watchlist
+17:47:42 INFO TRADE 2023-04-21  PVRINOX      SHORT driver=FIRST-CANDLE     entry=1503.10@09:25  exit=1497.45@15:15  TIME_EXIT   P&L Rs +1,149
+17:47:51 INFO Pre-market 2023-04-24: 446 stocks → 143 liquid+signal (121 bull / 22 bear) → 122 watchlist
+17:48:38 INFO TRADE 2023-04-24  BEL          SHORT driver=FIRST-CANDLE     entry=102.40@09:35  exit=101.80@15:15  TIME_EXIT   P&L Rs +2,202
+17:48:47 INFO Pre-market 2023-04-25: 446 stocks → 150 liquid+signal (124 bull / 26 bear) → 126 watchlist
+17:49:35 INFO TRADE 2023-04-25  SHREECEM     SHORT driver=BEAR-ENGULF      entry=24060.00@10:25  exit=24086.95@15:15  TIME_EXIT   P&L Rs -1,243
+17:49:44 INFO Pre-market 2023-04-26: 446 stocks → 148 liquid+signal (124 bull / 24 bear) → 124 watchlist
+17:50:31 INFO TRADE 2023-04-26  PVRINOX      SHORT driver=FIRST-CANDLE     entry=1465.80@09:20  exit=1441.40@11:50  TARGET_HIT  P&L Rs +7,596
+17:50:40 INFO Pre-market 2023-04-27: 446 stocks → 145 liquid+signal (125 bull / 20 bear) → 120 watchlist
+17:51:27 INFO TRADE 2023-04-27  DMART        SHORT driver=FIRST-CANDLE     entry=3458.05@09:40  exit=3471.00@12:15  STOP_HIT    P&L Rs -2,592
+17:51:36 INFO Pre-market 2023-04-28: 446 stocks → 144 liquid+signal (130 bull / 14 bear) → 114 watchlist
+17:52:21 INFO TRADE 2023-04-28  M&MFIN       SHORT driver=FIRST-CANDLE     entry=237.95@09:40  exit=235.65@09:45  TARGET_HIT  P&L Rs +4,106
+17:52:30 INFO Pre-market 2023-05-02: 446 stocks → 152 liquid+signal (140 bull / 12 bear) → 112 watchlist
+17:53:13 INFO TRADE 2023-05-02  TIINDIA      SHORT driver=FIRST-CANDLE     entry=2574.00@09:20  exit=2587.75@15:15  TIME_EXIT   P&L Rs -3,397
+17:53:22 INFO Pre-market 2023-05-03: 446 stocks → 162 liquid+signal (149 bull / 13 bear) → 113 watchlist
+17:54:07 INFO TRADE 2023-05-03  SUNPHARMA    SHORT driver=FIRST-CANDLE     entry=966.00@09:20  exit=964.10@15:15  TIME_EXIT   P&L Rs +255
+17:54:16 INFO Pre-market 2023-05-04: 446 stocks → 161 liquid+signal (144 bull / 17 bear) → 117 watchlist
+17:54:57 INFO TRADE 2023-05-04  BHARATFORG   SHORT driver=FIRST-CANDLE     entry=786.35@09:30  exit=780.05@10:30  TARGET_HIT  P&L Rs +3,275
+17:55:05 INFO Pre-market 2023-05-05: 446 stocks → 159 liquid+signal (145 bull / 14 bear) → 114 watchlist
+17:55:46 INFO TRADE 2023-05-05  CUB          SHORT driver=FIRST-CANDLE     entry=141.85@10:25  exit=138.75@12:50  TARGET_HIT  P&L Rs +10,202
+17:55:55 INFO Pre-market 2023-05-08: 446 stocks → 163 liquid+signal (137 bull / 26 bear) → 126 watchlist
+17:56:40 INFO TRADE 2023-05-08  ADANIPOWER   SHORT driver=FIRST-CANDLE     entry=48.10@09:25  exit=47.65@15:15  TIME_EXIT   P&L Rs +3,952
+17:56:48 INFO Pre-market 2023-05-09: 446 stocks → 159 liquid+signal (145 bull / 14 bear) → 114 watchlist
+17:57:28 INFO TRADE 2023-05-09  DIXON        SHORT driver=FIRST-CANDLE     entry=2903.10@11:00  exit=2924.65@11:50  STOP_HIT    P&L Rs -4,437
+17:57:36 INFO Pre-market 2023-05-10: 446 stocks → 160 liquid+signal (141 bull / 19 bear) → 119 watchlist
+17:58:17 INFO TRADE 2023-05-10  VOLTAS       SHORT driver=FIRST-CANDLE     entry=803.75@09:25  exit=807.85@12:00  STOP_HIT    P&L Rs -3,280
+17:58:25 INFO Pre-market 2023-05-11: 446 stocks → 160 liquid+signal (145 bull / 15 bear) → 115 watchlist
+17:59:06 INFO TRADE 2023-05-11  JSWSTEEL     SHORT driver=FIRST-CANDLE     entry=722.90@09:20  exit=710.80@15:15  TIME_EXIT   P&L Rs +7,638
+17:59:14 INFO Pre-market 2023-05-12: 446 stocks → 159 liquid+signal (142 bull / 17 bear) → 117 watchlist
+17:59:55 INFO TRADE 2023-05-12  BHARATFORG   SHORT driver=FIRST-CANDLE     entry=773.10@09:30  exit=758.45@15:15  TIME_EXIT   P&L Rs +8,741
+18:00:04 INFO Pre-market 2023-05-15: 446 stocks → 158 liquid+signal (138 bull / 20 bear) → 120 watchlist
+18:00:46 INFO TRADE 2023-05-15  RVNL         SHORT driver=FIRST-CANDLE     entry=122.20@09:20  exit=120.60@15:15  TIME_EXIT   P&L Rs +5,821
+18:00:54 INFO Pre-market 2023-05-16: 446 stocks → 156 liquid+signal (143 bull / 13 bear) → 113 watchlist
+18:01:35 INFO TRADE 2023-05-16  AWL          SHORT driver=SUPERTREND       entry=387.20@10:35  exit=383.05@15:15  TIME_EXIT   P&L Rs +4,632
+18:01:43 INFO Pre-market 2023-05-17: 446 stocks → 167 liquid+signal (144 bull / 23 bear) → 123 watchlist
+18:02:27 INFO TRADE 2023-05-17  NAVINFLUOR   SHORT driver=FIRST-CANDLE     entry=4680.00@10:05  exit=4654.20@15:15  TIME_EXIT   P&L Rs +2,013
+18:02:36 INFO Pre-market 2023-05-18: 446 stocks → 164 liquid+signal (134 bull / 30 bear) → 130 watchlist
+18:03:29 INFO TRADE 2023-05-18  LT           SHORT driver=FIRST-CANDLE     entry=2221.60@09:30  exit=2197.80@12:15  TARGET_HIT  P&L Rs +4,629
+18:03:38 INFO Pre-market 2023-05-19: 446 stocks → 167 liquid+signal (125 bull / 42 bear) → 142 watchlist
+18:04:35 INFO TRADE 2023-05-19  PVRINOX      SHORT driver=FIRST-CANDLE     entry=1375.50@09:35  exit=1372.10@15:15  TIME_EXIT   P&L Rs +507
+18:04:44 INFO Pre-market 2023-05-22: 446 stocks → 162 liquid+signal (131 bull / 31 bear) → 131 watchlist
+18:05:36 INFO TRADE 2023-05-22  INDIANB      SHORT driver=VPOC             entry=279.45@09:15  exit=280.85@10:40  STOP_HIT    P&L Rs -3,230
+18:05:46 INFO Pre-market 2023-05-23: 446 stocks → 160 liquid+signal (132 bull / 28 bear) → 128 watchlist
+18:06:38 INFO TRADE 2023-05-23  INDHOTEL     SHORT driver=FIRST-CANDLE     entry=372.00@09:30  exit=370.90@15:15  TIME_EXIT   P&L Rs +750
+18:06:47 INFO Pre-market 2023-05-24: 446 stocks → 167 liquid+signal (132 bull / 35 bear) → 135 watchlist
+18:07:41 INFO TRADE 2023-05-24  NMDC         SHORT driver=FIRST-CANDLE     entry=30.55@13:10  exit=30.45@15:15  TIME_EXIT   P&L Rs +909
+18:07:50 INFO Pre-market 2023-05-25: 446 stocks → 170 liquid+signal (135 bull / 35 bear) → 135 watchlist
+18:08:47 INFO TRADE 2023-05-25  BHARATFORG   SHORT driver=FIRST-CANDLE     entry=761.15@09:25  exit=764.10@09:45  STOP_HIT    P&L Rs -2,664
+18:08:56 INFO Pre-market 2023-05-26: 446 stocks → 165 liquid+signal (138 bull / 27 bear) → 127 watchlist
+18:09:41 INFO TRADE 2023-05-26  ONGC         SHORT driver=FIRST-CANDLE     entry=150.05@09:20  exit=147.55@09:35  TARGET_HIT  P&L Rs +7,606
+18:09:50 INFO Pre-market 2023-05-29: 446 stocks → 161 liquid+signal (138 bull / 23 bear) → 123 watchlist
+18:10:34 INFO TRADE 2023-05-29  POONAWALLA   SHORT driver=FIRST-CANDLE     entry=347.80@09:20  exit=344.20@09:30  TARGET_HIT  P&L Rs +4,448
+18:10:42 INFO Pre-market 2023-05-30: 446 stocks → 161 liquid+signal (137 bull / 24 bear) → 124 watchlist
+18:11:26 INFO TRADE 2023-05-30  CHOLAFIN     SHORT driver=FIRST-CANDLE     entry=1051.10@09:45  exit=1037.30@13:20  TARGET_HIT  P&L Rs +5,831
+18:11:34 INFO Pre-market 2023-05-31: 446 stocks → 163 liquid+signal (134 bull / 29 bear) → 129 watchlist
+18:12:19 INFO TRADE 2023-05-31  AXISBANK     SHORT driver=RISE-WEDGE       entry=925.40@11:35  exit=913.75@15:15  TIME_EXIT   P&L Rs +5,566
+18:12:27 INFO Pre-market 2023-06-01: 446 stocks → 168 liquid+signal (139 bull / 29 bear) → 129 watchlist
+18:13:14 INFO TRADE 2023-06-01  IEX          SHORT driver=STOCHASTIC       entry=153.55@12:00  exit=153.45@15:15  TIME_EXIT   P&L Rs -403
+18:13:22 INFO Pre-market 2023-06-02: 446 stocks → 168 liquid+signal (138 bull / 30 bear) → 130 watchlist
+18:14:08 INFO TRADE 2023-06-02  BAJAJFINSV   SHORT driver=FIRST-CANDLE     entry=1454.05@09:35  exit=1460.00@13:25  STOP_HIT    P&L Rs -2,769
+18:14:16 INFO Pre-market 2023-06-05: 446 stocks → 174 liquid+signal (152 bull / 22 bear) → 122 watchlist
+18:14:59 INFO TRADE 2023-06-05  TCS          SHORT driver=FIRST-CANDLE     entry=3312.60@09:30  exit=3287.60@15:15  TIME_EXIT   P&L Rs +3,027
+18:15:07 INFO Pre-market 2023-06-06: 446 stocks → 172 liquid+signal (151 bull / 21 bear) → 121 watchlist
+18:15:50 INFO TRADE 2023-06-06  POWERGRID    SHORT driver=FIRST-CANDLE     entry=172.90@11:40  exit=173.00@15:15  TIME_EXIT   P&L Rs -1,018
+18:15:58 INFO Pre-market 2023-06-07: 446 stocks → 166 liquid+signal (153 bull / 13 bear) → 113 watchlist
+18:16:39 INFO TRADE 2023-06-07  LUPIN        SHORT driver=FIRST-CANDLE     entry=822.05@09:35  exit=817.50@15:15  TIME_EXIT   P&L Rs +2,039
+18:16:47 INFO Pre-market 2023-06-08: 446 stocks → 170 liquid+signal (163 bull / 7 bear) → 107 watchlist
+18:17:25 INFO TRADE 2023-06-08  GODREJPROP   SHORT driver=VPOC             entry=1446.50@09:15  exit=1427.56@11:25  TARGET_HIT  P&L Rs +5,812
+18:17:33 INFO Pre-market 2023-06-09: 446 stocks → 168 liquid+signal (156 bull / 12 bear) → 112 watchlist
+18:18:14 INFO TRADE 2023-06-09  BDL          SHORT driver=FIRST-CANDLE     entry=578.20@09:20  exit=584.20@13:10  STOP_HIT    P&L Rs -5,915
+18:18:23 INFO Pre-market 2023-06-12: 446 stocks → 167 liquid+signal (148 bull / 19 bear) → 119 watchlist
+18:19:11 INFO TRADE 2023-06-12  ZENSARTECH   SHORT driver=FIRST-CANDLE     entry=398.85@09:45  exit=392.35@12:20  TARGET_HIT  P&L Rs +7,421
+18:19:21 INFO Pre-market 2023-06-13: 446 stocks → 172 liquid+signal (156 bull / 16 bear) → 116 watchlist
+18:20:06 INFO TRADE 2023-06-13  SBIN         SHORT driver=FIRST-CANDLE     entry=579.45@09:45  exit=575.55@10:20  TARGET_HIT  P&L Rs +2,636
+18:20:15 INFO Pre-market 2023-06-14: 446 stocks → 169 liquid+signal (154 bull / 15 bear) → 115 watchlist
+18:21:00 INFO TRADE 2023-06-14  EICHERMOT    SHORT driver=FIRST-CANDLE     entry=3605.25@09:40  exit=3573.45@15:15  TIME_EXIT   P&L Rs +3,665
+18:21:09 INFO Pre-market 2023-06-15: 446 stocks → 164 liquid+signal (153 bull / 11 bear) → 111 watchlist
+18:21:53 INFO TRADE 2023-06-15  M&MFIN       SHORT driver=FIRST-CANDLE     entry=273.30@11:40  exit=273.50@15:15  TIME_EXIT   P&L Rs -1,095
+18:22:02 INFO Pre-market 2023-06-16: 446 stocks → 170 liquid+signal (149 bull / 21 bear) → 121 watchlist
+18:22:50 INFO TRADE 2023-06-16  IGL          SHORT driver=FIRST-CANDLE     entry=233.70@09:55  exit=231.90@12:35  TARGET_HIT  P&L Rs +3,124
+18:23:00 INFO Pre-market 2023-06-19: 446 stocks → 171 liquid+signal (152 bull / 19 bear) → 119 watchlist
+18:23:47 INFO TRADE 2023-06-19  ATGL         SHORT driver=FIRST-CANDLE     entry=670.15@09:20  exit=662.05@13:25  TARGET_HIT  P&L Rs +5,317
+18:23:57 INFO Pre-market 2023-06-20: 446 stocks → 171 liquid+signal (149 bull / 22 bear) → 122 watchlist
+18:24:44 INFO TRADE 2023-06-20  PERSISTENT   SHORT driver=FIRST-CANDLE     entry=2470.10@10:10  exit=2453.90@10:30  TARGET_HIT  P&L Rs +2,547
+18:24:52 INFO Pre-market 2023-06-21: 446 stocks → 168 liquid+signal (154 bull / 14 bear) → 114 watchlist
+18:25:33 INFO TRADE 2023-06-21  SONACOMS     SHORT driver=FIRST-CANDLE     entry=517.15@10:15  exit=513.85@15:15  TIME_EXIT   P&L Rs +2,461
+18:25:41 INFO Pre-market 2023-06-22: 446 stocks → 171 liquid+signal (151 bull / 20 bear) → 120 watchlist
+18:26:25 INFO TRADE 2023-06-22  AMBUJACEM    SHORT driver=FIRST-CANDLE     entry=449.40@09:20  exit=442.30@12:55  TARGET_HIT  P&L Rs +7,171
+18:26:34 INFO Pre-market 2023-06-23: 446 stocks → 174 liquid+signal (148 bull / 26 bear) → 126 watchlist
+18:27:19 INFO TRADE 2023-06-23  AUBANK       SHORT driver=FIRST-CANDLE     entry=736.05@09:20  exit=742.60@10:30  STOP_HIT    P&L Rs -5,179
+18:27:27 INFO Pre-market 2023-06-26: 446 stocks → 173 liquid+signal (129 bull / 44 bear) → 144 watchlist
+18:28:18 INFO TRADE 2023-06-26  PNB          SHORT driver=FIRST-CANDLE     entry=48.69@09:45  exit=48.88@15:15  TIME_EXIT   P&L Rs -2,681
+18:28:26 INFO Pre-market 2023-06-27: 446 stocks → 169 liquid+signal (140 bull / 29 bear) → 129 watchlist
+18:29:12 INFO TRADE 2023-06-27  COALINDIA    SHORT driver=DESC-TRI         entry=209.75@09:15  exit=209.70@15:15  TIME_EXIT   P&L Rs -609
+18:29:21 INFO Pre-market 2023-06-28: 446 stocks → 173 liquid+signal (140 bull / 33 bear) → 133 watchlist
+18:30:08 INFO TRADE 2023-06-28  AUBANK       SHORT driver=FIRST-CANDLE     entry=747.00@11:10  exit=755.40@14:25  STOP_HIT    P&L Rs -6,351
+18:30:16 INFO Pre-market 2023-06-30: 446 stocks → 179 liquid+signal (150 bull / 29 bear) → 129 watchlist
+18:31:02 INFO TRADE 2023-06-30  PVRINOX      SHORT driver=FIRST-CANDLE     entry=1385.00@10:05  exit=1374.55@15:15  TIME_EXIT   P&L Rs +3,046
+18:31:10 INFO Pre-market 2023-07-03: 446 stocks → 185 liquid+signal (155 bull / 30 bear) → 130 watchlist
+18:31:56 INFO TRADE 2023-07-03  SRF          SHORT driver=FIRST-CANDLE     entry=2292.15@09:40  exit=2272.00@15:15  TIME_EXIT   P&L Rs +3,667
+18:32:05 INFO Pre-market 2023-07-04: 446 stocks → 189 liquid+signal (159 bull / 30 bear) → 130 watchlist
+18:32:50 INFO TRADE 2023-07-04  PIDILITIND   SHORT driver=FIRST-CANDLE     entry=1282.50@13:05  exit=1288.20@15:15  TIME_EXIT   P&L Rs -2,946
+18:32:59 INFO Pre-market 2023-07-05: 446 stocks → 184 liquid+signal (152 bull / 32 bear) → 132 watchlist
+18:33:46 INFO TRADE 2023-07-05  ACC          SHORT driver=FIRST-CANDLE     entry=1823.00@09:30  exit=1820.75@15:15  TIME_EXIT   P&L Rs -111
+18:33:56 INFO Pre-market 2023-07-06: 446 stocks → 182 liquid+signal (159 bull / 23 bear) → 123 watchlist
+18:34:46 INFO TRADE 2023-07-06  VEDL         SHORT driver=DESC-TRI         entry=123.10@10:10  exit=124.60@15:15  TIME_EXIT   P&L Rs -6,824
+18:34:55 INFO Pre-market 2023-07-07: 446 stocks → 186 liquid+signal (164 bull / 22 bear) → 122 watchlist
+18:35:44 INFO TRADE 2023-07-07  STARHEALTH   SHORT driver=FAILED-BO        entry=599.25@11:55  exit=603.00@12:15  STOP_HIT    P&L Rs -3,858
+18:35:53 INFO Pre-market 2023-07-10: 446 stocks → 190 liquid+signal (158 bull / 32 bear) → 132 watchlist
+18:36:46 INFO TRADE 2023-07-10  BALRAMCHIN   SHORT driver=DESC-TRI         entry=382.40@09:15  exit=382.60@15:15  TIME_EXIT   P&L Rs -990
+18:36:56 INFO Pre-market 2023-07-11: 446 stocks → 185 liquid+signal (153 bull / 32 bear) → 132 watchlist
+18:37:49 INFO TRADE 2023-07-11  BANDHANBNK   SHORT driver=FIRST-CANDLE     entry=228.50@09:25  exit=224.30@13:20  TARGET_HIT  P&L Rs +8,466
+18:37:59 INFO Pre-market 2023-07-12: 446 stocks → 191 liquid+signal (163 bull / 28 bear) → 128 watchlist
+18:38:50 INFO TRADE 2023-07-12  IEX          SHORT driver=DESC-TRI         entry=124.45@09:15  exit=123.50@15:15  TIME_EXIT   P&L Rs +3,090
+18:38:59 INFO Pre-market 2023-07-13: 446 stocks → 193 liquid+signal (163 bull / 30 bear) → 130 watchlist
+18:39:53 INFO TRADE 2023-07-13  IEX          SHORT driver=DESC-TRI         entry=123.95@09:15  exit=121.65@15:15  TIME_EXIT   P&L Rs +8,552
+18:40:02 INFO Pre-market 2023-07-14: 446 stocks → 192 liquid+signal (157 bull / 35 bear) → 135 watchlist
+18:40:53 INFO TRADE 2023-07-14  CYIENT       SHORT driver=FIRST-CANDLE     entry=1433.00@10:40  exit=1440.00@15:15  TIME_EXIT   P&L Rs -3,165
+18:41:02 INFO Pre-market 2023-07-17: 446 stocks → 196 liquid+signal (175 bull / 21 bear) → 121 watchlist
+18:41:46 INFO TRADE 2023-07-17  ASTRAL       SHORT driver=FIRST-CANDLE     entry=1851.00@09:20  exit=1836.50@15:15  TIME_EXIT   P&L Rs +3,189
+18:41:55 INFO Pre-market 2023-07-18: 446 stocks → 194 liquid+signal (168 bull / 26 bear) → 126 watchlist
+18:42:40 INFO TRADE 2023-07-18  AMBUJACEM    SHORT driver=FIRST-CANDLE     entry=416.70@09:30  exit=418.75@10:00  STOP_HIT    P&L Rs -3,188
+18:42:49 INFO Pre-market 2023-07-19: 446 stocks → 193 liquid+signal (160 bull / 33 bear) → 133 watchlist
+18:43:38 INFO TRADE 2023-07-19  BANDHANBNK   SHORT driver=FIRST-CANDLE     entry=215.35@09:20  exit=214.75@15:15  TIME_EXIT   P&L Rs +665
+18:43:46 INFO Pre-market 2023-07-20: 446 stocks → 193 liquid+signal (161 bull / 32 bear) → 132 watchlist
+18:44:35 INFO TRADE 2023-07-20  INDIGO       SHORT driver=VPOC             entry=2707.45@09:15  exit=2720.99@12:35  STOP_HIT    P&L Rs -3,219
+18:44:44 INFO Pre-market 2023-07-21: 446 stocks → 189 liquid+signal (154 bull / 35 bear) → 135 watchlist
+18:45:34 INFO TRADE 2023-07-21  BEL          SHORT driver=FIRST-CANDLE     entry=125.75@09:20  exit=126.35@09:30  STOP_HIT    P&L Rs -3,116
+18:45:43 INFO Pre-market 2023-07-24: 446 stocks → 185 liquid+signal (150 bull / 35 bear) → 135 watchlist
+18:46:32 INFO TRADE 2023-07-24  BANDHANBNK   SHORT driver=FAILED-BO        entry=220.15@13:15  exit=218.65@15:15  TIME_EXIT   P&L Rs +2,680
+18:46:41 INFO Pre-market 2023-07-25: 446 stocks → 191 liquid+signal (163 bull / 28 bear) → 128 watchlist
+18:47:27 INFO TRADE 2023-07-25  NESTLEIND    SHORT driver=FIRST-CANDLE     entry=1144.50@09:45  exit=1138.20@15:15  TIME_EXIT   P&L Rs +2,021
+18:47:36 INFO Pre-market 2023-07-26: 446 stocks → 190 liquid+signal (162 bull / 28 bear) → 128 watchlist
+18:48:23 INFO TRADE 2023-07-26  PIIND        SHORT driver=DESC-TRI         entry=3583.55@09:15  exit=3591.65@15:15  TIME_EXIT   P&L Rs -1,762
+18:48:31 INFO Pre-market 2023-07-27: 446 stocks → 196 liquid+signal (166 bull / 30 bear) → 130 watchlist
+18:49:18 INFO TRADE 2023-07-27  CONCOR       SHORT driver=FIRST-CANDLE     entry=543.45@09:50  exit=536.75@12:30  TARGET_HIT  P&L Rs +5,439
+18:49:27 INFO Pre-market 2023-07-28: 446 stocks → 197 liquid+signal (160 bull / 37 bear) → 137 watchlist
+18:50:17 INFO TRADE 2023-07-28  AUBANK       SHORT driver=CPR              entry=731.40@09:15  exit=729.93@09:20  TARGET_HIT  P&L Rs +274
+18:50:27 INFO Pre-market 2023-07-31: 446 stocks → 192 liquid+signal (161 bull / 31 bear) → 131 watchlist
+18:51:22 INFO TRADE 2023-07-31  AXISBANK     SHORT driver=SUPERTREND       entry=951.55@12:15  exit=954.00@15:15  TIME_EXIT   P&L Rs -2,015
+18:51:32 INFO Pre-market 2023-08-01: 446 stocks → 193 liquid+signal (164 bull / 29 bear) → 129 watchlist
+18:52:24 INFO TRADE 2023-08-01  CROMPTON     SHORT driver=FIRST-CANDLE     entry=295.00@09:45  exit=291.00@11:55  TARGET_HIT  P&L Rs +6,051
+18:52:34 INFO Pre-market 2023-08-02: 446 stocks → 195 liquid+signal (169 bull / 26 bear) → 126 watchlist
+18:53:27 INFO TRADE 2023-08-02  DMART        SHORT driver=FIRST-CANDLE     entry=3745.00@10:15  exit=3714.45@15:15  TIME_EXIT   P&L Rs +3,339
+18:53:37 INFO Pre-market 2023-08-03: 446 stocks → 198 liquid+signal (156 bull / 42 bear) → 142 watchlist
+18:54:35 INFO TRADE 2023-08-03  ASIANPAINT   SHORT driver=FIRST-CANDLE     entry=3342.60@12:20  exit=3337.20@15:15  TIME_EXIT   P&L Rs +79
+18:54:45 INFO Pre-market 2023-08-04: 446 stocks → 196 liquid+signal (142 bull / 54 bear) → 154 watchlist
+18:55:48 INFO TRADE 2023-08-04  HEROMOTOCO   SHORT driver=FIRST-CANDLE     entry=2792.10@09:20  exit=2776.85@15:15  TIME_EXIT   P&L Rs +2,003
+18:55:58 INFO Pre-market 2023-08-07: 446 stocks → 199 liquid+signal (155 bull / 44 bear) → 144 watchlist
+18:56:55 INFO TRADE 2023-08-07  CDSL         SHORT driver=FIRST-CANDLE     entry=613.75@09:20  exit=600.75@13:10  TARGET_HIT  P&L Rs +9,860
+18:57:04 INFO Pre-market 2023-08-08: 446 stocks → 199 liquid+signal (157 bull / 42 bear) → 142 watchlist
+18:57:55 INFO TRADE 2023-08-08  BPCL         SHORT driver=FIRST-CANDLE     entry=156.65@09:20  exit=155.35@15:15  TIME_EXIT   P&L Rs +3,422
+18:58:04 INFO Pre-market 2023-08-09: 446 stocks → 201 liquid+signal (153 bull / 48 bear) → 148 watchlist
+18:58:58 INFO TRADE 2023-08-09  NESTLEIND    SHORT driver=FIRST-CANDLE     entry=1111.40@09:40  exit=1111.60@15:15  TIME_EXIT   P&L Rs -817
+18:59:07 INFO Pre-market 2023-08-10: 446 stocks → 194 liquid+signal (153 bull / 41 bear) → 141 watchlist
+18:59:58 INFO TRADE 2023-08-10  DMART        SHORT driver=FIRST-CANDLE     entry=3630.10@09:45  exit=3600.40@12:30  TARGET_HIT  P&L Rs +3,346
+19:00:07 INFO Pre-market 2023-08-11: 446 stocks → 202 liquid+signal (153 bull / 49 bear) → 149 watchlist
+19:01:00 INFO TRADE 2023-08-11  HEROMOTOCO   SHORT driver=FIRST-CANDLE     entry=2860.75@09:20  exit=2829.00@15:15  TIME_EXIT   P&L Rs +4,802
+19:01:09 INFO Pre-market 2023-08-14: 446 stocks → 201 liquid+signal (144 bull / 57 bear) → 157 watchlist
+19:02:06 INFO TRADE 2023-08-14  CANFINHOME   SHORT driver=FIRST-CANDLE     entry=715.55@09:20  exit=726.00@13:05  STOP_HIT    P&L Rs -8,026
+19:02:15 INFO Pre-market 2023-08-16: 446 stocks → 197 liquid+signal (132 bull / 65 bear) → 165 watchlist
+19:03:13 INFO TRADE 2023-08-16  PPLPHARMA    SHORT driver=FIRST-CANDLE     entry=96.15@09:35  exit=97.20@11:35  STOP_HIT    P&L Rs -6,192
+19:03:22 INFO Pre-market 2023-08-17: 446 stocks → 189 liquid+signal (133 bull / 56 bear) → 156 watchlist
+19:04:18 INFO TRADE 2023-08-17  ASIANPAINT   SHORT driver=FIRST-CANDLE     entry=3191.05@09:45  exit=3184.40@15:15  TIME_EXIT   P&L Rs +312
+19:04:27 INFO Pre-market 2023-08-18: 446 stocks → 195 liquid+signal (127 bull / 68 bear) → 168 watchlist
+19:05:27 INFO TRADE 2023-08-18  INDIAMART    SHORT driver=STOCHASTIC       entry=3072.50@13:25  exit=3084.45@15:15  TIME_EXIT   P&L Rs -2,663
+19:05:36 INFO Pre-market 2023-08-21: 446 stocks → 197 liquid+signal (123 bull / 74 bear) → 174 watchlist
+19:06:37 INFO TRADE 2023-08-21  HINDALCO     SHORT driver=FIRST-CANDLE     entry=441.50@09:40  exit=443.85@10:10  STOP_HIT    P&L Rs -3,390
+19:06:46 INFO Pre-market 2023-08-22: 446 stocks → 189 liquid+signal (131 bull / 58 bear) → 158 watchlist
+19:07:43 INFO TRADE 2023-08-22  PVRINOX      SHORT driver=FIRST-CANDLE     entry=1706.20@09:40  exit=1699.00@15:15  TIME_EXIT   P&L Rs +1,382
+19:07:53 INFO Pre-market 2023-08-23: 446 stocks → 202 liquid+signal (141 bull / 61 bear) → 161 watchlist
+19:08:50 INFO TRADE 2023-08-23  NAUKRI       SHORT driver=FIRST-CANDLE     entry=834.00@12:25  exit=830.50@15:15  TIME_EXIT   P&L Rs +1,369
+19:09:00 INFO Pre-market 2023-08-24: 446 stocks → 196 liquid+signal (144 bull / 52 bear) → 152 watchlist
+19:10:01 INFO TRADE 2023-08-24  INDIACEM     SHORT driver=FIRST-CANDLE     entry=240.05@09:50  exit=236.35@12:00  TARGET_HIT  P&L Rs +6,979
+19:10:12 INFO Pre-market 2023-08-25: 446 stocks → 202 liquid+signal (145 bull / 57 bear) → 157 watchlist
+19:11:15 INFO TRADE 2023-08-25  ANGELONE     SHORT driver=SUPERTREND       entry=170.60@09:50  exit=171.70@15:15  TIME_EXIT   P&L Rs -3,954
+19:11:25 INFO Pre-market 2023-08-28: 446 stocks → 192 liquid+signal (127 bull / 65 bear) → 165 watchlist
+19:12:33 INFO TRADE 2023-08-28  ADANIGREEN   SHORT driver=VPOC             entry=989.05@09:15  exit=975.69@10:30  TARGET_HIT  P&L Rs +6,021
+19:12:43 INFO Pre-market 2023-08-29: 446 stocks → 193 liquid+signal (136 bull / 57 bear) → 157 watchlist
+19:13:47 INFO TRADE 2023-08-29  GODREJCP     SHORT driver=FIRST-CANDLE     entry=1024.05@09:20  exit=1012.00@15:15  TIME_EXIT   P&L Rs +5,155
+19:13:57 INFO Pre-market 2023-08-30: 446 stocks → 190 liquid+signal (150 bull / 40 bear) → 140 watchlist
+19:14:57 INFO TRADE 2023-08-30  INDIGO       SHORT driver=FIRST-CANDLE     entry=2430.30@09:35  exit=2450.10@15:15  TIME_EXIT   P&L Rs -4,788
+19:15:07 INFO Pre-market 2023-08-31: 446 stocks → 199 liquid+signal (150 bull / 49 bear) → 149 watchlist
+19:16:02 INFO TRADE 2023-08-31  IOC          SHORT driver=FIRST-CANDLE     entry=74.74@09:20  exit=73.12@14:45  TARGET_HIT  P&L Rs +10,114
+19:16:11 INFO Pre-market 2023-09-01: 446 stocks → 200 liquid+signal (151 bull / 49 bear) → 149 watchlist
+19:17:07 INFO TRADE 2023-09-01  COLPAL       SHORT driver=FIRST-CANDLE     entry=1939.60@09:20  exit=1916.20@11:50  TARGET_HIT  P&L Rs +5,290
+19:17:16 INFO Pre-market 2023-09-04: 446 stocks → 195 liquid+signal (164 bull / 31 bear) → 131 watchlist
+19:18:06 INFO TRADE 2023-09-04  PIIND        SHORT driver=FIRST-CANDLE     entry=3629.00@09:25  exit=3629.95@15:15  TIME_EXIT   P&L Rs -855
+19:18:16 INFO Pre-market 2023-09-05: 446 stocks → 201 liquid+signal (170 bull / 31 bear) → 131 watchlist
+19:19:07 INFO TRADE 2023-09-05  APOLLOTYRE   SHORT driver=DESC-TRI         entry=386.15@11:15  exit=383.90@15:15  TIME_EXIT   P&L Rs +2,166
+19:19:17 INFO Pre-market 2023-09-06: 446 stocks → 207 liquid+signal (178 bull / 29 bear) → 129 watchlist
+19:20:05 INFO TRADE 2023-09-06  POWERGRID    SHORT driver=FIRST-CANDLE     entry=191.70@09:20  exit=189.20@11:45  TARGET_HIT  P&L Rs +5,795
+19:20:15 INFO Pre-market 2023-09-07: 446 stocks → 210 liquid+signal (185 bull / 25 bear) → 125 watchlist
+19:21:02 INFO TRADE 2023-09-07  POONAWALLA   SHORT driver=SUPERTREND       entry=397.50@10:40  exit=388.80@15:15  TIME_EXIT   P&L Rs +10,214
+19:21:11 INFO Pre-market 2023-09-08: 446 stocks → 215 liquid+signal (196 bull / 19 bear) → 119 watchlist
+19:21:56 INFO TRADE 2023-09-08  RBLBANK      SHORT driver=VPOC             entry=235.40@09:15  exit=232.64@10:25  TARGET_HIT  P&L Rs +5,137
+19:22:06 INFO Pre-market 2023-09-11: 446 stocks → 218 liquid+signal (204 bull / 14 bear) → 114 watchlist
+19:22:49 INFO TRADE 2023-09-11  TORNTPHARM   SHORT driver=FIRST-CANDLE     entry=1872.05@10:50  exit=1868.25@15:15  TIME_EXIT   P&L Rs +286
+19:22:59 INFO Pre-market 2023-09-12: 446 stocks → 220 liquid+signal (212 bull / 8 bear) → 108 watchlist
+19:23:39 INFO TRADE 2023-09-12  ASHOKLEY     SHORT driver=FIRST-CANDLE     entry=90.00@09:20  exit=89.00@09:35  TARGET_HIT  P&L Rs +4,829
+19:23:49 INFO Pre-market 2023-09-13: 446 stocks → 224 liquid+signal (192 bull / 32 bear) → 132 watchlist
+19:24:39 INFO TRADE 2023-09-13  GODREJCP     SHORT driver=FIRST-CANDLE     entry=1007.25@09:35  exit=1003.85@15:15  TIME_EXIT   P&L Rs +959
+19:24:48 INFO Pre-market 2023-09-14: 446 stocks → 221 liquid+signal (196 bull / 25 bear) → 125 watchlist
+19:25:35 INFO TRADE 2023-09-14  GODREJCP     SHORT driver=FIRST-CANDLE     entry=1004.50@09:45  exit=1005.05@15:15  TIME_EXIT   P&L Rs -1,001
+19:25:45 INFO Pre-market 2023-09-15: 446 stocks → 224 liquid+signal (204 bull / 20 bear) → 120 watchlist
+19:26:37 INFO TRADE 2023-09-15  POWERGRID    SHORT driver=FIRST-CANDLE     entry=195.00@09:25  exit=192.60@11:15  TARGET_HIT  P&L Rs +5,428
+19:26:48 INFO Pre-market 2023-09-18: 446 stocks → 231 liquid+signal (211 bull / 20 bear) → 120 watchlist
+19:27:41 INFO TRADE 2023-09-18  ALKEM        SHORT driver=DESC-TRI         entry=3644.00@11:05  exit=3656.50@15:15  TIME_EXIT   P&L Rs -2,162
+19:27:51 INFO Pre-market 2023-09-20: 446 stocks → 223 liquid+signal (197 bull / 26 bear) → 126 watchlist
+19:28:46 INFO TRADE 2023-09-20  INDIAMART    SHORT driver=SUPERTREND       entry=3021.05@09:40  exit=3017.10@15:15  TIME_EXIT   P&L Rs -75
+19:28:56 INFO Pre-market 2023-09-21: 446 stocks → 222 liquid+signal (183 bull / 39 bear) → 139 watchlist
+19:29:57 INFO TRADE 2023-09-21  SYNGENE      SHORT driver=FIRST-CANDLE     entry=794.20@10:25  exit=777.50@15:15  TIME_EXIT   P&L Rs +9,782
+19:30:07 INFO Pre-market 2023-09-22: 446 stocks → 215 liquid+signal (166 bull / 49 bear) → 149 watchlist
+19:31:05 INFO TRADE 2023-09-22  AMBUJACEM    SHORT driver=FIRST-CANDLE     entry=425.80@09:25  exit=420.40@09:45  TARGET_HIT  P&L Rs +5,614
+19:31:15 INFO Pre-market 2023-09-25: 446 stocks → 216 liquid+signal (153 bull / 63 bear) → 163 watchlist
+19:32:26 INFO TRADE 2023-09-25  COFORGE      SHORT driver=FIRST-CANDLE     entry=1060.00@09:50  exit=1058.50@15:15  TIME_EXIT   P&L Rs -21
+19:32:36 INFO Pre-market 2023-09-26: 446 stocks → 211 liquid+signal (153 bull / 58 bear) → 158 watchlist
+19:33:38 INFO TRADE 2023-09-26  APOLLOTYRE   SHORT driver=FIRST-CANDLE     entry=377.55@09:25  exit=372.85@10:35  TARGET_HIT  P&L Rs +5,498
+19:33:48 INFO Pre-market 2023-09-27: 446 stocks → 206 liquid+signal (145 bull / 61 bear) → 161 watchlist
+19:34:49 INFO TRADE 2023-09-27  LICI         SHORT driver=FIRST-CANDLE     entry=322.50@09:30  exit=323.50@12:15  STOP_HIT    P&L Rs -2,280
+19:34:59 INFO Pre-market 2023-09-28: 446 stocks → 209 liquid+signal (157 bull / 52 bear) → 152 watchlist
+19:35:56 INFO TRADE 2023-09-28  HAL          SHORT driver=FIRST-CANDLE     entry=1919.00@09:35  exit=1888.05@15:15  TIME_EXIT   P&L Rs +7,324
+19:36:06 INFO Pre-market 2023-09-29: 446 stocks → 221 liquid+signal (140 bull / 81 bear) → 181 watchlist
+19:37:14 INFO TRADE 2023-09-29  DATAPATTNS   SHORT driver=FIRST-CANDLE     entry=2090.05@10:50  exit=2102.10@15:15  TIME_EXIT   P&L Rs -3,610
+19:37:24 INFO Pre-market 2023-10-03: 446 stocks → 211 liquid+signal (146 bull / 65 bear) → 165 watchlist
+19:38:26 INFO TRADE 2023-10-03  HINDPETRO    SHORT driver=FAILED-BO        entry=146.70@09:25  exit=144.55@15:15  TIME_EXIT   P&L Rs +6,603
+19:38:35 INFO Pre-market 2023-10-04: 446 stocks → 215 liquid+signal (131 bull / 84 bear) → 184 watchlist
+19:39:44 INFO TRADE 2023-10-04  ASTRAL       SHORT driver=STOCHASTIC       entry=1899.15@09:35  exit=1871.05@15:15  TIME_EXIT   P&L Rs +6,666
+19:39:53 INFO Pre-market 2023-10-05: 446 stocks → 208 liquid+signal (109 bull / 99 bear) → 199 watchlist
+19:41:07 INFO TRADE 2023-10-05  DABUR        SHORT driver=FIRST-CANDLE     entry=553.70@09:25  exit=551.75@15:15  TIME_EXIT   P&L Rs +1,033
+19:41:16 INFO Pre-market 2023-10-06: 446 stocks → 205 liquid+signal (112 bull / 93 bear) → 193 watchlist
+19:42:27 INFO TRADE 2023-10-06  SAIL         SHORT driver=FIRST-CANDLE     entry=89.55@09:35  exit=88.90@15:15  TIME_EXIT   P&L Rs +2,902
+19:42:36 INFO Pre-market 2023-10-09: 446 stocks → 196 liquid+signal (118 bull / 78 bear) → 178 watchlist
+19:43:43 INFO TRADE 2023-10-09  TATACOMM     SHORT driver=FIRST-CANDLE     entry=1815.20@12:00  exit=1808.00@15:15  TIME_EXIT   P&L Rs +1,253
+19:43:52 INFO Pre-market 2023-10-10: 446 stocks → 202 liquid+signal (97 bull / 105 bear) → 197 watchlist
+19:45:09 INFO TRADE 2023-10-10  HINDALCO     SHORT driver=VPOC             entry=471.00@09:40  exit=473.35@13:40  STOP_HIT    P&L Rs -3,229
+19:45:20 INFO Pre-market 2023-10-11: 446 stocks → 197 liquid+signal (118 bull / 79 bear) → 179 watchlist
+19:46:34 INFO TRADE 2023-10-11  HDFCLIFE     SHORT driver=FIRST-CANDLE     entry=624.75@09:25  exit=620.25@10:00  TARGET_HIT  P&L Rs +2,873
+19:46:44 INFO Pre-market 2023-10-12: 446 stocks → 205 liquid+signal (114 bull / 91 bear) → 191 watchlist
+19:48:03 INFO TRADE 2023-10-12  ICICIPRULI   SHORT driver=FIRST-CANDLE     entry=525.20@10:10  exit=524.40@15:15  TIME_EXIT   P&L Rs +33
+19:48:13 INFO Pre-market 2023-10-13: 446 stocks → 195 liquid+signal (134 bull / 61 bear) → 161 watchlist
+19:49:20 INFO TRADE 2023-10-13  ASIANPAINT   SHORT driver=FIRST-CANDLE     entry=3140.00@10:45  exit=3150.00@15:15  TIME_EXIT   P&L Rs -2,319
+19:49:31 INFO Pre-market 2023-10-16: 446 stocks → 190 liquid+signal (130 bull / 60 bear) → 160 watchlist
+19:50:39 INFO TRADE 2023-10-16  LAURUSLABS   SHORT driver=VPOC             entry=408.00@09:15  exit=401.50@09:25  TARGET_HIT  P&L Rs +7,235
+19:50:50 INFO Pre-market 2023-10-17: 446 stocks → 189 liquid+signal (134 bull / 55 bear) → 155 watchlist
+19:51:49 INFO TRADE 2023-10-17  ASIANPAINT   SHORT driver=FIRST-CANDLE     entry=3110.35@11:25  exit=3112.90@15:15  TIME_EXIT   P&L Rs -1,134
+19:51:58 INFO Pre-market 2023-10-18: 446 stocks → 189 liquid+signal (142 bull / 47 bear) → 147 watchlist
+19:52:54 INFO TRADE 2023-10-18  ADANIGREEN   SHORT driver=FIRST-CANDLE     entry=949.15@10:00  exit=939.55@14:35  TARGET_HIT  P&L Rs +4,325
+19:53:03 INFO Pre-market 2023-10-19: 446 stocks → 199 liquid+signal (124 bull / 75 bear) → 175 watchlist
+19:54:09 INFO TRADE 2023-10-19  NAVINFLUOR   SHORT driver=DESC-TRI         entry=3662.25@09:15  exit=3648.05@15:15  TIME_EXIT   P&L Rs +1,206
+19:54:19 INFO Pre-market 2023-10-20: 446 stocks → 194 liquid+signal (131 bull / 63 bear) → 163 watchlist
+19:55:21 INFO TRADE 2023-10-20  NCC          SHORT driver=FIRST-CANDLE     entry=159.20@09:45  exit=156.10@12:05  TARGET_HIT  P&L Rs +9,011
+19:55:30 INFO Pre-market 2023-10-23: 446 stocks → 206 liquid+signal (117 bull / 89 bear) → 189 watchlist
+19:56:40 INFO TRADE 2023-10-23  ADANIENT     SHORT driver=FIRST-CANDLE     entry=2321.90@09:35  exit=2288.30@10:05  TARGET_HIT  P&L Rs +6,500
+19:56:50 INFO Pre-market 2023-10-25: 446 stocks → 210 liquid+signal (85 bull / 125 bear) → 185 watchlist
+19:58:15 INFO TRADE 2023-10-25  IOC          SHORT driver=FIRST-CANDLE     entry=72.51@09:30  exit=71.95@15:15  TIME_EXIT   P&L Rs +3,135
+19:58:25 INFO Pre-market 2023-10-26: 446 stocks → 208 liquid+signal (78 bull / 130 bear) → 178 watchlist
+19:59:33 INFO TRADE 2023-10-26  KOTAKBANK    SHORT driver=FIRST-CANDLE     entry=343.40@09:25  exit=339.20@14:15  TARGET_HIT  P&L Rs +5,390
+19:59:43 INFO Pre-market 2023-10-27: 446 stocks → 197 liquid+signal (62 bull / 135 bear) → 162 watchlist
+20:00:45 INFO TRADE 2023-10-27  VOLTAS       SHORT driver=FIRST-CANDLE     entry=831.30@10:15  exit=835.00@15:15  TIME_EXIT   P&L Rs -2,953
+20:00:55 INFO Pre-market 2023-10-30: 446 stocks → 202 liquid+signal (65 bull / 137 bear) → 165 watchlist
+20:01:57 INFO TRADE 2023-10-30  BEL          SHORT driver=FIRST-CANDLE     entry=132.55@09:30  exit=131.80@15:15  TIME_EXIT   P&L Rs +2,102
+20:02:07 INFO Pre-market 2023-10-31: 446 stocks → 200 liquid+signal (74 bull / 126 bear) → 174 watchlist
+20:03:27 INFO TRADE 2023-10-31  AUROPHARMA   SHORT driver=FIRST-CANDLE     entry=859.25@10:30  exit=849.85@15:15  TIME_EXIT   P&L Rs +4,737
+20:03:37 INFO Pre-market 2023-11-01: 446 stocks → 201 liquid+signal (67 bull / 134 bear) → 167 watchlist
+20:04:45 INFO TRADE 2023-11-01  MOTHERSON    SHORT driver=FIRST-CANDLE     entry=61.30@10:30  exit=61.83@12:10  STOP_HIT    P&L Rs -5,054
+20:04:56 INFO Pre-market 2023-11-02: 446 stocks → 200 liquid+signal (62 bull / 138 bear) → 162 watchlist
+20:06:06 INFO TRADE 2023-11-02  MANAPPURAM   SHORT driver=FIRST-CANDLE     entry=137.00@10:30  exit=136.70@15:15  TIME_EXIT   P&L Rs +367
+20:06:17 INFO Pre-market 2023-11-03: 446 stocks → 198 liquid+signal (91 bull / 107 bear) → 191 watchlist
+20:07:36 INFO TRADE 2023-11-03  BAJFINANCE   SHORT driver=FIRST-CANDLE     entry=749.00@09:45  exit=739.00@12:10  TARGET_HIT  P&L Rs +5,945
+20:07:47 INFO Pre-market 2023-11-06: 446 stocks → 192 liquid+signal (91 bull / 101 bear) → 191 watchlist
+20:09:08 INFO TRADE 2023-11-06  MARUTI       SHORT driver=FIRST-CANDLE     entry=10267.50@09:25  exit=10286.00@15:15  TIME_EXIT   P&L Rs -1,608
+20:09:18 INFO Pre-market 2023-11-07: 446 stocks → 196 liquid+signal (103 bull / 93 bear) → 193 watchlist
+20:10:39 INFO TRADE 2023-11-07  SAMMAANCAP   SHORT driver=FIRST-CANDLE     entry=147.50@09:35  exit=149.15@13:15  STOP_HIT    P&L Rs -6,324
+20:10:50 INFO Pre-market 2023-11-08: 446 stocks → 198 liquid+signal (118 bull / 80 bear) → 180 watchlist
+20:12:04 INFO TRADE 2023-11-08  POLYCAB      SHORT driver=FIRST-CANDLE     entry=5130.50@10:55  exit=5129.10@15:15  TIME_EXIT   P&L Rs -590
+20:12:14 INFO Pre-market 2023-11-09: 446 stocks → 199 liquid+signal (121 bull / 78 bear) → 178 watchlist
+20:13:21 INFO TRADE 2023-11-09  JINDALSTEL   SHORT driver=FIRST-CANDLE     entry=628.10@10:30  exit=624.45@15:15  TIME_EXIT   P&L Rs +2,178
+20:13:30 INFO Pre-market 2023-11-10: 446 stocks → 198 liquid+signal (116 bull / 82 bear) → 182 watchlist
+20:14:39 INFO TRADE 2023-11-10  M&M          SHORT driver=VPOC             entry=1540.00@09:15  exit=1524.45@15:15  TIME_EXIT   P&L Rs +4,314
+20:14:48 INFO Pre-market 2023-11-12: 446 stocks → 190 liquid+signal (136 bull / 54 bear) → 154 watchlist
+20:15:46 INFO Pre-market 2023-11-13: 446 stocks → 189 liquid+signal (152 bull / 37 bear) → 137 watchlist
+20:16:39 INFO TRADE 2023-11-13  ADANIENT     SHORT driver=DESC-TRI         entry=2129.90@10:20  exit=2144.90@15:15  TIME_EXIT   P&L Rs -3,021
+20:16:48 INFO Pre-market 2023-11-15: 446 stocks → 189 liquid+signal (145 bull / 44 bear) → 144 watchlist
+20:17:44 INFO TRADE 2023-11-15  CGPOWER      SHORT driver=FIRST-CANDLE     entry=382.40@09:40  exit=388.40@14:00  STOP_HIT    P&L Rs -8,575
+20:17:53 INFO Pre-market 2023-11-16: 446 stocks → 190 liquid+signal (167 bull / 23 bear) → 123 watchlist
+20:18:42 INFO TRADE 2023-11-16  ADANIENT     SHORT driver=DESC-TRI         entry=2132.30@09:30  exit=2137.10@15:15  TIME_EXIT   P&L Rs -1,697
+20:18:51 INFO Pre-market 2023-11-17: 446 stocks → 186 liquid+signal (168 bull / 18 bear) → 118 watchlist
+20:19:37 INFO TRADE 2023-11-17  IGL          SHORT driver=SUPERTREND       entry=194.30@11:20  exit=195.86@12:35  STOP_HIT    P&L Rs -4,748
+20:19:47 INFO Pre-market 2023-11-20: 446 stocks → 194 liquid+signal (170 bull / 24 bear) → 124 watchlist
+20:20:35 INFO TRADE 2023-11-20  SUNPHARMA    SHORT driver=FIRST-CANDLE     entry=1193.40@09:35  exit=1187.50@15:15  TIME_EXIT   P&L Rs +1,740
+20:20:44 INFO Pre-market 2023-11-21: 446 stocks → 203 liquid+signal (179 bull / 24 bear) → 124 watchlist
+20:21:33 INFO TRADE 2023-11-21  BANDHANBNK   SHORT driver=DESC-TRI         entry=215.10@09:20  exit=213.90@15:15  TIME_EXIT   P&L Rs +1,511
+20:21:42 INFO Pre-market 2023-11-22: 446 stocks → 208 liquid+signal (193 bull / 15 bear) → 115 watchlist
+20:22:27 INFO TRADE 2023-11-22  BANDHANBNK   SHORT driver=DESC-TRI         entry=214.50@09:15  exit=212.35@15:15  TIME_EXIT   P&L Rs +2,988
+20:22:36 INFO Pre-market 2023-11-23: 446 stocks → 198 liquid+signal (182 bull / 16 bear) → 116 watchlist
+20:23:22 INFO TRADE 2023-11-23  AMBUJACEM    SHORT driver=FIRST-CANDLE     entry=414.30@09:25  exit=409.40@10:40  TARGET_HIT  P&L Rs +5,184
+20:23:32 INFO Pre-market 2023-11-24: 446 stocks → 193 liquid+signal (177 bull / 16 bear) → 116 watchlist
+20:24:19 INFO TRADE 2023-11-24  BRITANNIA    SHORT driver=FIRST-CANDLE     entry=4691.00@09:20  exit=4643.00@14:50  TARGET_HIT  P&L Rs +4,366
+20:24:30 INFO Pre-market 2023-11-28: 446 stocks → 195 liquid+signal (176 bull / 19 bear) → 119 watchlist
+20:25:22 INFO TRADE 2023-11-28  SBICARD      SHORT driver=FIRST-CANDLE     entry=739.15@09:35  exit=733.85@15:15  TIME_EXIT   P&L Rs +2,856
+20:25:33 INFO Pre-market 2023-11-29: 446 stocks → 193 liquid+signal (181 bull / 12 bear) → 112 watchlist
+20:26:23 INFO TRADE 2023-11-29  SRF          SHORT driver=FIRST-CANDLE     entry=2355.00@09:20  exit=2351.45@15:15  TIME_EXIT   P&L Rs +25
+20:26:33 INFO Pre-market 2023-11-30: 446 stocks → 198 liquid+signal (189 bull / 9 bear) → 109 watchlist
+20:27:23 INFO TRADE 2023-11-30  VEDL         SHORT driver=FIRST-CANDLE     entry=101.95@09:30  exit=102.05@15:15  TIME_EXIT   P&L Rs -1,220
+20:27:34 INFO Pre-market 2023-12-01: 446 stocks → 205 liquid+signal (194 bull / 11 bear) → 111 watchlist
+20:28:25 INFO TRADE 2023-12-01  RBLBANK      SHORT driver=FIRST-CANDLE     entry=236.50@09:25  exit=233.05@15:15  TIME_EXIT   P&L Rs +6,569
+20:28:35 INFO Pre-market 2023-12-04: 446 stocks → 210 liquid+signal (199 bull / 11 bear) → 111 watchlist
+20:29:26 INFO TRADE 2023-12-04  BALKRISIND   SHORT driver=FIRST-CANDLE     entry=2559.70@09:25  exit=2558.70@15:15  TIME_EXIT   P&L Rs -533
+20:29:36 INFO Pre-market 2023-12-05: 446 stocks → 216 liquid+signal (210 bull / 6 bear) → 106 watchlist
+20:30:26 INFO TRADE 2023-12-05  ICICIPRULI   SHORT driver=CPR              entry=560.45@09:15  exit=557.25@09:20  TARGET_HIT  P&L Rs +2,127
+20:30:37 INFO Pre-market 2023-12-06: 446 stocks → 223 liquid+signal (215 bull / 8 bear) → 108 watchlist
+20:31:22 INFO TRADE 2023-12-06  DIVISLAB     SHORT driver=SUPERTREND       entry=3752.35@10:10  exit=3735.70@15:15  TIME_EXIT   P&L Rs +1,488
+20:31:32 INFO Pre-market 2023-12-07: 446 stocks → 221 liquid+signal (212 bull / 9 bear) → 109 watchlist
+20:32:16 INFO TRADE 2023-12-07  MARUTI       SHORT driver=FIRST-CANDLE     entry=10666.00@09:20  exit=10790.00@10:15  STOP_HIT    P&L Rs -6,423
+20:32:26 INFO Pre-market 2023-12-08: 446 stocks → 227 liquid+signal (221 bull / 6 bear) → 106 watchlist
+20:33:08 INFO TRADE 2023-12-08  LALPATHLAB   SHORT driver=FIRST-CANDLE     entry=1345.20@09:55  exit=1326.00@12:05  TARGET_HIT  P&L Rs +6,400
+20:33:18 INFO Pre-market 2023-12-11: 446 stocks → 228 liquid+signal (219 bull / 9 bear) → 109 watchlist
+20:34:02 INFO TRADE 2023-12-11  AUROPHARMA   SHORT driver=FIRST-CANDLE     entry=1002.00@10:00  exit=1004.20@15:15  TIME_EXIT   P&L Rs -1,827
+20:34:12 INFO Pre-market 2023-12-12: 446 stocks → 232 liquid+signal (219 bull / 13 bear) → 113 watchlist
+20:34:57 INFO TRADE 2023-12-12  BALRAMCHIN   SHORT driver=FIRST-CANDLE     entry=398.30@09:35  exit=392.50@12:45  TARGET_HIT  P&L Rs +6,554
+20:35:07 INFO Pre-market 2023-12-13: 446 stocks → 245 liquid+signal (230 bull / 15 bear) → 115 watchlist
+20:35:54 INFO TRADE 2023-12-13  RRKABEL      SHORT driver=STOCHASTIC       entry=1678.95@12:35  exit=1667.20@15:15  TIME_EXIT   P&L Rs +2,765
+20:36:04 INFO Pre-market 2023-12-14: 446 stocks → 248 liquid+signal (240 bull / 8 bear) → 108 watchlist
+20:36:48 INFO TRADE 2023-12-14  ADANIPORTS   SHORT driver=BEAR-ENGULF      entry=1063.65@09:50  exit=1077.31@10:45  STOP_HIT    P&L Rs -7,153
+20:36:58 INFO Pre-market 2023-12-15: 446 stocks → 251 liquid+signal (238 bull / 13 bear) → 113 watchlist
+20:37:45 INFO TRADE 2023-12-15  CAMS         SHORT driver=FIRST-CANDLE     entry=547.40@09:20  exit=544.10@15:15  TIME_EXIT   P&L Rs +2,286
+20:37:56 INFO Pre-market 2023-12-18: 446 stocks → 254 liquid+signal (240 bull / 14 bear) → 114 watchlist
+20:38:44 INFO TRADE 2023-12-18  ABCAPITAL    SHORT driver=FIRST-CANDLE     entry=164.65@09:35  exit=166.35@10:45  STOP_HIT    P&L Rs -5,893
+20:38:56 INFO Pre-market 2023-12-19: 446 stocks → 256 liquid+signal (243 bull / 13 bear) → 113 watchlist
+20:39:48 INFO TRADE 2023-12-19  ACC          SHORT driver=FIRST-CANDLE     entry=2232.55@09:20  exit=2189.65@10:15  TARGET_HIT  P&L Rs +8,846
+20:40:00 INFO Pre-market 2023-12-20: 446 stocks → 258 liquid+signal (241 bull / 17 bear) → 117 watchlist
+20:40:56 INFO TRADE 2023-12-20  SBILIFE      SHORT driver=FIRST-CANDLE     entry=1426.15@11:40  exit=1404.45@14:45  TARGET_HIT  P&L Rs +6,872
+20:41:08 INFO Pre-market 2023-12-21: 446 stocks → 253 liquid+signal (205 bull / 48 bear) → 148 watchlist
+20:42:16 INFO TRADE 2023-12-21  APLAPOLLO    SHORT driver=STOCHASTIC       entry=1565.80@10:30  exit=1589.29@12:55  STOP_HIT    P&L Rs -8,225
+20:42:27 INFO Pre-market 2023-12-22: 446 stocks → 254 liquid+signal (229 bull / 25 bear) → 125 watchlist
+20:43:24 INFO TRADE 2023-12-22  CANBK        SHORT driver=BEAR-ENGULF      entry=80.40@10:10  exit=79.19@15:15  TIME_EXIT   P&L Rs +6,799
+20:43:35 INFO Pre-market 2023-12-26: 446 stocks → 251 liquid+signal (220 bull / 31 bear) → 131 watchlist
+20:44:34 INFO TRADE 2023-12-26  ESCORTS      SHORT driver=FIRST-CANDLE     entry=2967.60@10:25  exit=2977.65@15:15  TIME_EXIT   P&L Rs -2,416
+20:44:46 INFO Pre-market 2023-12-27: 446 stocks → 250 liquid+signal (227 bull / 23 bear) → 123 watchlist
+20:45:40 INFO TRADE 2023-12-27  LALPATHLAB   SHORT driver=FIRST-CANDLE     entry=1300.10@09:35  exit=1285.50@11:40  TARGET_HIT  P&L Rs +4,882
+20:45:51 INFO Pre-market 2023-12-28: 446 stocks → 254 liquid+signal (234 bull / 20 bear) → 120 watchlist
+20:46:40 INFO TRADE 2023-12-28  BANDHANBNK   SHORT driver=FIRST-CANDLE     entry=238.80@09:50  exit=236.00@11:25  TARGET_HIT  P&L Rs +5,135
+20:46:51 INFO Pre-market 2023-12-29: 446 stocks → 256 liquid+signal (233 bull / 23 bear) → 123 watchlist
+20:47:42 INFO TRADE 2023-12-29  MANAPPURAM   SHORT driver=FIRST-CANDLE     entry=172.55@09:45  exit=171.65@15:15  TIME_EXIT   P&L Rs +1,880
+20:47:42 INFO Year 2023 complete: 245 trades | effective win rate 65.3% | P&L Rs 408,994
+20:47:42 INFO 
+--- 2023 RESULTS ---
+20:47:42 INFO Total trades   : 245  (0 LONG, 245 SHORT)
+20:47:42 INFO EXACT_WIN      : 67  (27.3%)   — target hit
+20:47:42 INFO WIN (partial)  : 93  (38.0%)   — profitable TIME_EXIT
+20:47:42 INFO LOSS           : 85  (34.7%)   — stopped or exit at loss
+20:47:42 INFO Effective WR   : 65.3%  (EXACT_WIN + WIN)
+20:47:42 INFO Total P&L      : Rs 408,994  (Long Rs 0 | Short Rs 408,994)
+20:47:42 INFO Paper trades   : C:\Users\somal\Downloads\AI_ML\TradingAgent\data\trade_logs\paper_trades.csv
+20:47:42 INFO WF-5 running total: P&L Rs 408,994 [PASS ✓] — wf_results.json updated
+20:47:42 INFO Windows sleep prevention: OFF

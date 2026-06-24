@@ -1,0 +1,4 @@
+from strategies.chart_patterns.double_bottom import DoubleBottom
+from strategies.chart_patterns.falling_wedge import FallingWedge
+from strategies.chart_patterns.ascending_triangle import AscendingTriangle
+from strategies.chart_patterns.bull_flag import BullFlag

@@ -1,0 +1,794 @@
+23:10:02 INFO ============================================================
+23:10:02 INFO TESTING — WF-5 frozen weights, 1 trade/day
+23:10:02 INFO Years       : [2023]
+23:10:02 INFO Pre-filter  : ON
+23:10:02 INFO Log dir     : experiments\E01_fc_blocked
+23:10:02 INFO Paper trades: C:\Users\somal\Downloads\AI_ML\TradingAgent\data\trade_logs\paper_trades.csv
+23:10:02 INFO WF weights  : C:\Users\somal\Downloads\AI_ML\TradingAgent\checkpoints\wf5_weights.json
+23:10:02 INFO ============================================================
+23:10:02 INFO Windows sleep prevention: ON
+23:10:05 INFO 
+==================================================
+23:10:05 INFO Starting testing year: 2023
+23:10:05 INFO ==================================================
+23:10:05 INFO Starting 2023 [TESTING] — weights FROZEN — SHORT ON — pre-filter ON
+23:10:05 INFO Loading stock data into memory...
+23:10:24 INFO Loaded 446 stocks for 2023 (with prev-year warmup)
+23:10:28 INFO Resuming from 2023-12-30 — 0 days remaining
+23:10:28 INFO Year 2023 complete: 0 trades | effective win rate 0% | P&L Rs 0
+23:10:28 INFO 
+--- 2023 RESULTS ---
+23:10:28 INFO Total trades   : 0  (0 LONG, 0 SHORT)
+23:10:28 INFO EXACT_WIN      : 0  (0%)   — target hit
+23:10:28 INFO WIN (partial)  : 0  (0%)   — profitable TIME_EXIT
+23:10:28 INFO LOSS           : 0  (0%)   — stopped or exit at loss
+23:10:28 INFO Effective WR   : 0%  (EXACT_WIN + WIN)
+23:10:28 INFO Total P&L      : Rs 0  (Long Rs 0 | Short Rs 0)
+23:10:28 INFO Paper trades   : C:\Users\somal\Downloads\AI_ML\TradingAgent\data\trade_logs\paper_trades.csv
+23:10:28 INFO WF-5 running total: P&L Rs 0 [FAIL ✗] — wf_results.json updated
+23:10:28 INFO Windows sleep prevention: OFF
+23:12:05 INFO ============================================================
+23:12:05 INFO TESTING — WF-5 frozen weights, 1 trade/day
+23:12:05 INFO Years       : [2023]
+23:12:05 INFO Pre-filter  : ON
+23:12:05 INFO Log dir     : experiments\E01_fc_blocked
+23:12:05 INFO Paper trades: C:\Users\somal\Downloads\AI_ML\TradingAgent\data\trade_logs\paper_trades.csv
+23:12:05 INFO WF weights  : C:\Users\somal\Downloads\AI_ML\TradingAgent\checkpoints\wf5_weights.json
+23:12:05 INFO ============================================================
+23:12:05 INFO Windows sleep prevention: ON
+23:12:07 INFO 
+==================================================
+23:12:07 INFO Starting testing year: 2023
+23:12:07 INFO ==================================================
+23:12:07 INFO Starting 2023 [TESTING] — weights FROZEN — SHORT ON — pre-filter ON
+23:12:07 INFO Loading stock data into memory...
+23:12:20 INFO Loaded 446 stocks for 2023 (with prev-year warmup)
+23:12:34 INFO Pre-market 2023-01-02: 446 stocks → 170 liquid+signal (53 bull / 117 bear) → 153 watchlist
+23:13:29 INFO 2023-01-02  LONG=[NATIONALUM/CAMARILLA s=13.29 a=5 p=50% [STANDARD]]  SHORT=[BRITANNIA/SUPERTREND s=36.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 13.29)
+23:13:29 INFO TRADE 2023-01-02  BRITANNIA    SHORT driver=SUPERTREND       entry=4294.85@09:55  exit=4291.55@15:15  TIME_EXIT   P&L Rs -343
+23:13:38 INFO Pre-market 2023-01-03: 446 stocks → 168 liquid+signal (66 bull / 102 bear) → 166 watchlist
+23:14:37 INFO 2023-01-03  LONG=[none]  SHORT=[PIDILITIND/STOCHASTIC s=39.00 a=13 p=62% [HIGH]]  -> SHORT (only candidate)
+23:14:37 INFO TRADE 2023-01-03  PIDILITIND   SHORT driver=STOCHASTIC       entry=1265.40@12:40  exit=1268.80@15:15  TIME_EXIT   P&L Rs -2,072
+23:14:46 INFO Pre-market 2023-01-04: 446 stocks → 169 liquid+signal (75 bull / 94 bear) → 169 watchlist
+23:15:45 INFO 2023-01-04  LONG=[none]  SHORT=[BRITANNIA/SUPERTREND s=45.00 a=14 p=61% [MEDIUM]]  -> SHORT (only candidate)
+23:15:45 INFO TRADE 2023-01-04  BRITANNIA    SHORT driver=SUPERTREND       entry=4231.90@11:05  exit=4239.60@15:15  TIME_EXIT   P&L Rs -1,637
+23:15:54 INFO Pre-market 2023-01-05: 446 stocks → 174 liquid+signal (65 bull / 109 bear) → 165 watchlist
+23:16:51 INFO 2023-01-05  LONG=[none]  SHORT=[AUBANK/STOCHASTIC s=33.12 a=12 p=65% [HIGH]]  -> SHORT (only candidate)
+23:16:51 INFO TRADE 2023-01-05  AUBANK       SHORT driver=STOCHASTIC       entry=632.20@12:20  exit=635.90@15:15  TIME_EXIT   P&L Rs -3,653
+23:17:00 INFO Pre-market 2023-01-06: 446 stocks → 166 liquid+signal (81 bull / 85 bear) → 166 watchlist
+23:18:03 INFO 2023-01-06  LONG=[none]  SHORT=[FEDERALBNK/SUPERTREND s=42.00 a=14 p=63% [MEDIUM]]  -> SHORT (only candidate)
+23:18:03 INFO TRADE 2023-01-06  FEDERALBNK   SHORT driver=SUPERTREND       entry=135.55@09:45  exit=134.75@15:15  TIME_EXIT   P&L Rs +2,223
+23:18:12 INFO Pre-market 2023-01-09: 446 stocks → 163 liquid+signal (64 bull / 99 bear) → 163 watchlist
+23:19:13 INFO 2023-01-09  LONG=[none]  SHORT=[DIXON/SUPERTREND s=48.00 a=15 p=60% [MEDIUM]]  -> SHORT (only candidate)
+23:19:13 INFO TRADE 2023-01-09  DIXON        SHORT driver=SUPERTREND       entry=3812.05@09:45  exit=3769.65@15:15  TIME_EXIT   P&L Rs +4,830
+23:19:23 INFO Pre-market 2023-01-10: 446 stocks → 162 liquid+signal (83 bull / 79 bear) → 162 watchlist
+23:20:25 INFO 2023-01-10  LONG=[none]  SHORT=[PIIND/SUPERTREND s=42.00 a=14 p=64% [MEDIUM]]  -> SHORT (only candidate)
+23:20:25 INFO TRADE 2023-01-10  PIIND        SHORT driver=SUPERTREND       entry=3295.00@09:35  exit=3290.00@15:15  TIME_EXIT   P&L Rs +30
+23:20:34 INFO Pre-market 2023-01-11: 446 stocks → 164 liquid+signal (81 bull / 83 bear) → 164 watchlist
+23:21:36 INFO 2023-01-11  LONG=[IOC/VPOC s=11.42 a=4 p=57% [STANDARD]]  SHORT=[ASIANPAINT/SUPERTREND s=42.00 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 42.00 > 11.42)
+23:21:36 INFO TRADE 2023-01-11  ASIANPAINT   SHORT driver=SUPERTREND       entry=2951.10@09:20  exit=2940.05@15:15  TIME_EXIT   P&L Rs +1,141
+23:21:46 INFO Pre-market 2023-01-12: 446 stocks → 166 liquid+signal (88 bull / 78 bear) → 166 watchlist
+23:22:52 INFO 2023-01-12  LONG=[none]  SHORT=[TATACONSUM/SUPERTREND s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT (only candidate)
+23:22:52 INFO TRADE 2023-01-12  TATACONSUM   SHORT driver=SUPERTREND       entry=748.50@10:15  exit=746.05@15:15  TIME_EXIT   P&L Rs +909
+23:23:01 INFO Pre-market 2023-01-13: 446 stocks → 156 liquid+signal (87 bull / 69 bear) → 156 watchlist
+23:24:00 INFO 2023-01-13  LONG=[none]  SHORT=[AUBANK/CPR s=42.00 a=14 p=64% [MEDIUM]]  -> SHORT (only candidate)
+23:24:00 INFO TRADE 2023-01-13  AUBANK       SHORT driver=CPR              entry=626.38@09:15  exit=623.08@09:40  TARGET_HIT  P&L Rs +1,906
+23:24:10 INFO Pre-market 2023-01-16: 446 stocks → 156 liquid+signal (93 bull / 63 bear) → 156 watchlist
+23:25:05 INFO 2023-01-16  LONG=[WIPRO/CAMARILLA s=12.57 a=4 p=56% [STANDARD]]  SHORT=[BHARTIARTL/SUPERTREND s=39.00 a=12 p=61% [MEDIUM]]  -> SHORT wins (score 39.00 > 12.57)
+23:25:05 INFO TRADE 2023-01-16  BHARTIARTL   SHORT driver=SUPERTREND       entry=759.75@11:15  exit=761.05@15:15  TIME_EXIT   P&L Rs -1,585
+23:25:13 INFO Pre-market 2023-01-17: 446 stocks → 155 liquid+signal (85 bull / 70 bear) → 155 watchlist
+23:26:09 INFO 2023-01-17  LONG=[ICICIPRULI/CPR s=15.94 a=4 p=49% [STANDARD]]  SHORT=[HAL/CPR s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT wins (score 39.00 > 15.94)
+23:26:09 INFO TRADE 2023-01-17  HAL          SHORT driver=CPR              entry=1238.50@09:15  exit=1237.83@09:20  TARGET_HIT  P&L Rs -459
+23:26:18 INFO Pre-market 2023-01-18: 446 stocks → 147 liquid+signal (92 bull / 55 bear) → 147 watchlist
+23:27:10 INFO 2023-01-18  LONG=[none]  SHORT=[PIIND/SUPERTREND s=45.00 a=15 p=62% [MEDIUM]]  -> SHORT (only candidate)
+23:27:10 INFO TRADE 2023-01-18  PIIND        SHORT driver=SUPERTREND       entry=3251.25@10:05  exit=3252.35@15:15  TIME_EXIT   P&L Rs -894
+23:27:19 INFO Pre-market 2023-01-19: 446 stocks → 149 liquid+signal (96 bull / 53 bear) → 149 watchlist
+23:28:14 INFO 2023-01-19  LONG=[none]  SHORT=[PVRINOX/CPR s=36.62 a=12 p=61% [MEDIUM]]  -> SHORT (only candidate)
+23:28:14 INFO TRADE 2023-01-19  PVRINOX      SHORT driver=CPR              entry=1673.62@09:15  exit=1673.12@09:20  TARGET_HIT  P&L Rs -578
+23:28:22 INFO Pre-market 2023-01-20: 446 stocks → 139 liquid+signal (88 bull / 51 bear) → 139 watchlist
+23:29:15 INFO 2023-01-20  LONG=[COFORGE/VPOC s=12.17 a=4 p=57% [STANDARD]]  SHORT=[PVRINOX/SUPERTREND s=36.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 12.17)
+23:29:15 INFO TRADE 2023-01-20  PVRINOX      SHORT driver=SUPERTREND       entry=1669.00@09:25  exit=1613.00@15:15  TIME_EXIT   P&L Rs +16,026
+23:29:25 INFO Pre-market 2023-01-23: 446 stocks → 143 liquid+signal (87 bull / 56 bear) → 143 watchlist
+23:30:21 INFO 2023-01-23  LONG=[COFORGE/MACD s=17.92 a=5 p=56% [STANDARD]]  SHORT=[ADANIPOWER/DESC-TRI s=39.00 a=13 p=62% [STANDARD]]  -> SHORT wins (score 39.00 > 17.92)
+23:30:21 INFO TRADE 2023-01-23  ADANIPOWER   SHORT driver=DESC-TRI         entry=54.45@12:55  exit=54.65@15:15  TIME_EXIT   P&L Rs -2,030
+23:30:30 INFO Pre-market 2023-01-24: 446 stocks → 136 liquid+signal (83 bull / 53 bear) → 136 watchlist
+23:31:22 INFO 2023-01-24  LONG=[none]  SHORT=[AMBUJACEM/DESC-TRI s=39.50 a=13 p=60% [STANDARD]]  -> SHORT (only candidate)
+23:31:22 INFO TRADE 2023-01-24  AMBUJACEM    SHORT driver=DESC-TRI         entry=504.10@09:15  exit=499.05@15:15  TIME_EXIT   P&L Rs +3,240
+23:31:31 INFO Pre-market 2023-01-25: 446 stocks → 135 liquid+signal (76 bull / 59 bear) → 135 watchlist
+23:32:23 INFO 2023-01-25  LONG=[none]  SHORT=[NESTLEIND/CPR s=39.50 a=13 p=63% [MEDIUM]]  -> SHORT (only candidate)
+23:32:23 INFO TRADE 2023-01-25  NESTLEIND    SHORT driver=CPR              entry=964.55@09:15  exit=959.82@09:25  TARGET_HIT  P&L Rs +1,725
+23:32:32 INFO Pre-market 2023-01-27: 446 stocks → 137 liquid+signal (68 bull / 69 bear) → 137 watchlist
+23:33:25 INFO 2023-01-27  LONG=[none]  SHORT=[BAJFINANCE/DESC-TRI s=39.00 a=13 p=60% [STANDARD]]  -> SHORT (only candidate)
+23:33:25 INFO TRADE 2023-01-27  BAJFINANCE   SHORT driver=DESC-TRI         entry=583.00@09:15  exit=576.00@15:15  TIME_EXIT   P&L Rs +4,721
+23:33:34 INFO Pre-market 2023-01-30: 446 stocks → 145 liquid+signal (57 bull / 88 bear) → 145 watchlist
+23:34:30 INFO 2023-01-30  LONG=[none]  SHORT=[CIPLA/CPR s=36.00 a=12 p=64% [MEDIUM]]  -> SHORT (only candidate)
+23:34:30 INFO TRADE 2023-01-30  CIPLA        SHORT driver=CPR              entry=1048.10@09:15  exit=1045.63@09:20  TARGET_HIT  P&L Rs +448
+23:34:39 INFO Pre-market 2023-01-31: 446 stocks → 140 liquid+signal (48 bull / 92 bear) → 140 watchlist
+23:35:31 INFO 2023-01-31  LONG=[none]  SHORT=[UNITDSPR/CPR s=36.50 a=11 p=62% [MEDIUM]]  -> SHORT (only candidate)
+23:35:31 INFO TRADE 2023-01-31  UNITDSPR     SHORT driver=CPR              entry=766.35@09:15  exit=764.55@09:20  TARGET_HIT  P&L Rs +446
+23:35:39 INFO Pre-market 2023-02-01: 446 stocks → 134 liquid+signal (61 bull / 73 bear) → 134 watchlist
+23:36:28 INFO 2023-02-01  LONG=[POLYCAB/CAMARILLA s=14.79 a=5 p=55% [STANDARD]]  SHORT=[NESTLEIND/SUPERTREND s=39.00 a=12 p=61% [MEDIUM]]  -> SHORT wins (score 39.00 > 14.79)
+23:36:28 INFO TRADE 2023-02-01  NESTLEIND    SHORT driver=SUPERTREND       entry=951.00@11:35  exit=955.00@15:15  TIME_EXIT   P&L Rs -2,829
+23:36:36 INFO Pre-market 2023-02-02: 446 stocks → 152 liquid+signal (48 bull / 104 bear) → 148 watchlist
+23:37:31 INFO 2023-02-02  LONG=[BRITANNIA/GAP-CONT s=12.17 a=5 p=58% [STANDARD]]  SHORT=[NESTLEIND/CPR s=39.00 a=13 p=62% [MEDIUM]]  -> SHORT wins (score 39.00 > 12.17)
+23:37:31 INFO TRADE 2023-02-02  NESTLEIND    SHORT driver=CPR              entry=952.30@09:15  exit=949.50@09:20  TARGET_HIT  P&L Rs +742
+23:37:40 INFO Pre-market 2023-02-03: 446 stocks → 150 liquid+signal (55 bull / 95 bear) → 150 watchlist
+23:38:33 INFO 2023-02-03  LONG=[UNIONBANK/CPR s=13.38 a=4 p=50% [STANDARD]]  SHORT=[IRFC/SUPERTREND s=42.00 a=14 p=64% [MEDIUM]]  -> SHORT wins (score 42.00 > 13.38)
+23:38:33 INFO TRADE 2023-02-03  IRFC         SHORT driver=SUPERTREND       entry=31.30@09:40  exit=31.15@15:15  TIME_EXIT   P&L Rs +1,669
+23:38:43 INFO Pre-market 2023-02-06: 446 stocks → 150 liquid+signal (57 bull / 93 bear) → 150 watchlist
+23:39:42 INFO 2023-02-06  LONG=[none]  SHORT=[TATACONSUM/SUPERTREND s=39.50 a=13 p=61% [MEDIUM]]  -> SHORT (only candidate)
+23:39:42 INFO TRADE 2023-02-06  TATACONSUM   SHORT driver=SUPERTREND       entry=713.85@09:25  exit=721.25@15:15  TIME_EXIT   P&L Rs -5,911
+23:39:52 INFO Pre-market 2023-02-07: 446 stocks → 143 liquid+signal (62 bull / 81 bear) → 143 watchlist
+23:40:46 INFO 2023-02-07  LONG=[PAYTM/CAMARILLA s=15.17 a=4 p=56% [STANDARD]]  SHORT=[TATACONSUM/FAILED-BO s=45.00 a=15 p=61% [STANDARD]]  -> SHORT wins (score 45.00 > 15.17)
+23:40:46 INFO TRADE 2023-02-07  TATACONSUM   SHORT driver=FAILED-BO        entry=721.10@09:55  exit=719.30@15:15  TIME_EXIT   P&L Rs +520
+23:40:55 INFO Pre-market 2023-02-08: 446 stocks → 150 liquid+signal (57 bull / 93 bear) → 150 watchlist
+23:41:52 INFO 2023-02-08  LONG=[UCOBANK/CAMARILLA s=11.82 a=4 p=50% [STANDARD]]  SHORT=[ONGC/SUPERTREND s=42.00 a=13 p=60% [MEDIUM]]  -> SHORT wins (score 42.00 > 11.82)
+23:41:52 INFO TRADE 2023-02-08  ONGC         SHORT driver=SUPERTREND       entry=130.05@10:20  exit=129.95@15:15  TIME_EXIT   P&L Rs -344
+23:42:01 INFO Pre-market 2023-02-09: 446 stocks → 148 liquid+signal (65 bull / 83 bear) → 148 watchlist
+23:42:57 INFO 2023-02-09  LONG=[none]  SHORT=[COALINDIA/SUPERTREND s=39.00 a=13 p=62% [MEDIUM]]  -> SHORT (only candidate)
+23:42:57 INFO TRADE 2023-02-09  COALINDIA    SHORT driver=SUPERTREND       entry=199.80@09:25  exit=199.85@15:15  TIME_EXIT   P&L Rs -854
+23:43:06 INFO Pre-market 2023-02-10: 446 stocks → 149 liquid+signal (70 bull / 79 bear) → 149 watchlist
+23:44:02 INFO 2023-02-10  LONG=[SBILIFE/CPR s=14.75 a=4 p=50% [STANDARD]]  SHORT=[INDIGO/STOCHASTIC s=36.50 a=12 p=61% [HIGH]]  -> SHORT wins (score 36.50 > 14.75)
+23:44:02 INFO TRADE 2023-02-10  INDIGO       SHORT driver=STOCHASTIC       entry=2042.45@13:45  exit=2043.35@15:15  TIME_EXIT   P&L Rs -946
+23:44:11 INFO Pre-market 2023-02-13: 446 stocks → 148 liquid+signal (65 bull / 83 bear) → 148 watchlist
+23:45:09 INFO 2023-02-13  LONG=[none]  SHORT=[IRFC/SUPERTREND s=42.00 a=14 p=62% [MEDIUM]]  -> SHORT (only candidate)
+23:45:09 INFO TRADE 2023-02-13  IRFC         SHORT driver=SUPERTREND       entry=29.95@12:05  exit=30.00@15:15  TIME_EXIT   P&L Rs -1,564
+23:45:17 INFO Pre-market 2023-02-14: 446 stocks → 150 liquid+signal (57 bull / 93 bear) → 150 watchlist
+23:46:10 INFO 2023-02-14  LONG=[none]  SHORT=[TATACONSUM/STOCHASTIC s=36.50 a=11 p=61% [HIGH]]  -> SHORT (only candidate)
+23:46:10 INFO TRADE 2023-02-14  TATACONSUM   SHORT driver=STOCHASTIC       entry=710.50@10:25  exit=711.65@15:15  TIME_EXIT   P&L Rs -1,537
+23:46:20 INFO Pre-market 2023-02-15: 446 stocks → 151 liquid+signal (62 bull / 89 bear) → 151 watchlist
+23:47:17 INFO 2023-02-15  LONG=[TATAELXSI/CAMARILLA s=18.17 a=5 p=50% [STANDARD]]  SHORT=[INDIGO/FAILED-BO s=33.12 a=12 p=64% [STANDARD]]  -> SHORT wins (score 33.12 > 18.17)
+23:47:17 INFO TRADE 2023-02-15  INDIGO       SHORT driver=FAILED-BO        entry=2021.15@11:35  exit=1990.45@15:15  TIME_EXIT   P&L Rs +6,859
+23:47:25 INFO Pre-market 2023-02-16: 446 stocks → 145 liquid+signal (75 bull / 70 bear) → 145 watchlist
+23:48:18 INFO 2023-02-16  LONG=[MPHASIS/CAMARILLA s=15.79 a=5 p=56% [STANDARD]]  SHORT=[HINDUNILVR/CAMARILLA s=42.00 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 42.00 > 15.79)
+23:48:18 INFO TRADE 2023-02-16  HINDUNILVR   SHORT driver=CAMARILLA        entry=2557.53@09:15  exit=2538.47@10:25  TARGET_HIT  P&L Rs +2,991
+23:48:28 INFO Pre-market 2023-02-17: 446 stocks → 143 liquid+signal (76 bull / 67 bear) → 143 watchlist
+23:49:24 INFO 2023-02-17  LONG=[DMART/CAMARILLA s=14.35 a=4 p=49% [STANDARD]]  SHORT=[APOLLOTYRE/BEAR-ENGULF s=33.00 a=11 p=62% [STANDARD]]  -> SHORT wins (score 33.00 > 14.35)
+23:49:24 INFO TRADE 2023-02-17  APOLLOTYRE   SHORT driver=BEAR-ENGULF      entry=334.60@09:30  exit=330.65@15:15  TIME_EXIT   P&L Rs +5,176
+23:49:33 INFO Pre-market 2023-02-20: 446 stocks → 146 liquid+signal (74 bull / 72 bear) → 146 watchlist
+23:50:29 INFO 2023-02-20  LONG=[none]  SHORT=[HINDPETRO/CPR s=36.00 a=12 p=65% [MEDIUM]]  -> SHORT (only candidate)
+23:50:29 INFO TRADE 2023-02-20  HINDPETRO    SHORT driver=CPR              entry=131.38@09:15  exit=130.88@09:20  TARGET_HIT  P&L Rs +1,175
+23:50:39 INFO Pre-market 2023-02-21: 446 stocks → 151 liquid+signal (77 bull / 74 bear) → 151 watchlist
+23:51:36 INFO 2023-02-21  LONG=[MARICO/VPOC s=12.07 a=5 p=50% [STANDARD]]  SHORT=[TCS/SUPERTREND s=42.00 a=13 p=62% [MEDIUM]]  -> SHORT wins (score 42.00 > 12.07)
+23:51:36 INFO TRADE 2023-02-21  TCS          SHORT driver=SUPERTREND       entry=3484.00@09:55  exit=3448.40@15:15  TIME_EXIT   P&L Rs +4,367
+23:51:45 INFO Pre-market 2023-02-22: 446 stocks → 152 liquid+signal (86 bull / 66 bear) → 152 watchlist
+23:52:43 INFO 2023-02-22  LONG=[BALKRISIND/CAMARILLA s=14.60 a=4 p=50% [STANDARD]]  SHORT=[AXISBANK/CPR s=36.00 a=12 p=65% [MEDIUM]]  -> SHORT wins (score 36.00 > 14.60)
+23:52:43 INFO TRADE 2023-02-22  AXISBANK     SHORT driver=CPR              entry=843.23@09:15  exit=842.99@09:20  TARGET_HIT  P&L Rs -590
+23:52:52 INFO Pre-market 2023-02-23: 446 stocks → 148 liquid+signal (71 bull / 77 bear) → 148 watchlist
+23:53:50 INFO 2023-02-23  LONG=[none]  SHORT=[BPCL/FAILED-BO s=36.00 a=12 p=60% [STANDARD]]  -> SHORT (only candidate)
+23:53:50 INFO TRADE 2023-02-23  BPCL         SHORT driver=FAILED-BO        entry=139.15@09:15  exit=138.25@15:15  TIME_EXIT   P&L Rs +2,507
+23:54:00 INFO Pre-market 2023-02-24: 446 stocks → 146 liquid+signal (69 bull / 77 bear) → 146 watchlist
+23:54:54 INFO 2023-02-24  LONG=[ZEEL/GAP-FADE s=15.20 a=4 p=49% [STANDARD]]  SHORT=[HDFCBANK/SUPERTREND s=48.00 a=16 p=64% [MEDIUM]]  -> SHORT wins (score 48.00 > 15.20)
+23:54:54 INFO TRADE 2023-02-24  HDFCBANK     SHORT driver=SUPERTREND       entry=796.60@10:40  exit=795.70@15:15  TIME_EXIT   P&L Rs -164
+23:55:02 INFO Pre-market 2023-02-27: 446 stocks → 142 liquid+signal (61 bull / 81 bear) → 142 watchlist
+23:55:55 INFO 2023-02-27  LONG=[none]  SHORT=[TITAN/SUPERTREND s=39.00 a=13 p=64% [MEDIUM]]  -> SHORT (only candidate)
+23:55:55 INFO TRADE 2023-02-27  TITAN        SHORT driver=SUPERTREND       entry=2384.40@09:40  exit=2402.65@15:15  TIME_EXIT   P&L Rs -4,543
+23:56:04 INFO Pre-market 2023-02-28: 446 stocks → 140 liquid+signal (60 bull / 80 bear) → 140 watchlist
+23:56:55 INFO 2023-02-28  LONG=[IGL/CAMARILLA s=11.47 a=4 p=50% [STANDARD]]  SHORT=[TATACHEM/SUPERTREND s=36.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 11.47)
+23:56:55 INFO TRADE 2023-02-28  TATACHEM     SHORT driver=SUPERTREND       entry=967.85@10:40  exit=979.80@12:55  STOP_HIT    P&L Rs -6,896
+23:57:04 INFO Pre-market 2023-03-01: 446 stocks → 140 liquid+signal (54 bull / 86 bear) → 140 watchlist
+23:57:59 INFO 2023-03-01  LONG=[BHEL/VPOC s=14.57 a=5 p=50% [STANDARD]]  SHORT=[BIOCON/FAILED-BO s=33.00 a=11 p=59% [STANDARD]]  -> SHORT wins (score 33.00 > 14.57)
+23:57:59 INFO TRADE 2023-03-01  BIOCON       SHORT driver=FAILED-BO        entry=231.65@09:25  exit=227.05@15:15  TIME_EXIT   P&L Rs +9,204
+23:58:08 INFO Pre-market 2023-03-02: 446 stocks → 134 liquid+signal (70 bull / 64 bear) → 134 watchlist
+23:59:01 INFO 2023-03-02  LONG=[none]  SHORT=[UNITDSPR/SUPERTREND s=45.00 a=14 p=61% [MEDIUM]]  -> SHORT (only candidate)
+23:59:01 INFO TRADE 2023-03-02  UNITDSPR     SHORT driver=SUPERTREND       entry=740.75@09:55  exit=735.15@15:15  TIME_EXIT   P&L Rs +3,049
+23:59:10 INFO Pre-market 2023-03-03: 446 stocks → 141 liquid+signal (60 bull / 81 bear) → 141 watchlist
+00:00:05 INFO 2023-03-03  LONG=[PNB/CAMARILLA s=10.82 a=4 p=50% [STANDARD]]  SHORT=[PAGEIND/DESC-TRI s=45.00 a=15 p=63% [STANDARD]]  -> SHORT wins (score 45.00 > 10.82)
+00:00:05 INFO TRADE 2023-03-03  PAGEIND      SHORT driver=DESC-TRI         entry=37722.05@09:15  exit=37349.80@15:15  TIME_EXIT   P&L Rs +4,126
+00:00:15 INFO Pre-market 2023-03-06: 446 stocks → 137 liquid+signal (80 bull / 57 bear) → 137 watchlist
+00:01:08 INFO 2023-03-06  LONG=[none]  SHORT=[PAGEIND/SUPERTREND s=45.00 a=15 p=62% [MEDIUM]]  -> SHORT (only candidate)
+00:01:08 INFO TRADE 2023-03-06  PAGEIND      SHORT driver=SUPERTREND       entry=37127.00@09:50  exit=37331.10@15:15  TIME_EXIT   P&L Rs -3,360
+00:01:17 INFO Pre-market 2023-03-08: 446 stocks → 147 liquid+signal (87 bull / 60 bear) → 147 watchlist
+00:02:15 INFO 2023-03-08  LONG=[BHEL/CAMARILLA s=15.17 a=4 p=50% [STANDARD]]  SHORT=[DABUR/CPR s=30.00 a=10 p=64% [MEDIUM]]  -> SHORT wins (score 30.00 > 15.17)
+00:02:15 INFO TRADE 2023-03-08  DABUR        SHORT driver=CPR              entry=536.10@09:15  exit=534.90@09:20  TARGET_HIT  P&L Rs +391
+00:02:25 INFO Pre-market 2023-03-09: 446 stocks → 138 liquid+signal (86 bull / 52 bear) → 138 watchlist
+00:03:19 INFO 2023-03-09  LONG=[SBICARD/CAMARILLA s=15.20 a=6 p=56% [STANDARD]]  SHORT=[HEROMOTOCO/SUPERTREND s=36.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 15.20)
+00:03:19 INFO TRADE 2023-03-09  HEROMOTOCO   SHORT driver=SUPERTREND       entry=2308.25@09:40  exit=2285.10@15:15  TIME_EXIT   P&L Rs +4,276
+00:03:28 INFO Pre-market 2023-03-10: 446 stocks → 142 liquid+signal (69 bull / 73 bear) → 142 watchlist
+00:04:23 INFO 2023-03-10  LONG=[none]  SHORT=[M&MFIN/STOCHASTIC s=27.12 a=10 p=65% [HIGH]]  -> SHORT (only candidate)
+00:04:23 INFO TRADE 2023-03-10  M&MFIN       SHORT driver=STOCHASTIC       entry=225.90@11:55  exit=226.65@15:15  TIME_EXIT   P&L Rs -2,390
+00:04:32 INFO Pre-market 2023-03-13: 446 stocks → 123 liquid+signal (67 bull / 56 bear) → 123 watchlist
+00:05:19 INFO 2023-03-13  LONG=[none]  SHORT=[RELIANCE/SUPERTREND s=39.00 a=12 p=61% [MEDIUM]]  -> SHORT (only candidate)
+00:05:19 INFO TRADE 2023-03-13  RELIANCE     SHORT driver=SUPERTREND       entry=1109.90@09:35  exit=1090.48@14:30  TARGET_HIT  P&L Rs +8,018
+00:05:28 INFO Pre-market 2023-03-14: 446 stocks → 152 liquid+signal (52 bull / 100 bear) → 152 watchlist
+00:06:24 INFO 2023-03-14  LONG=[none]  SHORT=[DRREDDY/SUPERTREND s=48.00 a=15 p=61% [MEDIUM]]  -> SHORT (only candidate)
+00:06:24 INFO TRADE 2023-03-14  DRREDDY      SHORT driver=SUPERTREND       entry=873.20@10:15  exit=870.35@15:15  TIME_EXIT   P&L Rs +903
+00:06:33 INFO Pre-market 2023-03-15: 446 stocks → 136 liquid+signal (51 bull / 85 bear) → 136 watchlist
+00:07:24 INFO 2023-03-15  LONG=[IEX/VPOC s=16.17 a=7 p=56% [STANDARD]]  SHORT=[WIPRO/SUPERTREND s=45.00 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 45.00 > 16.17)
+00:07:24 INFO TRADE 2023-03-15  WIPRO        SHORT driver=SUPERTREND       entry=181.40@09:55  exit=179.40@15:15  TIME_EXIT   P&L Rs +4,786
+00:07:33 INFO Pre-market 2023-03-16: 446 stocks → 144 liquid+signal (53 bull / 91 bear) → 144 watchlist
+00:08:26 INFO 2023-03-16  LONG=[BPCL/CAMARILLA s=17.32 a=6 p=55% [STANDARD]]  SHORT=[DRREDDY/SUPERTREND s=36.00 a=12 p=60% [MEDIUM]]  -> SHORT wins (score 36.00 > 17.32)
+00:08:26 INFO TRADE 2023-03-16  DRREDDY      SHORT driver=SUPERTREND       entry=877.45@10:05  exit=877.10@15:15  TIME_EXIT   P&L Rs -529
+00:08:36 INFO Pre-market 2023-03-17: 446 stocks → 137 liquid+signal (60 bull / 77 bear) → 137 watchlist
+00:09:31 INFO 2023-03-17  LONG=[none]  SHORT=[POLYCAB/SUPERTREND s=33.50 a=11 p=64% [MEDIUM]]  -> SHORT (only candidate)
+00:09:31 INFO TRADE 2023-03-17  POLYCAB      SHORT driver=SUPERTREND       entry=2887.40@12:05  exit=2891.60@15:15  TIME_EXIT   P&L Rs -1,455
+00:09:39 INFO Pre-market 2023-03-20: 446 stocks → 141 liquid+signal (65 bull / 76 bear) → 141 watchlist
+00:10:34 INFO 2023-03-20  LONG=[none]  SHORT=[TATACHEM/CPR s=36.50 a=12 p=64% [MEDIUM]]  -> SHORT (only candidate)
+00:10:34 INFO TRADE 2023-03-20  TATACHEM     SHORT driver=CPR              entry=963.55@09:15  exit=962.95@09:20  TARGET_HIT  P&L Rs -417
+00:10:43 INFO Pre-market 2023-03-21: 446 stocks → 144 liquid+signal (57 bull / 87 bear) → 144 watchlist
+00:11:41 INFO 2023-03-21  LONG=[none]  SHORT=[NMDC/SUPERTREND s=42.00 a=14 p=62% [MEDIUM]]  -> SHORT (only candidate)
+00:11:41 INFO TRADE 2023-03-21  NMDC         SHORT driver=SUPERTREND       entry=32.55@09:40  exit=32.35@15:15  TIME_EXIT   P&L Rs +2,345
+00:11:50 INFO Pre-market 2023-03-22: 446 stocks → 140 liquid+signal (62 bull / 78 bear) → 140 watchlist
+00:12:45 INFO 2023-03-22  LONG=[none]  SHORT=[BHARTIARTL/SUPERTREND s=42.00 a=14 p=64% [MEDIUM]]  -> SHORT (only candidate)
+00:12:45 INFO TRADE 2023-03-22  BHARTIARTL   SHORT driver=SUPERTREND       entry=756.35@10:15  exit=756.65@15:15  TIME_EXIT   P&L Rs -927
+00:12:55 INFO Pre-market 2023-03-23: 446 stocks → 138 liquid+signal (63 bull / 75 bear) → 138 watchlist
+00:13:50 INFO 2023-03-23  LONG=[none]  SHORT=[PFC/STOCHASTIC s=33.00 a=11 p=63% [HIGH]]  -> SHORT (only candidate)
+00:13:50 INFO TRADE 2023-03-23  PFC          SHORT driver=STOCHASTIC       entry=122.55@11:45  exit=121.80@15:15  TIME_EXIT   P&L Rs +2,332
+00:13:59 INFO Pre-market 2023-03-24: 446 stocks → 137 liquid+signal (66 bull / 71 bear) → 137 watchlist
+00:14:55 INFO 2023-03-24  LONG=[none]  SHORT=[LICI/DESC-TRI s=39.00 a=13 p=64% [STANDARD]]  -> SHORT (only candidate)
+00:14:55 INFO TRADE 2023-03-24  LICI         SHORT driver=DESC-TRI         entry=285.10@09:15  exit=280.00@15:15  TIME_EXIT   P&L Rs +8,217
+00:15:05 INFO Pre-market 2023-03-27: 446 stocks → 140 liquid+signal (49 bull / 91 bear) → 140 watchlist
+00:16:00 INFO 2023-03-27  LONG=[none]  SHORT=[CHOLAFIN/STOCHASTIC s=36.00 a=12 p=64% [HIGH]]  -> SHORT (only candidate)
+00:16:00 INFO TRADE 2023-03-27  CHOLAFIN     SHORT driver=STOCHASTIC       entry=717.25@11:50  exit=715.55@15:15  TIME_EXIT   P&L Rs +457
+00:16:10 INFO Pre-market 2023-03-28: 446 stocks → 139 liquid+signal (46 bull / 93 bear) → 139 watchlist
+00:17:03 INFO 2023-03-28  LONG=[HDFCBANK/CAMARILLA s=11.60 a=4 p=49% [STANDARD]]  SHORT=[VOLTAS/CPR s=39.00 a=13 p=64% [MEDIUM]]  -> SHORT wins (score 39.00 > 11.60)
+00:17:03 INFO TRADE 2023-03-28  VOLTAS       SHORT driver=CPR              entry=821.08@09:15  exit=821.04@09:20  TARGET_HIT  P&L Rs -708
+00:17:12 INFO Pre-market 2023-03-29: 446 stocks → 137 liquid+signal (42 bull / 95 bear) → 137 watchlist
+00:18:04 INFO 2023-03-29  LONG=[ICICIPRULI/VPOC s=12.04 a=4 p=49% [STANDARD]]  SHORT=[HINDALCO/SUPERTREND s=39.00 a=12 p=61% [MEDIUM]]  -> SHORT wins (score 39.00 > 12.04)
+00:18:04 INFO TRADE 2023-03-29  HINDALCO     SHORT driver=SUPERTREND       entry=390.55@11:05  exit=394.88@13:45  STOP_HIT    P&L Rs -6,280
+00:18:13 INFO Pre-market 2023-03-31: 446 stocks → 126 liquid+signal (63 bull / 63 bear) → 126 watchlist
+00:19:05 INFO 2023-03-31  LONG=[AXISBANK/CAMARILLA s=10.72 a=4 p=50% [STANDARD]]  SHORT=[KOTAKBANK/BEAR-ENGULF s=33.50 a=10 p=59% [STANDARD]]  -> SHORT wins (score 33.50 > 10.72)
+00:19:05 INFO TRADE 2023-03-31  KOTAKBANK    SHORT driver=BEAR-ENGULF      entry=344.50@10:45  exit=346.62@12:20  STOP_HIT    P&L Rs -3,813
+00:19:14 INFO Pre-market 2023-04-03: 446 stocks → 130 liquid+signal (70 bull / 60 bear) → 130 watchlist
+00:20:07 INFO 2023-04-03  LONG=[CONCOR/VPOC s=11.47 a=4 p=50% [STANDARD]]  SHORT=[BHEL/SUPERTREND s=36.00 a=12 p=63% [MEDIUM]]  -> SHORT wins (score 36.00 > 11.47)
+00:20:07 INFO TRADE 2023-04-03  BHEL         SHORT driver=SUPERTREND       entry=70.15@10:10  exit=69.85@15:15  TIME_EXIT   P&L Rs +1,410
+00:20:16 INFO Pre-market 2023-04-05: 446 stocks → 134 liquid+signal (80 bull / 54 bear) → 134 watchlist
+00:21:09 INFO 2023-04-05  LONG=[AMBUJACEM/CAMARILLA s=18.04 a=4 p=50% [STANDARD]]  SHORT=[CONCOR/CPR s=45.00 a=15 p=64% [MEDIUM]]  -> SHORT wins (score 45.00 > 18.04)
+00:21:09 INFO TRADE 2023-04-05  CONCOR       SHORT driver=CPR              entry=464.57@09:15  exit=464.27@09:20  TARGET_HIT  P&L Rs -406
+00:21:18 INFO Pre-market 2023-04-06: 446 stocks → 139 liquid+signal (86 bull / 53 bear) → 139 watchlist
+00:22:13 INFO 2023-04-06  LONG=[none]  SHORT=[ADANIENT/FAILED-BO s=36.75 a=11 p=59% [STANDARD]]  -> SHORT (only candidate)
+00:22:13 INFO TRADE 2023-04-06  ADANIENT     SHORT driver=FAILED-BO        entry=1665.50@10:00  exit=1675.84@10:30  STOP_HIT    P&L Rs -3,831
+00:22:22 INFO Pre-market 2023-04-10: 446 stocks → 143 liquid+signal (94 bull / 49 bear) → 143 watchlist
+00:23:19 INFO 2023-04-10  LONG=[IGL/VPOC s=11.79 a=5 p=59% [STANDARD]]  SHORT=[MOTHERSON/SUPERTREND s=39.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 39.00 > 11.79)
+00:23:19 INFO TRADE 2023-04-10  MOTHERSON    SHORT driver=SUPERTREND       entry=45.03@11:05  exit=45.33@15:15  TIME_EXIT   P&L Rs -4,062
+00:23:28 INFO Pre-market 2023-04-11: 446 stocks → 143 liquid+signal (100 bull / 43 bear) → 143 watchlist
+00:24:25 INFO 2023-04-11  LONG=[CGPOWER/CAMARILLA s=15.57 a=5 p=50% [STANDARD]]  SHORT=[CUMMINSIND/CPR s=39.00 a=13 p=65% [MEDIUM]]  -> SHORT wins (score 39.00 > 15.57)
+00:24:25 INFO TRADE 2023-04-11  CUMMINSIND   SHORT driver=CPR              entry=1581.93@09:15  exit=1575.16@09:20  TARGET_HIT  P&L Rs +1,411
+00:24:35 INFO Pre-market 2023-04-12: 446 stocks → 139 liquid+signal (104 bull / 35 bear) → 135 watchlist
+00:25:30 INFO 2023-04-12  LONG=[ICICIPRULI/VPOC s=14.54 a=4 p=50% [STANDARD]]  SHORT=[TATAPOWER/SUPERTREND s=39.00 a=13 p=61% [MEDIUM]]  -> SHORT wins (score 39.00 > 14.54)
+00:25:30 INFO TRADE 2023-04-12  TATAPOWER    SHORT driver=SUPERTREND       entry=196.55@09:40  exit=197.15@15:15  TIME_EXIT   P&L Rs -2,255
+00:25:38 INFO Pre-market 2023-04-13: 446 stocks → 134 liquid+signal (113 bull / 21 bear) → 121 watchlist
+00:26:26 INFO 2023-04-13  LONG=[none]  SHORT=[SUNPHARMA/SUPERTREND s=45.00 a=14 p=61% [MEDIUM]]  -> SHORT (only candidate)
+00:26:26 INFO TRADE 2023-04-13  SUNPHARMA    SHORT driver=SUPERTREND       entry=1012.75@09:40  exit=1003.70@15:15  TIME_EXIT   P&L Rs +3,736
+00:26:35 INFO Pre-market 2023-04-17: 446 stocks → 140 liquid+signal (114 bull / 26 bear) → 126 watchlist
+00:27:23 INFO 2023-04-17  LONG=[IRCTC/CAMARILLA s=16.82 a=4 p=50% [STANDARD]]  SHORT=[UPL/SUPERTREND s=36.00 a=11 p=60% [MEDIUM]]  -> SHORT wins (score 36.00 > 16.82)
+00:27:23 INFO TRADE 2023-04-17  UPL          SHORT driver=SUPERTREND       entry=707.25@09:55  exit=707.30@15:15  TIME_EXIT   P&L Rs -763
+00:27:32 INFO Pre-market 2023-04-18: 446 stocks → 146 liquid+signal (121 bull / 25 bear) → 125 watchlist
+00:28:20 INFO 2023-04-18  LONG=[AUROPHARMA/VPOC s=12.42 a=4 p=49% [STANDARD]]  SHORT=[ADANIPOWER/SUPERTREND s=36.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 12.42)
+00:28:20 INFO TRADE 2023-04-18  ADANIPOWER   SHORT driver=SUPERTREND       entry=37.80@11:45  exit=37.70@15:15  TIME_EXIT   P&L Rs +595
+00:28:29 INFO Pre-market 2023-04-19: 446 stocks → 147 liquid+signal (125 bull / 22 bear) → 122 watchlist
+00:29:18 INFO 2023-04-19  LONG=[none]  SHORT=[MARICO/CPR s=39.12 a=14 p=64% [MEDIUM]]  -> SHORT (only candidate)
+00:29:18 INFO TRADE 2023-04-19  MARICO       SHORT driver=CPR              entry=479.65@09:15  exit=479.18@09:20  TARGET_HIT  P&L Rs -242
+00:29:28 INFO Pre-market 2023-04-20: 446 stocks → 143 liquid+signal (120 bull / 23 bear) → 123 watchlist
+00:30:19 INFO 2023-04-20  LONG=[ICICIPRULI/CAMARILLA s=12.54 a=4 p=49% [STANDARD]]  SHORT=[BAJAJFINSV/SUPERTREND s=36.00 a=12 p=61% [MEDIUM]]  -> SHORT wins (score 36.00 > 12.54)
+00:30:19 INFO TRADE 2023-04-20  BAJAJFINSV   SHORT driver=SUPERTREND       entry=1329.00@10:25  exit=1333.25@15:15  TIME_EXIT   P&L Rs -2,327
+00:30:28 INFO Pre-market 2023-04-21: 446 stocks → 145 liquid+signal (126 bull / 19 bear) → 119 watchlist
+00:31:17 INFO 2023-04-21  LONG=[none]  SHORT=[PVRINOX/SUPERTREND s=39.00 a=13 p=61% [MEDIUM]]  -> SHORT (only candidate)
+00:31:17 INFO TRADE 2023-04-21  PVRINOX      SHORT driver=SUPERTREND       entry=1500.80@09:25  exit=1497.45@15:15  TIME_EXIT   P&L Rs +388
+00:31:27 INFO Pre-market 2023-04-24: 446 stocks → 143 liquid+signal (121 bull / 22 bear) → 122 watchlist
+00:32:16 INFO 2023-04-24  LONG=[HDFCLIFE/CAMARILLA s=14.44 a=6 p=55% [STANDARD]]  SHORT=[BEL/SUPERTREND s=36.00 a=12 p=64% [MEDIUM]]  -> SHORT wins (score 36.00 > 14.44)
+00:32:16 INFO TRADE 2023-04-24  BEL          SHORT driver=SUPERTREND       entry=102.40@09:30  exit=101.80@15:15  TIME_EXIT   P&L Rs +2,202
+00:32:26 INFO Pre-market 2023-04-25: 446 stocks → 150 liquid+signal (124 bull / 26 bear) → 126 watchlist
+00:33:16 INFO 2023-04-25  LONG=[AUROPHARMA/CAMARILLA s=11.57 a=4 p=50% [STANDARD]]  SHORT=[SHREECEM/BEAR-ENGULF s=36.00 a=11 p=60% [STANDARD]]  -> SHORT wins (score 36.00 > 11.57)
+00:33:16 INFO TRADE 2023-04-25  SHREECEM     SHORT driver=BEAR-ENGULF      entry=24060.00@10:25  exit=24086.95@15:15  TIME_EXIT   P&L Rs -1,243
+00:33:26 INFO Pre-market 2023-04-26: 446 stocks → 148 liquid+signal (124 bull / 24 bear) → 124 watchlist
+00:34:17 INFO 2023-04-26  LONG=[ONGC/ASC-TRI s=15.67 a=4 p=50% [STANDARD]]  SHORT=[PVRINOX/CPR s=33.00 a=11 p=65% [MEDIUM]]  -> SHORT wins (score 33.00 > 15.67)
+00:34:17 INFO TRADE 2023-04-26  PVRINOX      SHORT driver=CPR              entry=1473.45@09:15  exit=1467.38@09:20  TARGET_HIT  P&L Rs +1,330
+00:34:26 INFO Pre-market 2023-04-27: 446 stocks → 145 liquid+signal (125 bull / 20 bear) → 120 watchlist
+00:35:19 INFO 2023-04-27  LONG=[BAJAJFINSV/CAMARILLA s=13.29 a=6 p=55% [STANDARD]]  SHORT=[DMART/SUPERTREND s=36.00 a=11 p=61% [MEDIUM]]  -> SHORT wins (score 36.00 > 13.29)
+00:35:19 INFO TRADE 2023-04-27  DMART        SHORT driver=SUPERTREND       entry=3457.00@09:40  exit=3480.53@13:50  STOP_HIT    P&L Rs -4,116
+00:35:28 INFO Pre-market 2023-04-28: 446 stocks → 144 liquid+signal (130 bull / 14 bear) → 114 watchlist
+00:36:14 INFO 2023-04-28  LONG=[CANBK/CAMARILLA s=12.67 a=4 p=50% [STANDARD]]  SHORT=[M&MFIN/SUPERTREND s=36.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 12.67)
+00:36:14 INFO TRADE 2023-04-28  M&MFIN       SHORT driver=SUPERTREND       entry=235.65@09:45  exit=239.86@13:00  STOP_HIT    P&L Rs -9,665
+00:36:24 INFO Pre-market 2023-05-02: 446 stocks → 152 liquid+signal (140 bull / 12 bear) → 112 watchlist
+00:37:08 INFO 2023-05-02  LONG=[ANURAS/CAMARILLA s=15.67 a=5 p=50% [STANDARD]]  SHORT=[TIINDIA/SUPERTREND s=30.50 a=9 p=59% [MEDIUM]]  -> SHORT wins (score 30.50 > 15.67)
+00:37:08 INFO TRADE 2023-05-02  TIINDIA      SHORT driver=SUPERTREND       entry=2545.50@09:20  exit=2587.75@15:15  TIME_EXIT   P&L Rs -9,013
+00:37:17 INFO Pre-market 2023-05-03: 446 stocks → 162 liquid+signal (149 bull / 13 bear) → 113 watchlist
+00:38:02 INFO 2023-05-03  LONG=[BALRAMCHIN/CAMARILLA s=15.29 a=4 p=49% [STANDARD]]  SHORT=[SUNPHARMA/STOCHASTIC s=30.62 a=11 p=65% [HIGH]]  -> SHORT wins (score 30.62 > 15.29)
+00:38:02 INFO TRADE 2023-05-03  SUNPHARMA    SHORT driver=STOCHASTIC       entry=969.80@12:00  exit=964.10@15:15  TIME_EXIT   P&L Rs +2,209
+00:38:11 INFO Pre-market 2023-05-04: 446 stocks → 161 liquid+signal (144 bull / 17 bear) → 117 watchlist
+00:38:58 INFO 2023-05-04  LONG=[none]  SHORT=[BHARATFORG/SUPERTREND s=36.75 a=13 p=64% [MEDIUM]]  -> SHORT (only candidate)
+00:38:58 INFO TRADE 2023-05-04  BHARATFORG   SHORT driver=SUPERTREND       entry=783.00@10:15  exit=775.00@15:15  TIME_EXIT   P&L Rs +4,379
+00:39:07 INFO Pre-market 2023-05-05: 446 stocks → 159 liquid+signal (145 bull / 14 bear) → 114 watchlist
+00:39:52 INFO 2023-05-05  LONG=[none]  SHORT=[CUB/SUPERTREND s=39.00 a=12 p=61% [MEDIUM]]  -> SHORT (only candidate)
+00:39:52 INFO TRADE 2023-05-05  CUB          SHORT driver=SUPERTREND       entry=141.45@10:35  exit=138.28@13:30  TARGET_HIT  P&L Rs +10,496
+00:40:03 INFO Pre-market 2023-05-08: 446 stocks → 163 liquid+signal (137 bull / 26 bear) → 126 watchlist
+00:40:57 INFO 2023-05-08  LONG=[INDHOTEL/CAMARILLA s=12.42 a=4 p=50% [STANDARD]]  SHORT=[ADANIPOWER/SUPERTREND s=33.00 a=11 p=61% [MEDIUM]]  -> SHORT wins (score 33.00 > 12.42)
+00:40:57 INFO TRADE 2023-05-08  ADANIPOWER   SHORT driver=SUPERTREND       entry=47.95@09:25  exit=47.65@15:15  TIME_EXIT   P&L Rs +2,401
+00:41:06 INFO Pre-market 2023-05-09: 446 stocks → 159 liquid+signal (145 bull / 14 bear) → 114 watchlist
+00:41:54 INFO 2023-05-09  LONG=[SRF/CAMARILLA s=14.92 a=4 p=56% [STANDARD]]  SHORT=[DIXON/SUPERTREND s=36.00 a=12 p=61% [MEDIUM]]  -> SHORT wins (score 36.00 > 14.92)
+00:41:54 INFO TRADE 2023-05-09  DIXON        SHORT driver=SUPERTREND       entry=2905.05@12:50  exit=2900.00@15:15  TIME_EXIT   P&L Rs +141
+00:42:04 INFO Pre-market 2023-05-10: 446 stocks → 160 liquid+signal (141 bull / 19 bear) → 119 watchlist
+00:42:54 INFO 2023-05-10  LONG=[INDIGO/CAMARILLA s=11.32 a=4 p=50% [STANDARD]]  SHORT=[VOLTAS/SUPERTREND s=36.50 a=11 p=60% [MEDIUM]]  -> SHORT wins (score 36.50 > 11.32)
+00:42:54 INFO TRADE 2023-05-10  VOLTAS       SHORT driver=SUPERTREND       entry=800.50@09:35  exit=808.13@12:05  STOP_HIT    P&L Rs -5,495
+00:43:04 INFO Pre-market 2023-05-11: 446 stocks → 160 liquid+signal (145 bull / 15 bear) → 115 watchlist
+00:43:52 INFO 2023-05-11  LONG=[ADANIPORTS/CAMARILLA s=10.54 a=4 p=50% [STANDARD]]  SHORT=[JSWSTEEL/SUPERTREND s=39.00 a=13 p=64% [MEDIUM]]  -> SHORT wins (score 39.00 > 10.54)
+00:43:52 INFO TRADE 2023-05-11  JSWSTEEL     SHORT driver=SUPERTREND       entry=720.80@09:25  exit=710.80@15:15  TIME_EXIT   P&L Rs +6,206
+00:44:01 INFO Pre-market 2023-05-12: 446 stocks → 159 liquid+signal (142 bull / 17 bear) → 117 watchlist
+00:44:51 INFO 2023-05-12  LONG=[none]  SHORT=[BHARATFORG/SUPERTREND s=36.00 a=12 p=64% [MEDIUM]]  -> SHORT (only candidate)
+00:44:51 INFO TRADE 2023-05-12  BHARATFORG   SHORT driver=SUPERTREND       entry=775.80@09:20  exit=762.20@13:50  TARGET_HIT  P&L Rs +8,032
+00:45:00 INFO Pre-market 2023-05-15: 446 stocks → 158 liquid+signal (138 bull / 20 bear) → 120 watchlist
+00:45:52 INFO 2023-05-15  LONG=[OBEROIRLTY/CAMARILLA s=14.92 a=5 p=56% [STANDARD]]  SHORT=[RVNL/SUPERTREND s=36.00 a=11 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 14.92)
+00:45:52 INFO TRADE 2023-05-15  RVNL         SHORT driver=SUPERTREND       entry=121.70@09:20  exit=120.60@15:15  TIME_EXIT   P&L Rs +3,793
+00:46:01 INFO Pre-market 2023-05-16: 446 stocks → 156 liquid+signal (143 bull / 13 bear) → 113 watchlist
+00:46:48 INFO 2023-05-16  LONG=[AUROPHARMA/VPOC s=11.92 a=4 p=55% [STANDARD]]  SHORT=[AWL/SUPERTREND s=33.00 a=11 p=64% [MEDIUM]]  -> SHORT wins (score 33.00 > 11.92)
+00:46:48 INFO TRADE 2023-05-16  AWL          SHORT driver=SUPERTREND       entry=387.20@10:35  exit=383.05@15:15  TIME_EXIT   P&L Rs +4,632
+00:46:57 INFO Pre-market 2023-05-17: 446 stocks → 167 liquid+signal (144 bull / 23 bear) → 123 watchlist
+00:47:45 INFO 2023-05-17  LONG=[none]  SHORT=[NAVINFLUOR/SUPERTREND s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT (only candidate)
+00:47:45 INFO TRADE 2023-05-17  NAVINFLUOR   SHORT driver=SUPERTREND       entry=4677.45@10:05  exit=4654.20@15:15  TIME_EXIT   P&L Rs +1,743
+00:47:54 INFO Pre-market 2023-05-18: 446 stocks → 164 liquid+signal (134 bull / 30 bear) → 130 watchlist
+00:48:45 INFO 2023-05-18  LONG=[none]  SHORT=[LT/SUPERTREND s=42.00 a=14 p=63% [MEDIUM]]  -> SHORT (only candidate)
+00:48:45 INFO TRADE 2023-05-18  LT           SHORT driver=SUPERTREND       entry=2213.20@09:35  exit=2188.00@15:15  TIME_EXIT   P&L Rs +4,947
+00:48:54 INFO Pre-market 2023-05-19: 446 stocks → 167 liquid+signal (125 bull / 42 bear) → 142 watchlist
+00:49:51 INFO 2023-05-19  LONG=[DLF/VPOC s=17.94 a=5 p=50% [STANDARD]]  SHORT=[PVRINOX/SUPERTREND s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT wins (score 39.00 > 17.94)
+00:49:51 INFO TRADE 2023-05-19  PVRINOX      SHORT driver=SUPERTREND       entry=1365.50@09:50  exit=1372.10@15:15  TIME_EXIT   P&L Rs -3,146
+00:50:01 INFO Pre-market 2023-05-22: 446 stocks → 162 liquid+signal (131 bull / 31 bear) → 131 watchlist
+00:50:56 INFO 2023-05-22  LONG=[ACC/VPOC s=14.32 a=5 p=58% [STANDARD]]  SHORT=[INDIANB/VPOC s=33.50 a=11 p=61% [MEDIUM]]  -> SHORT wins (score 33.50 > 14.32)
+00:50:56 INFO TRADE 2023-05-22  INDIANB      SHORT driver=VPOC             entry=279.45@09:15  exit=280.85@10:40  STOP_HIT    P&L Rs -3,230
+00:51:06 INFO Pre-market 2023-05-23: 446 stocks → 160 liquid+signal (132 bull / 28 bear) → 128 watchlist
+00:51:59 INFO 2023-05-23  LONG=[none]  SHORT=[INDHOTEL/SUPERTREND s=39.00 a=13 p=62% [MEDIUM]]  -> SHORT (only candidate)
+00:51:59 INFO TRADE 2023-05-23  INDHOTEL     SHORT driver=SUPERTREND       entry=369.95@09:35  exit=370.90@15:15  TIME_EXIT   P&L Rs -2,013
+00:52:09 INFO Pre-market 2023-05-24: 446 stocks → 167 liquid+signal (132 bull / 35 bear) → 135 watchlist
+00:53:05 INFO 2023-05-24  LONG=[TATAELXSI/CAMARILLA s=15.42 a=4 p=49% [STANDARD]]  SHORT=[NMDC/SUPERTREND s=33.00 a=11 p=62% [MEDIUM]]  -> SHORT wins (score 33.00 > 15.42)
+00:53:05 INFO TRADE 2023-05-24  NMDC         SHORT driver=SUPERTREND       entry=30.50@13:10  exit=30.45@15:15  TIME_EXIT   P&L Rs +91
+00:53:15 INFO Pre-market 2023-05-25: 446 stocks → 170 liquid+signal (135 bull / 35 bear) → 135 watchlist
+00:54:10 INFO 2023-05-25  LONG=[CEATLTD/CAMARILLA s=16.42 a=6 p=50% [STANDARD]]  SHORT=[BHARATFORG/STOCHASTIC s=45.00 a=15 p=63% [HIGH]]  -> SHORT wins (score 45.00 > 16.42)
+00:54:10 INFO TRADE 2023-05-25  BHARATFORG   SHORT driver=STOCHASTIC       entry=758.20@12:20  exit=757.20@15:15  TIME_EXIT   P&L Rs -69
+00:54:20 INFO Pre-market 2023-05-26: 446 stocks → 165 liquid+signal (138 bull / 27 bear) → 127 watchlist
+00:55:15 INFO 2023-05-26  LONG=[CUMMINSIND/VPOC s=14.67 a=5 p=56% [STANDARD]]  SHORT=[ONGC/SUPERTREND s=36.00 a=11 p=61% [MEDIUM]]  -> SHORT wins (score 36.00 > 14.67)
+00:55:15 INFO TRADE 2023-05-26  ONGC         SHORT driver=SUPERTREND       entry=149.80@09:20  exit=147.90@15:15  TIME_EXIT   P&L Rs +5,615
+00:55:25 INFO Pre-market 2023-05-29: 446 stocks → 161 liquid+signal (138 bull / 23 bear) → 123 watchlist
+00:56:15 INFO 2023-05-29  LONG=[IRCTC/VPOC s=19.04 a=6 p=55% [STANDARD]]  SHORT=[POONAWALLA/SUPERTREND s=42.00 a=13 p=61% [MEDIUM]]  -> SHORT wins (score 42.00 > 19.04)
+00:56:15 INFO TRADE 2023-05-29  POONAWALLA   SHORT driver=SUPERTREND       entry=344.45@09:30  exit=340.75@15:15  TIME_EXIT   P&L Rs +4,643
+00:56:24 INFO Pre-market 2023-05-30: 446 stocks → 161 liquid+signal (137 bull / 24 bear) → 124 watchlist
+00:57:14 INFO 2023-05-30  LONG=[APOLLOHOSP/ASC-TRI s=16.29 a=6 p=55% [STANDARD]]  SHORT=[CHOLAFIN/STOCHASTIC s=36.00 a=12 p=64% [HIGH]]  -> SHORT wins (score 36.00 > 16.29)
+00:57:14 INFO TRADE 2023-05-30  CHOLAFIN     SHORT driver=STOCHASTIC       entry=1040.95@13:50  exit=1046.70@15:15  TIME_EXIT   P&L Rs -3,490
+00:57:23 INFO Pre-market 2023-05-31: 446 stocks → 163 liquid+signal (134 bull / 29 bear) → 129 watchlist
+00:58:14 INFO 2023-05-31  LONG=[LTF/CAMARILLA s=14.92 a=4 p=50% [STANDARD]]  SHORT=[AXISBANK/RISE-WEDGE s=30.75 a=11 p=63% [STANDARD]]  -> SHORT wins (score 30.75 > 14.92)
+00:58:14 INFO TRADE 2023-05-31  AXISBANK     SHORT driver=RISE-WEDGE       entry=925.40@11:35  exit=913.75@15:15  TIME_EXIT   P&L Rs +5,566
+00:58:24 INFO Pre-market 2023-06-01: 446 stocks → 168 liquid+signal (139 bull / 29 bear) → 129 watchlist
+00:59:19 INFO 2023-06-01  LONG=[APOLLOHOSP/CAMARILLA s=11.92 a=4 p=57% [STANDARD]]  SHORT=[IEX/STOCHASTIC s=33.50 a=10 p=59% [HIGH]]  -> SHORT wins (score 33.50 > 11.92)
+00:59:19 INFO TRADE 2023-06-01  IEX          SHORT driver=STOCHASTIC       entry=153.55@12:00  exit=153.45@15:15  TIME_EXIT   P&L Rs -403
+00:59:29 INFO Pre-market 2023-06-02: 446 stocks → 168 liquid+signal (138 bull / 30 bear) → 130 watchlist
+01:00:24 INFO 2023-06-02  LONG=[CUMMINSIND/MACD s=14.44 a=4 p=50% [STANDARD]]  SHORT=[BAJAJFINSV/CAMARILLA s=33.50 a=10 p=60% [MEDIUM]]  -> SHORT wins (score 33.50 > 14.44)
+01:00:24 INFO TRADE 2023-06-02  BAJAJFINSV   SHORT driver=CAMARILLA        entry=1453.11@09:45  exit=1457.22@09:50  STOP_HIT    P&L Rs -2,144
+01:00:34 INFO Pre-market 2023-06-05: 446 stocks → 174 liquid+signal (152 bull / 22 bear) → 122 watchlist
+01:01:26 INFO 2023-06-05  LONG=[none]  SHORT=[TCS/SUPERTREND s=39.00 a=13 p=62% [MEDIUM]]  -> SHORT (only candidate)
+01:01:26 INFO TRADE 2023-06-05  TCS          SHORT driver=SUPERTREND       entry=3305.10@12:35  exit=3287.60@15:15  TIME_EXIT   P&L Rs +1,916
+01:01:36 INFO Pre-market 2023-06-06: 446 stocks → 172 liquid+signal (151 bull / 21 bear) → 121 watchlist
+01:02:27 INFO 2023-06-06  LONG=[ULTRACEMCO/CAMARILLA s=12.54 a=4 p=50% [STANDARD]]  SHORT=[POWERGRID/STOCHASTIC s=36.50 a=12 p=63% [HIGH]]  -> SHORT wins (score 36.50 > 12.54)
+01:02:27 INFO TRADE 2023-06-06  POWERGRID    SHORT driver=STOCHASTIC       entry=173.55@09:55  exit=173.00@15:15  TIME_EXIT   P&L Rs +857
+01:02:37 INFO Pre-market 2023-06-07: 446 stocks → 166 liquid+signal (153 bull / 13 bear) → 113 watchlist
+01:03:25 INFO 2023-06-07  LONG=[BRITANNIA/CAMARILLA s=17.42 a=5 p=55% [STANDARD]]  SHORT=[LUPIN/SUPERTREND s=42.00 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 42.00 > 17.42)
+01:03:25 INFO TRADE 2023-06-07  LUPIN        SHORT driver=SUPERTREND       entry=818.50@10:45  exit=817.50@15:15  TIME_EXIT   P&L Rs -118
+01:03:35 INFO Pre-market 2023-06-08: 446 stocks → 170 liquid+signal (163 bull / 7 bear) → 107 watchlist
+01:04:21 INFO 2023-06-08  LONG=[TATAPOWER/VPOC s=15.17 a=5 p=56% [STANDARD]]  SHORT=[GODREJPROP/VPOC s=36.00 a=12 p=63% [MEDIUM]]  -> SHORT wins (score 36.00 > 15.17)
+01:04:21 INFO TRADE 2023-06-08  GODREJPROP   SHORT driver=VPOC             entry=1446.50@09:15  exit=1427.56@11:25  TARGET_HIT  P&L Rs +5,812
+01:04:31 INFO Pre-market 2023-06-09: 446 stocks → 168 liquid+signal (156 bull / 12 bear) → 112 watchlist
+01:05:17 INFO 2023-06-09  LONG=[HAL/VPOC s=14.57 a=5 p=55% [STANDARD]]  SHORT=[BDL/SUPERTREND s=36.75 a=11 p=60% [MEDIUM]]  -> SHORT wins (score 36.75 > 14.57)
+01:05:17 INFO TRADE 2023-06-09  BDL          SHORT driver=SUPERTREND       entry=572.10@09:25  exit=587.15@13:45  STOP_HIT    P&L Rs -13,871
+01:05:27 INFO Pre-market 2023-06-12: 446 stocks → 167 liquid+signal (148 bull / 19 bear) → 119 watchlist
+01:06:14 INFO 2023-06-12  LONG=[HINDPETRO/VPOC s=15.42 a=5 p=50% [STANDARD]]  SHORT=[ZENSARTECH/SUPERTREND s=36.00 a=11 p=59% [MEDIUM]]  -> SHORT wins (score 36.00 > 15.42)
+01:06:14 INFO TRADE 2023-06-12  ZENSARTECH   SHORT driver=SUPERTREND       entry=394.80@10:10  exit=395.00@15:15  TIME_EXIT   P&L Rs -982
+01:06:24 INFO Pre-market 2023-06-13: 446 stocks → 172 liquid+signal (156 bull / 16 bear) → 116 watchlist
+01:07:11 INFO 2023-06-13  LONG=[AXISBANK/CAMARILLA s=12.67 a=4 p=49% [STANDARD]]  SHORT=[SBIN/SUPERTREND s=39.00 a=13 p=64% [MEDIUM]]  -> SHORT wins (score 39.00 > 12.67)
+01:07:11 INFO TRADE 2023-06-13  SBIN         SHORT driver=SUPERTREND       entry=577.60@10:05  exit=576.80@15:15  TIME_EXIT   P&L Rs -36
+01:07:21 INFO Pre-market 2023-06-14: 446 stocks → 169 liquid+signal (154 bull / 15 bear) → 115 watchlist
+01:08:11 INFO 2023-06-14  LONG=[LT/CPR s=15.19 a=4 p=49% [STANDARD]]  SHORT=[EICHERMOT/SUPERTREND s=36.00 a=12 p=64% [MEDIUM]]  -> SHORT wins (score 36.00 > 15.19)
+01:08:11 INFO TRADE 2023-06-14  EICHERMOT    SHORT driver=SUPERTREND       entry=3593.60@10:35  exit=3573.45@15:15  TIME_EXIT   P&L Rs +2,074
+01:08:21 INFO Pre-market 2023-06-15: 446 stocks → 164 liquid+signal (153 bull / 11 bear) → 111 watchlist
+01:09:07 INFO 2023-06-15  LONG=[ADANIENT/CAMARILLA s=12.42 a=4 p=49% [STANDARD]]  SHORT=[M&MFIN/SUPERTREND s=39.50 a=13 p=62% [MEDIUM]]  -> SHORT wins (score 39.50 > 12.42)
+01:09:07 INFO TRADE 2023-06-15  M&MFIN       SHORT driver=SUPERTREND       entry=273.60@11:35  exit=273.50@15:15  TIME_EXIT   P&L Rs -546
+01:09:17 INFO Pre-market 2023-06-16: 446 stocks → 170 liquid+signal (149 bull / 21 bear) → 121 watchlist
+01:10:09 INFO 2023-06-16  LONG=[HCLTECH/VPOC s=12.32 a=4 p=50% [STANDARD]]  SHORT=[IGL/SUPERTREND s=36.00 a=12 p=64% [MEDIUM]]  -> SHORT wins (score 36.00 > 12.32)
+01:10:09 INFO TRADE 2023-06-16  IGL          SHORT driver=SUPERTREND       entry=232.70@11:10  exit=233.55@15:15  TIME_EXIT   P&L Rs -2,556
+01:10:19 INFO Pre-market 2023-06-19: 446 stocks → 171 liquid+signal (152 bull / 19 bear) → 119 watchlist
+01:11:10 INFO 2023-06-19  LONG=[JINDALSTEL/CAMARILLA s=14.07 a=4 p=56% [STANDARD]]  SHORT=[ATGL/STOCHASTIC s=33.00 a=11 p=65% [HIGH]]  -> SHORT wins (score 33.00 > 14.07)
+01:11:10 INFO TRADE 2023-06-19  ATGL         SHORT driver=STOCHASTIC       entry=664.50@12:25  exit=657.05@15:15  TIME_EXIT   P&L Rs +4,877
+01:11:20 INFO Pre-market 2023-06-20: 446 stocks → 171 liquid+signal (149 bull / 22 bear) → 122 watchlist
+01:12:13 INFO 2023-06-20  LONG=[HDFCAMC/CAMARILLA s=14.10 a=6 p=57% [STANDARD]]  SHORT=[PERSISTENT/SUPERTREND s=33.00 a=11 p=63% [MEDIUM]]  -> SHORT wins (score 33.00 > 14.10)
+01:12:13 INFO TRADE 2023-06-20  PERSISTENT   SHORT driver=SUPERTREND       entry=2456.95@10:25  exit=2480.08@15:00  STOP_HIT    P&L Rs -5,425
+01:12:23 INFO Pre-market 2023-06-21: 446 stocks → 168 liquid+signal (154 bull / 14 bear) → 114 watchlist
+01:13:12 INFO 2023-06-21  LONG=[ANGELONE/VPOC s=13.17 a=5 p=50% [STANDARD]]  SHORT=[SONACOMS/SUPERTREND s=39.50 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 39.50 > 13.17)
+01:13:12 INFO TRADE 2023-06-21  SONACOMS     SHORT driver=SUPERTREND       entry=515.00@10:15  exit=513.85@15:15  TIME_EXIT   P&L Rs +388
+01:13:22 INFO Pre-market 2023-06-22: 446 stocks → 171 liquid+signal (151 bull / 20 bear) → 120 watchlist
+01:14:14 INFO 2023-06-22  LONG=[JUBLFOOD/CAMARILLA s=16.44 a=6 p=55% [STANDARD]]  SHORT=[AMBUJACEM/SUPERTREND s=42.00 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 42.00 > 16.44)
+01:14:14 INFO TRADE 2023-06-22  AMBUJACEM    SHORT driver=SUPERTREND       entry=447.15@09:40  exit=444.90@15:15  TIME_EXIT   P&L Rs +1,788
+01:14:23 INFO Pre-market 2023-06-23: 446 stocks → 174 liquid+signal (148 bull / 26 bear) → 126 watchlist
+01:15:14 INFO 2023-06-23  LONG=[none]  SHORT=[AUBANK/STOCHASTIC s=36.50 a=12 p=61% [HIGH]]  -> SHORT (only candidate)
+01:15:14 INFO TRADE 2023-06-23  AUBANK       SHORT driver=STOCHASTIC       entry=741.35@10:40  exit=736.90@15:15  TIME_EXIT   P&L Rs +2,273
+01:15:24 INFO Pre-market 2023-06-26: 446 stocks → 173 liquid+signal (129 bull / 44 bear) → 144 watchlist
+01:16:21 INFO 2023-06-26  LONG=[NAUKRI/CAMARILLA s=15.17 a=5 p=50% [STANDARD]]  SHORT=[PNB/STOCHASTIC s=33.00 a=11 p=64% [HIGH]]  -> SHORT wins (score 33.00 > 15.17)
+01:16:21 INFO TRADE 2023-06-26  PNB          SHORT driver=STOCHASTIC       entry=48.59@12:35  exit=48.88@15:15  TIME_EXIT   P&L Rs -3,715
+01:16:31 INFO Pre-market 2023-06-27: 446 stocks → 169 liquid+signal (140 bull / 29 bear) → 129 watchlist
+01:17:23 INFO 2023-06-27  LONG=[ABCAPITAL/VPOC s=10.57 a=4 p=58% [STANDARD]]  SHORT=[COALINDIA/DESC-TRI s=39.00 a=12 p=59% [STANDARD]]  -> SHORT wins (score 39.00 > 10.57)
+01:17:23 INFO TRADE 2023-06-27  COALINDIA    SHORT driver=DESC-TRI         entry=209.75@09:15  exit=209.70@15:15  TIME_EXIT   P&L Rs -609
+01:17:32 INFO Pre-market 2023-06-28: 446 stocks → 173 liquid+signal (140 bull / 33 bear) → 133 watchlist
+01:18:27 INFO 2023-06-28  LONG=[none]  SHORT=[AUBANK/SUPERTREND s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT (only candidate)
+01:18:27 INFO TRADE 2023-06-28  AUBANK       SHORT driver=SUPERTREND       entry=745.80@11:10  exit=753.66@14:25  STOP_HIT    P&L Rs -5,997
+01:18:37 INFO Pre-market 2023-06-30: 446 stocks → 179 liquid+signal (150 bull / 29 bear) → 129 watchlist
+01:19:34 INFO 2023-06-30  LONG=[none]  SHORT=[PVRINOX/SUPERTREND s=39.00 a=12 p=62% [MEDIUM]]  -> SHORT (only candidate)
+01:19:34 INFO TRADE 2023-06-30  PVRINOX      SHORT driver=SUPERTREND       entry=1380.00@11:25  exit=1374.55@15:15  TIME_EXIT   P&L Rs +1,246
+01:19:44 INFO Pre-market 2023-07-03: 446 stocks → 185 liquid+signal (155 bull / 30 bear) → 130 watchlist
+01:20:39 INFO 2023-07-03  LONG=[LTF/VPOC s=11.42 a=4 p=56% [STANDARD]]  SHORT=[SRF/SUPERTREND s=48.00 a=15 p=62% [MEDIUM]]  -> SHORT wins (score 48.00 > 11.42)
+01:20:39 INFO TRADE 2023-07-03  SRF          SHORT driver=SUPERTREND       entry=2285.65@09:40  exit=2272.00@15:15  TIME_EXIT   P&L Rs +2,251
+01:20:50 INFO Pre-market 2023-07-04: 446 stocks → 189 liquid+signal (159 bull / 30 bear) → 130 watchlist
+01:21:44 INFO 2023-07-04  LONG=[FEDERALBNK/CPR s=14.92 a=5 p=57% [STANDARD]]  SHORT=[PIDILITIND/SUPERTREND s=39.00 a=12 p=63% [MEDIUM]]  -> SHORT wins (score 39.00 > 14.92)
+01:21:44 INFO TRADE 2023-07-04  PIDILITIND   SHORT driver=SUPERTREND       entry=1285.80@12:55  exit=1288.20@15:15  TIME_EXIT   P&L Rs -1,659
+01:21:54 INFO Pre-market 2023-07-05: 446 stocks → 184 liquid+signal (152 bull / 32 bear) → 132 watchlist
+01:22:50 INFO 2023-07-05  LONG=[none]  SHORT=[ACC/SUPERTREND s=36.00 a=11 p=60% [MEDIUM]]  -> SHORT (only candidate)
+01:22:50 INFO TRADE 2023-07-05  ACC          SHORT driver=SUPERTREND       entry=1818.05@09:35  exit=1820.75@15:15  TIME_EXIT   P&L Rs -1,472
+01:23:01 INFO Pre-market 2023-07-06: 446 stocks → 182 liquid+signal (159 bull / 23 bear) → 123 watchlist
+01:23:55 INFO 2023-07-06  LONG=[TATAPOWER/CAMARILLA s=18.79 a=7 p=55% [STANDARD]]  SHORT=[VEDL/DESC-TRI s=39.50 a=12 p=59% [STANDARD]]  -> SHORT wins (score 39.50 > 18.79)
+01:23:55 INFO TRADE 2023-07-06  VEDL         SHORT driver=DESC-TRI         entry=123.10@10:10  exit=124.60@15:15  TIME_EXIT   P&L Rs -6,824
+01:24:05 INFO Pre-market 2023-07-07: 446 stocks → 186 liquid+signal (164 bull / 22 bear) → 122 watchlist
+01:24:59 INFO 2023-07-07  LONG=[none]  SHORT=[STARHEALTH/FAILED-BO s=36.50 a=11 p=60% [STANDARD]]  -> SHORT (only candidate)
+01:24:59 INFO TRADE 2023-07-07  STARHEALTH   SHORT driver=FAILED-BO        entry=599.25@11:55  exit=603.00@12:15  STOP_HIT    P&L Rs -3,858
+01:25:08 INFO Pre-market 2023-07-10: 446 stocks → 190 liquid+signal (158 bull / 32 bear) → 132 watchlist
+01:26:03 INFO 2023-07-10  LONG=[none]  SHORT=[BALRAMCHIN/DESC-TRI s=39.00 a=13 p=60% [STANDARD]]  -> SHORT (only candidate)
+01:26:03 INFO TRADE 2023-07-10  BALRAMCHIN   SHORT driver=DESC-TRI         entry=382.40@09:15  exit=382.60@15:15  TIME_EXIT   P&L Rs -990
+01:26:13 INFO Pre-market 2023-07-11: 446 stocks → 185 liquid+signal (153 bull / 32 bear) → 132 watchlist
+01:27:07 INFO 2023-07-11  LONG=[KALYANKJIL/CAMARILLA s=11.92 a=4 p=50% [STANDARD]]  SHORT=[BANDHANBNK/SUPERTREND s=39.00 a=13 p=64% [MEDIUM]]  -> SHORT wins (score 39.00 > 11.92)
+01:27:07 INFO TRADE 2023-07-11  BANDHANBNK   SHORT driver=SUPERTREND       entry=227.50@09:55  exit=223.00@15:15  TIME_EXIT   P&L Rs +9,163
+01:27:17 INFO Pre-market 2023-07-12: 446 stocks → 191 liquid+signal (163 bull / 28 bear) → 128 watchlist
+01:28:09 INFO 2023-07-12  LONG=[NMDC/VPOC s=15.04 a=4 p=50% [STANDARD]]  SHORT=[IEX/DESC-TRI s=42.00 a=14 p=63% [STANDARD]]  -> SHORT wins (score 42.00 > 15.04)
+01:28:09 INFO TRADE 2023-07-12  IEX          SHORT driver=DESC-TRI         entry=124.45@09:15  exit=123.50@15:15  TIME_EXIT   P&L Rs +3,090
+01:28:19 INFO Pre-market 2023-07-13: 446 stocks → 193 liquid+signal (163 bull / 30 bear) → 130 watchlist
+01:29:14 INFO 2023-07-13  LONG=[BSOFT/CAMARILLA s=15.79 a=5 p=56% [STANDARD]]  SHORT=[IEX/DESC-TRI s=45.00 a=15 p=63% [STANDARD]]  -> SHORT wins (score 45.00 > 15.79)
+01:29:14 INFO TRADE 2023-07-13  IEX          SHORT driver=DESC-TRI         entry=123.95@09:15  exit=121.65@15:15  TIME_EXIT   P&L Rs +8,552
+01:29:25 INFO Pre-market 2023-07-14: 446 stocks → 192 liquid+signal (157 bull / 35 bear) → 135 watchlist
+01:30:24 INFO 2023-07-14  LONG=[NATIONALUM/VPOC s=17.67 a=5 p=55% [STANDARD]]  SHORT=[CYIENT/SUPERTREND s=33.00 a=11 p=62% [MEDIUM]]  -> SHORT wins (score 33.00 > 17.67)
+01:30:24 INFO TRADE 2023-07-14  CYIENT       SHORT driver=SUPERTREND       entry=1424.90@11:25  exit=1442.10@13:10  STOP_HIT    P&L Rs -6,752
+01:30:34 INFO Pre-market 2023-07-17: 446 stocks → 196 liquid+signal (175 bull / 21 bear) → 121 watchlist
+01:31:27 INFO 2023-07-17  LONG=[UNITDSPR/CAMARILLA s=14.54 a=4 p=56% [STANDARD]]  SHORT=[ASTRAL/SUPERTREND s=42.00 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 42.00 > 14.54)
+01:31:27 INFO TRADE 2023-07-17  ASTRAL       SHORT driver=SUPERTREND       entry=1843.55@09:25  exit=1836.50@15:15  TIME_EXIT   P&L Rs +1,183
+01:31:37 INFO Pre-market 2023-07-18: 446 stocks → 194 liquid+signal (168 bull / 26 bear) → 126 watchlist
+01:32:31 INFO 2023-07-18  LONG=[CIPLA/ASC-TRI s=14.84 a=4 p=50% [STANDARD]]  SHORT=[AMBUJACEM/SUPERTREND s=39.50 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 39.50 > 14.84)
+01:32:31 INFO TRADE 2023-07-18  AMBUJACEM    SHORT driver=SUPERTREND       entry=414.90@09:30  exit=419.93@10:15  STOP_HIT    P&L Rs -6,793
+01:32:41 INFO Pre-market 2023-07-19: 446 stocks → 193 liquid+signal (160 bull / 33 bear) → 133 watchlist
+01:33:39 INFO 2023-07-19  LONG=[PERSISTENT/MACD s=17.97 a=6 p=56% [STANDARD]]  SHORT=[BANDHANBNK/SUPERTREND s=36.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 17.97)
+01:33:39 INFO TRADE 2023-07-19  BANDHANBNK   SHORT driver=SUPERTREND       entry=214.30@09:40  exit=214.75@15:15  TIME_EXIT   P&L Rs -1,779
+01:33:49 INFO Pre-market 2023-07-20: 446 stocks → 193 liquid+signal (161 bull / 32 bear) → 132 watchlist
+01:34:48 INFO 2023-07-20  LONG=[KOTAKBANK/CAMARILLA s=19.29 a=6 p=50% [STANDARD]]  SHORT=[INDIGO/VPOC s=33.50 a=10 p=59% [MEDIUM]]  -> SHORT wins (score 33.50 > 19.29)
+01:34:48 INFO TRADE 2023-07-20  INDIGO       SHORT driver=VPOC             entry=2707.45@09:15  exit=2720.99@12:35  STOP_HIT    P&L Rs -3,219
+01:34:58 INFO Pre-market 2023-07-21: 446 stocks → 189 liquid+signal (154 bull / 35 bear) → 135 watchlist
+01:35:53 INFO 2023-07-21  LONG=[IRFC/CAMARILLA s=15.17 a=4 p=56% [STANDARD]]  SHORT=[BEL/CPR s=36.00 a=12 p=64% [MEDIUM]]  -> SHORT wins (score 36.00 > 15.17)
+01:35:53 INFO TRADE 2023-07-21  BEL          SHORT driver=CPR              entry=126.40@09:15  exit=126.20@09:20  TARGET_HIT  P&L Rs +63
+01:36:02 INFO Pre-market 2023-07-24: 446 stocks → 185 liquid+signal (150 bull / 35 bear) → 135 watchlist
+01:36:57 INFO 2023-07-24  LONG=[none]  SHORT=[BANDHANBNK/FAILED-BO s=36.00 a=11 p=60% [STANDARD]]  -> SHORT (only candidate)
+01:36:57 INFO TRADE 2023-07-24  BANDHANBNK   SHORT driver=FAILED-BO        entry=220.15@13:15  exit=218.65@15:15  TIME_EXIT   P&L Rs +2,680
+01:37:07 INFO Pre-market 2023-07-25: 446 stocks → 191 liquid+signal (163 bull / 28 bear) → 128 watchlist
+01:38:02 INFO 2023-07-25  LONG=[HINDCOPPER/CAMARILLA s=17.42 a=5 p=56% [STANDARD]]  SHORT=[NESTLEIND/SUPERTREND s=36.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 17.42)
+01:38:02 INFO TRADE 2023-07-25  NESTLEIND    SHORT driver=SUPERTREND       entry=1140.90@10:00  exit=1138.20@15:15  TIME_EXIT   P&L Rs +455
+01:38:13 INFO Pre-market 2023-07-26: 446 stocks → 190 liquid+signal (162 bull / 28 bear) → 128 watchlist
+01:39:10 INFO 2023-07-26  LONG=[TATACOMM/VPOC s=15.04 a=4 p=56% [STANDARD]]  SHORT=[PIIND/DESC-TRI s=36.50 a=12 p=61% [STANDARD]]  -> SHORT wins (score 36.50 > 15.04)
+01:39:10 INFO TRADE 2023-07-26  PIIND        SHORT driver=DESC-TRI         entry=3583.55@09:15  exit=3591.65@15:15  TIME_EXIT   P&L Rs -1,762
+01:39:21 INFO Pre-market 2023-07-27: 446 stocks → 196 liquid+signal (166 bull / 30 bear) → 130 watchlist
+01:40:17 INFO 2023-07-27  LONG=[BSOFT/CAMARILLA s=17.67 a=6 p=56% [STANDARD]]  SHORT=[CONCOR/SUPERTREND s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT wins (score 39.00 > 17.67)
+01:40:17 INFO TRADE 2023-07-27  CONCOR       SHORT driver=SUPERTREND       entry=540.75@10:00  exit=540.35@15:15  TIME_EXIT   P&L Rs -359
+01:40:28 INFO Pre-market 2023-07-28: 446 stocks → 197 liquid+signal (160 bull / 37 bear) → 137 watchlist
+01:41:27 INFO 2023-07-28  LONG=[TATACHEM/CPR s=18.17 a=6 p=56% [STANDARD]]  SHORT=[AUBANK/CPR s=33.50 a=11 p=64% [MEDIUM]]  -> SHORT wins (score 33.50 > 18.17)
+01:41:27 INFO TRADE 2023-07-28  AUBANK       SHORT driver=CPR              entry=731.40@09:15  exit=729.93@09:20  TARGET_HIT  P&L Rs +274
+01:41:37 INFO Pre-market 2023-07-31: 446 stocks → 192 liquid+signal (161 bull / 31 bear) → 131 watchlist
+01:42:34 INFO 2023-07-31  LONG=[APLAPOLLO/GAP-FADE s=12.42 a=4 p=49% [STANDARD]]  SHORT=[AXISBANK/SUPERTREND s=30.50 a=10 p=60% [MEDIUM]]  -> SHORT wins (score 30.50 > 12.42)
+01:42:34 INFO TRADE 2023-07-31  AXISBANK     SHORT driver=SUPERTREND       entry=951.55@12:15  exit=954.00@15:15  TIME_EXIT   P&L Rs -2,015
+01:42:45 INFO Pre-market 2023-08-01: 446 stocks → 193 liquid+signal (164 bull / 29 bear) → 129 watchlist
+01:43:42 INFO 2023-08-01  LONG=[none]  SHORT=[CROMPTON/SUPERTREND s=36.00 a=12 p=61% [MEDIUM]]  -> SHORT (only candidate)
+01:43:42 INFO TRADE 2023-08-01  CROMPTON     SHORT driver=SUPERTREND       entry=293.20@10:30  exit=292.55@15:15  TIME_EXIT   P&L Rs +380
+01:43:53 INFO Pre-market 2023-08-02: 446 stocks → 195 liquid+signal (169 bull / 26 bear) → 126 watchlist
+01:44:48 INFO 2023-08-02  LONG=[none]  SHORT=[DMART/SUPERTREND s=36.00 a=11 p=60% [MEDIUM]]  -> SHORT (only candidate)
+01:44:48 INFO TRADE 2023-08-02  DMART        SHORT driver=SUPERTREND       entry=3743.45@10:15  exit=3714.45@15:15  TIME_EXIT   P&L Rs +3,133
+01:44:58 INFO Pre-market 2023-08-03: 446 stocks → 198 liquid+signal (156 bull / 42 bear) → 142 watchlist
+01:45:55 INFO 2023-08-03  LONG=[POONAWALLA/VPOC s=18.17 a=6 p=55% [STANDARD]]  SHORT=[ASIANPAINT/CPR s=45.00 a=15 p=63% [MEDIUM]]  -> SHORT wins (score 45.00 > 18.17)
+01:45:55 INFO TRADE 2023-08-03  ASIANPAINT   SHORT driver=CPR              entry=3351.30@09:15  exit=3357.77@09:20  STOP_HIT    P&L Rs -1,692
+01:46:04 INFO Pre-market 2023-08-04: 446 stocks → 196 liquid+signal (142 bull / 54 bear) → 154 watchlist
+01:47:04 INFO 2023-08-04  LONG=[FEDERALBNK/VPOC s=13.60 a=4 p=50% [STANDARD]]  SHORT=[HEROMOTOCO/SUPERTREND s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT wins (score 39.00 > 13.60)
+01:47:04 INFO TRADE 2023-08-04  HEROMOTOCO   SHORT driver=SUPERTREND       entry=2778.15@09:30  exit=2776.85@15:15  TIME_EXIT   P&L Rs -492
+01:47:14 INFO Pre-market 2023-08-07: 446 stocks → 199 liquid+signal (155 bull / 44 bear) → 144 watchlist
+01:48:12 INFO 2023-08-07  LONG=[none]  SHORT=[CDSL/SUPERTREND s=36.00 a=12 p=61% [MEDIUM]]  -> SHORT (only candidate)
+01:48:12 INFO TRADE 2023-08-07  CDSL         SHORT driver=SUPERTREND       entry=607.95@09:25  exit=599.70@15:15  TIME_EXIT   P&L Rs +6,057
+01:48:22 INFO Pre-market 2023-08-08: 446 stocks → 199 liquid+signal (157 bull / 42 bear) → 142 watchlist
+01:49:25 INFO 2023-08-08  LONG=[none]  SHORT=[BPCL/CPR s=39.00 a=13 p=64% [MEDIUM]]  -> SHORT (only candidate)
+01:49:25 INFO TRADE 2023-08-08  BPCL         SHORT driver=CPR              entry=156.75@09:15  exit=156.98@09:30  STOP_HIT    P&L Rs -1,473
+01:49:36 INFO Pre-market 2023-08-09: 446 stocks → 201 liquid+signal (153 bull / 48 bear) → 148 watchlist
+01:50:41 INFO 2023-08-09  LONG=[INDIACEM/CAMARILLA s=16.67 a=4 p=56% [STANDARD]]  SHORT=[NESTLEIND/SUPERTREND s=39.00 a=12 p=60% [MEDIUM]]  -> SHORT wins (score 39.00 > 16.67)
+01:50:41 INFO TRADE 2023-08-09  NESTLEIND    SHORT driver=SUPERTREND       entry=1108.70@09:40  exit=1111.60@15:15  TIME_EXIT   P&L Rs -2,033
+01:50:52 INFO Pre-market 2023-08-10: 446 stocks → 194 liquid+signal (153 bull / 41 bear) → 141 watchlist
+01:51:53 INFO 2023-08-10  LONG=[ZENSARTECH/CAMARILLA s=12.79 a=4 p=50% [STANDARD]]  SHORT=[DMART/SUPERTREND s=42.00 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 42.00 > 12.79)
+01:51:53 INFO TRADE 2023-08-10  DMART        SHORT driver=SUPERTREND       entry=3610.10@11:20  exit=3598.00@15:15  TIME_EXIT   P&L Rs +944
+01:52:04 INFO Pre-market 2023-08-11: 446 stocks → 202 liquid+signal (153 bull / 49 bear) → 149 watchlist
+01:53:08 INFO 2023-08-11  LONG=[IRCTC/CAMARILLA s=15.04 a=5 p=56% [STANDARD]]  SHORT=[HEROMOTOCO/SUPERTREND s=39.00 a=13 p=62% [MEDIUM]]  -> SHORT wins (score 39.00 > 15.04)
+01:53:08 INFO TRADE 2023-08-11  HEROMOTOCO   SHORT driver=SUPERTREND       entry=2844.65@09:20  exit=2829.00@15:15  TIME_EXIT   P&L Rs +2,014
+01:53:19 INFO Pre-market 2023-08-14: 446 stocks → 201 liquid+signal (144 bull / 57 bear) → 157 watchlist
+01:54:28 INFO 2023-08-14  LONG=[none]  SHORT=[CANFINHOME/STOCHASTIC s=30.75 a=10 p=62% [HIGH]]  -> SHORT (only candidate)
+01:54:28 INFO TRADE 2023-08-14  CANFINHOME   SHORT driver=STOCHASTIC       entry=710.05@11:50  exit=720.70@12:25  STOP_HIT    P&L Rs -8,231
+01:54:39 INFO Pre-market 2023-08-16: 446 stocks → 197 liquid+signal (132 bull / 65 bear) → 165 watchlist
+01:55:48 INFO 2023-08-16  LONG=[IGL/CAMARILLA s=14.20 a=4 p=50% [STANDARD]]  SHORT=[PPLPHARMA/SUPERTREND s=36.75 a=11 p=60% [MEDIUM]]  -> SHORT wins (score 36.75 > 14.20)
+01:55:48 INFO TRADE 2023-08-16  PPLPHARMA    SHORT driver=SUPERTREND       entry=95.70@10:30  exit=96.76@11:35  STOP_HIT    P&L Rs -6,263
+01:55:58 INFO Pre-market 2023-08-17: 446 stocks → 189 liquid+signal (133 bull / 56 bear) → 156 watchlist
+01:57:01 INFO 2023-08-17  LONG=[none]  SHORT=[ASIANPAINT/SUPERTREND s=42.00 a=14 p=63% [MEDIUM]]  -> SHORT (only candidate)
+01:57:01 INFO TRADE 2023-08-17  ASIANPAINT   SHORT driver=SUPERTREND       entry=3182.00@10:05  exit=3184.40@15:15  TIME_EXIT   P&L Rs -1,105
+01:57:11 INFO Pre-market 2023-08-18: 446 stocks → 195 liquid+signal (127 bull / 68 bear) → 168 watchlist
+01:58:19 INFO 2023-08-18  LONG=[none]  SHORT=[INDIAMART/STOCHASTIC s=33.00 a=11 p=64% [HIGH]]  -> SHORT (only candidate)
+01:58:19 INFO TRADE 2023-08-18  INDIAMART    SHORT driver=STOCHASTIC       entry=3072.50@13:25  exit=3084.45@15:15  TIME_EXIT   P&L Rs -2,663
+01:58:29 INFO Pre-market 2023-08-21: 446 stocks → 197 liquid+signal (123 bull / 74 bear) → 174 watchlist
+01:59:42 INFO 2023-08-21  LONG=[none]  SHORT=[HINDALCO/SUPERTREND s=33.50 a=10 p=60% [MEDIUM]]  -> SHORT (only candidate)
+01:59:42 INFO TRADE 2023-08-21  HINDALCO     SHORT driver=SUPERTREND       entry=446.85@13:25  exit=449.96@15:05  STOP_HIT    P&L Rs -4,212
+01:59:54 INFO Pre-market 2023-08-22: 446 stocks → 189 liquid+signal (131 bull / 58 bear) → 158 watchlist
+02:01:03 INFO 2023-08-22  LONG=[ENGINERSIN/MACD s=11.42 a=4 p=59% [STANDARD]]  SHORT=[PVRINOX/SUPERTREND s=36.00 a=12 p=63% [MEDIUM]]  -> SHORT wins (score 36.00 > 11.42)
+02:01:03 INFO TRADE 2023-08-22  PVRINOX      SHORT driver=SUPERTREND       entry=1702.00@09:50  exit=1699.00@15:15  TIME_EXIT   P&L Rs +152
+02:01:14 INFO Pre-market 2023-08-23: 446 stocks → 202 liquid+signal (141 bull / 61 bear) → 161 watchlist
+02:02:24 INFO 2023-08-23  LONG=[MARUTI/VPOC s=14.45 a=4 p=50% [STANDARD]]  SHORT=[NAUKRI/SUPERTREND s=36.00 a=12 p=63% [MEDIUM]]  -> SHORT wins (score 36.00 > 14.45)
+02:02:24 INFO TRADE 2023-08-23  NAUKRI       SHORT driver=SUPERTREND       entry=833.00@12:50  exit=830.50@15:15  TIME_EXIT   P&L Rs +772
+02:02:35 INFO Pre-market 2023-08-24: 446 stocks → 196 liquid+signal (144 bull / 52 bear) → 152 watchlist
+02:03:40 INFO 2023-08-24  LONG=[none]  SHORT=[INDIACEM/SUPERTREND s=45.00 a=15 p=62% [MEDIUM]]  -> SHORT (only candidate)
+02:03:40 INFO TRADE 2023-08-24  INDIACEM     SHORT driver=SUPERTREND       entry=238.55@10:45  exit=236.45@15:15  TIME_EXIT   P&L Rs +3,673
+02:03:51 INFO Pre-market 2023-08-25: 446 stocks → 202 liquid+signal (145 bull / 57 bear) → 157 watchlist
+02:04:59 INFO 2023-08-25  LONG=[ESCORTS/CPR s=12.67 a=4 p=55% [STANDARD]]  SHORT=[ANGELONE/SUPERTREND s=33.00 a=11 p=64% [MEDIUM]]  -> SHORT wins (score 33.00 > 12.67)
+02:04:59 INFO TRADE 2023-08-25  ANGELONE     SHORT driver=SUPERTREND       entry=170.60@09:50  exit=171.70@15:15  TIME_EXIT   P&L Rs -3,954
+02:05:10 INFO Pre-market 2023-08-28: 446 stocks → 192 liquid+signal (127 bull / 65 bear) → 165 watchlist
+02:06:21 INFO 2023-08-28  LONG=[JPPOWER/GAP-CONT s=12.17 a=5 p=57% [STANDARD]]  SHORT=[ADANIGREEN/VPOC s=42.00 a=13 p=60% [MEDIUM]]  -> SHORT wins (score 42.00 > 12.17)
+02:06:21 INFO TRADE 2023-08-28  ADANIGREEN   SHORT driver=VPOC             entry=989.05@09:15  exit=975.69@10:30  TARGET_HIT  P&L Rs +6,021
+02:06:31 INFO Pre-market 2023-08-29: 446 stocks → 193 liquid+signal (136 bull / 57 bear) → 157 watchlist
+02:07:36 INFO 2023-08-29  LONG=[HAVELLS/CAMARILLA s=14.82 a=5 p=50% [STANDARD]]  SHORT=[GODREJCP/CPR s=42.00 a=14 p=63% [MEDIUM]]  -> SHORT wins (score 42.00 > 14.82)
+02:07:36 INFO TRADE 2023-08-29  GODREJCP     SHORT driver=CPR              entry=1026.50@09:15  exit=1024.10@09:20  TARGET_HIT  P&L Rs +441
+02:07:46 INFO Pre-market 2023-08-30: 446 stocks → 190 liquid+signal (150 bull / 40 bear) → 140 watchlist
+02:08:45 INFO 2023-08-30  LONG=[INFY/CAMARILLA s=11.82 a=4 p=50% [STANDARD]]  SHORT=[INDIGO/DESC-TRI s=33.12 a=12 p=64% [STANDARD]]  -> SHORT wins (score 33.12 > 11.82)
+02:08:45 INFO TRADE 2023-08-30  INDIGO       SHORT driver=DESC-TRI         entry=2425.10@11:15  exit=2450.10@15:15  TIME_EXIT   P&L Rs -4,890
+02:08:56 INFO Pre-market 2023-08-31: 446 stocks → 199 liquid+signal (150 bull / 49 bear) → 149 watchlist
+02:09:57 INFO 2023-08-31  LONG=[ANGELONE/ASC-TRI s=14.54 a=7 p=55% [STANDARD]]  SHORT=[IOC/CAMARILLA s=39.00 a=13 p=61% [MEDIUM]]  -> SHORT wins (score 39.00 > 14.54)
+02:09:57 INFO TRADE 2023-08-31  IOC          SHORT driver=CAMARILLA        entry=75.03@09:15  exit=74.55@09:25  TARGET_HIT  P&L Rs +2,425
+02:10:08 INFO Pre-market 2023-09-01: 446 stocks → 200 liquid+signal (151 bull / 49 bear) → 149 watchlist
+02:11:13 INFO 2023-09-01  LONG=[HAL/CAMARILLA s=14.67 a=4 p=50% [STANDARD]]  SHORT=[COLPAL/SUPERTREND s=39.00 a=13 p=64% [MEDIUM]]  -> SHORT wins (score 39.00 > 14.67)
+02:11:13 INFO TRADE 2023-09-01  COLPAL       SHORT driver=SUPERTREND       entry=1933.55@11:10  exit=1939.95@15:15  TIME_EXIT   P&L Rs -2,379
+02:11:24 INFO Pre-market 2023-09-04: 446 stocks → 195 liquid+signal (164 bull / 31 bear) → 131 watchlist
+02:12:22 INFO 2023-09-04  LONG=[IRCTC/VPOC s=17.17 a=5 p=55% [STANDARD]]  SHORT=[PIIND/CPR s=48.00 a=16 p=63% [MEDIUM]]  -> SHORT wins (score 48.00 > 17.17)
+02:12:22 INFO TRADE 2023-09-04  PIIND        SHORT driver=CPR              entry=3626.55@09:25  exit=3611.68@10:05  TARGET_HIT  P&L Rs +1,313
+02:12:32 INFO Pre-market 2023-09-05: 446 stocks → 201 liquid+signal (170 bull / 31 bear) → 131 watchlist
+02:13:30 INFO 2023-09-05  LONG=[JUBLFOOD/CAMARILLA s=14.42 a=4 p=56% [STANDARD]]  SHORT=[APOLLOTYRE/DESC-TRI s=36.50 a=12 p=60% [STANDARD]]  -> SHORT wins (score 36.50 > 14.42)
+02:13:30 INFO TRADE 2023-09-05  APOLLOTYRE   SHORT driver=DESC-TRI         entry=386.15@11:15  exit=383.90@15:15  TIME_EXIT   P&L Rs +2,166
+02:13:41 INFO Pre-market 2023-09-06: 446 stocks → 207 liquid+signal (178 bull / 29 bear) → 129 watchlist
+02:14:39 INFO 2023-09-06  LONG=[UNITDSPR/VPOC s=17.57 a=6 p=56% [STANDARD]]  SHORT=[POWERGRID/SUPERTREND s=33.00 a=10 p=60% [MEDIUM]]  -> SHORT wins (score 33.00 > 17.57)
+02:14:39 INFO TRADE 2023-09-06  POWERGRID    SHORT driver=SUPERTREND       entry=190.95@09:30  exit=191.15@15:15  TIME_EXIT   P&L Rs -1,253
+02:14:50 INFO Pre-market 2023-09-07: 446 stocks → 210 liquid+signal (185 bull / 25 bear) → 125 watchlist
+02:15:46 INFO 2023-09-07  LONG=[MAZDOCK/VPOC s=15.42 a=4 p=55% [STANDARD]]  SHORT=[POONAWALLA/SUPERTREND s=33.00 a=11 p=65% [MEDIUM]]  -> SHORT wins (score 33.00 > 15.42)
+02:15:46 INFO TRADE 2023-09-07  POONAWALLA   SHORT driver=SUPERTREND       entry=397.50@10:40  exit=388.80@15:15  TIME_EXIT   P&L Rs +10,214
+02:15:57 INFO Pre-market 2023-09-08: 446 stocks → 215 liquid+signal (196 bull / 19 bear) → 119 watchlist
+02:16:52 INFO 2023-09-08  LONG=[CONCOR/MACD s=11.67 a=4 p=58% [STANDARD]]  SHORT=[RBLBANK/VPOC s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT wins (score 39.00 > 11.67)
+02:16:52 INFO TRADE 2023-09-08  RBLBANK      SHORT driver=VPOC             entry=235.40@09:15  exit=232.64@10:25  TARGET_HIT  P&L Rs +5,137
+02:17:04 INFO Pre-market 2023-09-11: 446 stocks → 218 liquid+signal (204 bull / 14 bear) → 114 watchlist
+02:17:54 INFO 2023-09-11  LONG=[CANBK/CAMARILLA s=14.42 a=4 p=55% [STANDARD]]  SHORT=[TORNTPHARM/SUPERTREND s=36.00 a=11 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 14.42)
+02:17:54 INFO TRADE 2023-09-11  TORNTPHARM   SHORT driver=SUPERTREND       entry=1865.35@11:20  exit=1868.25@15:15  TIME_EXIT   P&L Rs -1,506
+02:18:05 INFO Pre-market 2023-09-12: 446 stocks → 220 liquid+signal (212 bull / 8 bear) → 108 watchlist
+02:18:52 INFO 2023-09-12  LONG=[none]  SHORT=[ASHOKLEY/SUPERTREND s=45.00 a=15 p=64% [MEDIUM]]  -> SHORT (only candidate)
+02:18:52 INFO TRADE 2023-09-12  ASHOKLEY     SHORT driver=SUPERTREND       entry=89.50@09:25  exit=87.41@11:45  TARGET_HIT  P&L Rs +10,935
+02:19:03 INFO Pre-market 2023-09-13: 446 stocks → 224 liquid+signal (192 bull / 32 bear) → 132 watchlist
+02:20:00 INFO 2023-09-13  LONG=[none]  SHORT=[GODREJCP/SUPERTREND s=42.00 a=14 p=64% [MEDIUM]]  -> SHORT (only candidate)
+02:20:00 INFO TRADE 2023-09-13  GODREJCP     SHORT driver=SUPERTREND       entry=1005.60@09:35  exit=1003.85@15:15  TIME_EXIT   P&L Rs +142
+02:20:11 INFO Pre-market 2023-09-14: 446 stocks → 221 liquid+signal (196 bull / 25 bear) → 125 watchlist
+02:21:04 INFO 2023-09-14  LONG=[APARINDS/CAMARILLA s=15.67 a=5 p=50% [STANDARD]]  SHORT=[GODREJCP/SUPERTREND s=45.00 a=15 p=62% [MEDIUM]]  -> SHORT wins (score 45.00 > 15.67)
+02:21:04 INFO TRADE 2023-09-14  GODREJCP     SHORT driver=SUPERTREND       entry=1001.30@13:30  exit=1005.05@15:15  TIME_EXIT   P&L Rs -2,601
+02:21:14 INFO Pre-market 2023-09-15: 446 stocks → 224 liquid+signal (204 bull / 20 bear) → 120 watchlist
+02:22:09 INFO 2023-09-15  LONG=[BAJAJ-AUTO/CAMARILLA s=11.92 a=4 p=56% [STANDARD]]  SHORT=[POWERGRID/SUPERTREND s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT wins (score 39.00 > 11.92)
+02:22:09 INFO TRADE 2023-09-15  POWERGRID    SHORT driver=SUPERTREND       entry=193.90@09:35  exit=194.35@15:15  TIME_EXIT   P&L Rs -1,890
+02:22:21 INFO Pre-market 2023-09-18: 446 stocks → 231 liquid+signal (211 bull / 20 bear) → 120 watchlist
+02:23:16 INFO 2023-09-18  LONG=[UNIONBANK/CAMARILLA s=12.04 a=4 p=56% [STANDARD]]  SHORT=[ALKEM/DESC-TRI s=39.00 a=13 p=63% [STANDARD]]  -> SHORT wins (score 39.00 > 12.04)
+02:23:16 INFO TRADE 2023-09-18  ALKEM        SHORT driver=DESC-TRI         entry=3644.00@11:05  exit=3656.50@15:15  TIME_EXIT   P&L Rs -2,162
+02:23:27 INFO Pre-market 2023-09-20: 446 stocks → 223 liquid+signal (197 bull / 26 bear) → 126 watchlist
+02:24:25 INFO 2023-09-20  LONG=[M&MFIN/VPOC s=12.54 a=4 p=57% [STANDARD]]  SHORT=[INDIAMART/SUPERTREND s=36.00 a=11 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 12.54)
+02:24:25 INFO TRADE 2023-09-20  INDIAMART    SHORT driver=SUPERTREND       entry=3021.05@09:40  exit=3017.10@15:15  TIME_EXIT   P&L Rs -75
+02:24:36 INFO Pre-market 2023-09-21: 446 stocks → 222 liquid+signal (183 bull / 39 bear) → 139 watchlist
+02:25:38 INFO 2023-09-21  LONG=[MRPL/CAMARILLA s=12.17 a=4 p=49% [STANDARD]]  SHORT=[SYNGENE/SUPERTREND s=36.00 a=12 p=63% [MEDIUM]]  -> SHORT wins (score 36.00 > 12.17)
+02:25:38 INFO TRADE 2023-09-21  SYNGENE      SHORT driver=SUPERTREND       entry=795.00@10:00  exit=777.50@15:15  TIME_EXIT   P&L Rs +10,268
+02:25:49 INFO Pre-market 2023-09-22: 446 stocks → 215 liquid+signal (166 bull / 49 bear) → 149 watchlist
+02:26:55 INFO 2023-09-22  LONG=[INFY/CAMARILLA s=15.17 a=4 p=49% [STANDARD]]  SHORT=[AMBUJACEM/SUPERTREND s=45.00 a=15 p=63% [MEDIUM]]  -> SHORT wins (score 45.00 > 15.17)
+02:26:55 INFO TRADE 2023-09-22  AMBUJACEM    SHORT driver=SUPERTREND       entry=423.70@09:30  exit=420.65@15:15  TIME_EXIT   P&L Rs +2,872
+02:27:06 INFO Pre-market 2023-09-25: 446 stocks → 216 liquid+signal (153 bull / 63 bear) → 163 watchlist
+02:28:15 INFO 2023-09-25  LONG=[BAJFINANCE/VPOC s=13.04 a=5 p=56% [STANDARD]]  SHORT=[COFORGE/SUPERTREND s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT wins (score 39.00 > 13.04)
+02:28:15 INFO TRADE 2023-09-25  COFORGE      SHORT driver=SUPERTREND       entry=1053.00@10:10  exit=1058.50@15:15  TIME_EXIT   P&L Rs -3,336
+02:28:25 INFO Pre-market 2023-09-26: 446 stocks → 211 liquid+signal (153 bull / 58 bear) → 158 watchlist
+02:29:32 INFO 2023-09-26  LONG=[ICICIGI/CAMARILLA s=13.60 a=4 p=49% [STANDARD]]  SHORT=[APOLLOTYRE/SUPERTREND s=39.00 a=13 p=61% [MEDIUM]]  -> SHORT wins (score 39.00 > 13.60)
+02:29:32 INFO TRADE 2023-09-26  APOLLOTYRE   SHORT driver=SUPERTREND       entry=375.70@10:05  exit=370.65@15:15  TIME_EXIT   P&L Rs +5,992
+02:29:43 INFO Pre-market 2023-09-27: 446 stocks → 206 liquid+signal (145 bull / 61 bear) → 161 watchlist
+02:30:50 INFO 2023-09-27  LONG=[ASIANPAINT/CAMARILLA s=13.04 a=4 p=49% [STANDARD]]  SHORT=[LICI/STOCHASTIC s=36.50 a=12 p=61% [HIGH]]  -> SHORT wins (score 36.50 > 13.04)
+02:30:50 INFO TRADE 2023-09-27  LICI         SHORT driver=STOCHASTIC       entry=322.80@10:00  exit=322.60@15:15  TIME_EXIT   P&L Rs -419
+02:31:01 INFO Pre-market 2023-09-28: 446 stocks → 209 liquid+signal (157 bull / 52 bear) → 152 watchlist
+02:32:07 INFO 2023-09-28  LONG=[none]  SHORT=[HAL/SUPERTREND s=39.00 a=12 p=61% [MEDIUM]]  -> SHORT (only candidate)
+02:32:07 INFO TRADE 2023-09-28  HAL          SHORT driver=SUPERTREND       entry=1917.75@09:35  exit=1888.05@15:15  TIME_EXIT   P&L Rs +6,999
+02:32:19 INFO Pre-market 2023-09-29: 446 stocks → 221 liquid+signal (140 bull / 81 bear) → 181 watchlist
+02:33:39 INFO 2023-09-29  LONG=[none]  SHORT=[DATAPATTNS/CPR s=36.50 a=12 p=60% [MEDIUM]]  -> SHORT (only candidate)
+02:33:39 INFO TRADE 2023-09-29  DATAPATTNS   SHORT driver=CPR              entry=2098.50@09:15  exit=2101.50@09:25  STOP_HIT    P&L Rs -1,443
+02:33:51 INFO Pre-market 2023-10-03: 446 stocks → 211 liquid+signal (146 bull / 65 bear) → 165 watchlist
+02:35:04 INFO 2023-10-03  LONG=[BANKBARODA/CAMARILLA s=14.97 a=4 p=50% [STANDARD]]  SHORT=[HINDPETRO/FAILED-BO s=33.50 a=11 p=60% [STANDARD]]  -> SHORT wins (score 33.50 > 14.97)
+02:35:04 INFO TRADE 2023-10-03  HINDPETRO    SHORT driver=FAILED-BO        entry=146.70@09:25  exit=144.55@15:15  TIME_EXIT   P&L Rs +6,603
+02:35:15 INFO Pre-market 2023-10-04: 446 stocks → 215 liquid+signal (131 bull / 84 bear) → 184 watchlist
+02:36:36 INFO 2023-10-04  LONG=[none]  SHORT=[ASTRAL/STOCHASTIC s=39.00 a=13 p=63% [HIGH]]  -> SHORT (only candidate)
+02:36:36 INFO TRADE 2023-10-04  ASTRAL       SHORT driver=STOCHASTIC       entry=1899.15@09:35  exit=1871.05@15:15  TIME_EXIT   P&L Rs +6,666
+02:36:47 INFO Pre-market 2023-10-05: 446 stocks → 208 liquid+signal (109 bull / 99 bear) → 199 watchlist
+02:38:14 INFO 2023-10-05  LONG=[none]  SHORT=[DABUR/CPR s=48.00 a=16 p=62% [MEDIUM]]  -> SHORT (only candidate)
+02:38:14 INFO TRADE 2023-10-05  DABUR        SHORT driver=CPR              entry=553.90@09:25  exit=550.97@09:55  TARGET_HIT  P&L Rs +1,919
+02:38:25 INFO Pre-market 2023-10-06: 446 stocks → 205 liquid+signal (112 bull / 93 bear) → 193 watchlist
+02:39:45 INFO 2023-10-06  LONG=[none]  SHORT=[SAIL/SUPERTREND s=36.00 a=11 p=61% [MEDIUM]]  -> SHORT (only candidate)
+02:39:45 INFO TRADE 2023-10-06  SAIL         SHORT driver=SUPERTREND       entry=88.90@11:15  exit=88.90@15:15  TIME_EXIT   P&L Rs -729
+02:39:56 INFO Pre-market 2023-10-09: 446 stocks → 196 liquid+signal (118 bull / 78 bear) → 178 watchlist
+02:41:10 INFO 2023-10-09  LONG=[none]  SHORT=[TATACOMM/STOCHASTIC s=33.50 a=11 p=64% [HIGH]]  -> SHORT (only candidate)
+02:41:10 INFO TRADE 2023-10-09  TATACOMM     SHORT driver=STOCHASTIC       entry=1825.30@11:15  exit=1808.00@15:15  TIME_EXIT   P&L Rs +3,999
+02:41:21 INFO Pre-market 2023-10-10: 446 stocks → 202 liquid+signal (97 bull / 105 bear) → 197 watchlist
+02:42:46 INFO 2023-10-10  LONG=[ESCORTS/CAMARILLA s=17.17 a=5 p=56% [STANDARD]]  SHORT=[HINDALCO/VPOC s=45.25 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 45.25 > 17.17)
+02:42:46 INFO TRADE 2023-10-10  HINDALCO     SHORT driver=VPOC             entry=471.00@09:40  exit=473.35@13:40  STOP_HIT    P&L Rs -3,229
+02:42:57 INFO Pre-market 2023-10-11: 446 stocks → 197 liquid+signal (118 bull / 79 bear) → 179 watchlist
+02:44:15 INFO 2023-10-11  LONG=[MPHASIS/CAMARILLA s=10.92 a=5 p=50% [STANDARD]]  SHORT=[HDFCLIFE/SUPERTREND s=39.00 a=13 p=62% [MEDIUM]]  -> SHORT wins (score 39.00 > 10.92)
+02:44:15 INFO TRADE 2023-10-11  HDFCLIFE     SHORT driver=SUPERTREND       entry=619.70@10:55  exit=621.65@15:15  TIME_EXIT   P&L Rs -2,301
+02:44:26 INFO Pre-market 2023-10-12: 446 stocks → 205 liquid+signal (114 bull / 91 bear) → 191 watchlist
+02:45:51 INFO 2023-10-12  LONG=[NMDC/CAMARILLA s=14.42 a=4 p=56% [STANDARD]]  SHORT=[ICICIPRULI/SUPERTREND s=45.00 a=14 p=63% [MEDIUM]]  -> SHORT wins (score 45.00 > 14.42)
+02:45:51 INFO TRADE 2023-10-12  ICICIPRULI   SHORT driver=SUPERTREND       entry=525.65@09:55  exit=524.40@15:15  TIME_EXIT   P&L Rs +461
+02:46:02 INFO Pre-market 2023-10-13: 446 stocks → 195 liquid+signal (134 bull / 61 bear) → 161 watchlist
+02:47:14 INFO 2023-10-13  LONG=[MARICO/CPR s=15.32 a=4 p=49% [STANDARD]]  SHORT=[ASIANPAINT/SUPERTREND s=33.12 a=12 p=65% [MEDIUM]]  -> SHORT wins (score 33.12 > 15.32)
+02:47:14 INFO TRADE 2023-10-13  ASIANPAINT   SHORT driver=SUPERTREND       entry=3151.50@10:15  exit=3150.00@15:15  TIME_EXIT   P&L Rs -489
+02:47:25 INFO Pre-market 2023-10-16: 446 stocks → 190 liquid+signal (130 bull / 60 bear) → 160 watchlist
+02:48:36 INFO 2023-10-16  LONG=[CHAMBLFERT/VPOC s=12.17 a=4 p=55% [STANDARD]]  SHORT=[LAURUSLABS/VPOC s=33.00 a=11 p=62% [MEDIUM]]  -> SHORT wins (score 33.00 > 12.17)
+02:48:36 INFO TRADE 2023-10-16  LAURUSLABS   SHORT driver=VPOC             entry=408.00@09:15  exit=401.50@09:25  TARGET_HIT  P&L Rs +7,235
+02:48:47 INFO Pre-market 2023-10-17: 446 stocks → 189 liquid+signal (134 bull / 55 bear) → 155 watchlist
+02:49:53 INFO 2023-10-17  LONG=[none]  SHORT=[ASIANPAINT/STOCHASTIC s=42.50 a=14 p=62% [HIGH]]  -> SHORT (only candidate)
+02:49:53 INFO TRADE 2023-10-17  ASIANPAINT   SHORT driver=STOCHASTIC       entry=3103.65@12:55  exit=3112.90@15:15  TIME_EXIT   P&L Rs -2,219
+02:50:03 INFO Pre-market 2023-10-18: 446 stocks → 189 liquid+signal (142 bull / 47 bear) → 147 watchlist
+02:51:06 INFO 2023-10-18  LONG=[IRB/CAMARILLA s=12.17 a=4 p=55% [STANDARD]]  SHORT=[ADANIGREEN/SUPERTREND s=39.00 a=13 p=64% [MEDIUM]]  -> SHORT wins (score 39.00 > 12.17)
+02:51:06 INFO TRADE 2023-10-18  ADANIGREEN   SHORT driver=SUPERTREND       entry=944.15@10:55  exit=939.15@15:15  TIME_EXIT   P&L Rs +1,918
+02:51:17 INFO Pre-market 2023-10-19: 446 stocks → 199 liquid+signal (124 bull / 75 bear) → 175 watchlist
+02:52:29 INFO 2023-10-19  LONG=[BAJAJ-AUTO/VPOC s=15.54 a=6 p=56% [STANDARD]]  SHORT=[NAVINFLUOR/DESC-TRI s=36.00 a=12 p=62% [STANDARD]]  -> SHORT wins (score 36.00 > 15.54)
+02:52:29 INFO TRADE 2023-10-19  NAVINFLUOR   SHORT driver=DESC-TRI         entry=3662.25@09:15  exit=3648.05@15:15  TIME_EXIT   P&L Rs +1,206
+02:52:41 INFO Pre-market 2023-10-20: 446 stocks → 194 liquid+signal (131 bull / 63 bear) → 163 watchlist
+02:53:55 INFO 2023-10-20  LONG=[none]  SHORT=[NCC/SUPERTREND s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT (only candidate)
+02:53:55 INFO TRADE 2023-10-20  NCC          SHORT driver=SUPERTREND       entry=158.15@10:45  exit=155.05@12:30  TARGET_HIT  P&L Rs +9,091
+02:54:06 INFO Pre-market 2023-10-23: 446 stocks → 206 liquid+signal (117 bull / 89 bear) → 189 watchlist
+02:55:31 INFO 2023-10-23  LONG=[none]  SHORT=[ADANIENT/SUPERTREND s=42.00 a=14 p=64% [MEDIUM]]  -> SHORT (only candidate)
+02:55:31 INFO TRADE 2023-10-23  ADANIENT     SHORT driver=SUPERTREND       entry=2316.30@09:35  exit=2270.19@10:40  TARGET_HIT  P&L Rs +9,193
+02:55:42 INFO Pre-market 2023-10-25: 446 stocks → 210 liquid+signal (85 bull / 125 bear) → 185 watchlist
+02:57:05 INFO 2023-10-25  LONG=[none]  SHORT=[IOC/SUPERTREND s=39.00 a=13 p=64% [MEDIUM]]  -> SHORT (only candidate)
+02:57:05 INFO TRADE 2023-10-25  IOC          SHORT driver=SUPERTREND       entry=72.13@12:15  exit=71.95@15:15  TIME_EXIT   P&L Rs +519
+02:57:16 INFO Pre-market 2023-10-26: 446 stocks → 208 liquid+signal (78 bull / 130 bear) → 178 watchlist
+02:58:38 INFO 2023-10-26  LONG=[none]  SHORT=[KOTAKBANK/SUPERTREND s=30.12 a=11 p=63% [MEDIUM]]  -> SHORT (only candidate)
+02:58:38 INFO TRADE 2023-10-26  KOTAKBANK    SHORT driver=SUPERTREND       entry=343.20@09:25  exit=338.60@15:15  TIME_EXIT   P&L Rs +5,973
+02:58:49 INFO Pre-market 2023-10-27: 446 stocks → 197 liquid+signal (62 bull / 135 bear) → 162 watchlist
+02:59:59 INFO 2023-10-27  LONG=[HCLTECH/CAMARILLA s=11.82 a=4 p=50% [STANDARD]]  SHORT=[VOLTAS/FAILED-BO s=36.00 a=12 p=62% [STANDARD]]  -> SHORT wins (score 36.00 > 11.82)
+02:59:59 INFO TRADE 2023-10-27  VOLTAS       SHORT driver=FAILED-BO        entry=832.60@09:15  exit=835.00@15:15  TIME_EXIT   P&L Rs -2,169
+03:00:10 INFO Pre-market 2023-10-30: 446 stocks → 202 liquid+signal (65 bull / 137 bear) → 165 watchlist
+03:01:20 INFO 2023-10-30  LONG=[none]  SHORT=[BEL/SUPERTREND s=39.00 a=13 p=60% [MEDIUM]]  -> SHORT (only candidate)
+03:01:20 INFO TRADE 2023-10-30  BEL          SHORT driver=SUPERTREND       entry=132.10@09:30  exit=131.80@15:15  TIME_EXIT   P&L Rs +407
+03:01:31 INFO Pre-market 2023-10-31: 446 stocks → 200 liquid+signal (74 bull / 126 bear) → 174 watchlist
+03:02:44 INFO 2023-10-31  LONG=[TITAN/CAMARILLA s=13.85 a=4 p=50% [STANDARD]]  SHORT=[AUROPHARMA/CPR s=42.50 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 42.50 > 13.85)
+03:02:44 INFO TRADE 2023-10-31  AUROPHARMA   SHORT driver=CPR              entry=860.02@09:15  exit=861.74@09:20  STOP_HIT    P&L Rs -1,726
+03:02:55 INFO Pre-market 2023-11-01: 446 stocks → 201 liquid+signal (67 bull / 134 bear) → 167 watchlist
+03:04:11 INFO 2023-11-01  LONG=[BSOFT/GAP-CONT s=12.32 a=4 p=55% [STANDARD]]  SHORT=[MOTHERSON/SUPERTREND s=42.00 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 42.00 > 12.32)
+03:04:11 INFO TRADE 2023-11-01  MOTHERSON    SHORT driver=SUPERTREND       entry=61.17@11:05  exit=61.67@12:10  STOP_HIT    P&L Rs -4,857
+03:04:22 INFO Pre-market 2023-11-02: 446 stocks → 200 liquid+signal (62 bull / 138 bear) → 162 watchlist
+03:05:35 INFO 2023-11-02  LONG=[IOC/CAMARILLA s=14.67 a=5 p=56% [STANDARD]]  SHORT=[MANAPPURAM/SUPERTREND s=45.00 a=15 p=63% [MEDIUM]]  -> SHORT wins (score 45.00 > 14.67)
+03:05:35 INFO TRADE 2023-11-02  MANAPPURAM   SHORT driver=SUPERTREND       entry=136.25@10:50  exit=136.70@15:15  TIME_EXIT   P&L Rs -2,381
+03:05:47 INFO Pre-market 2023-11-03: 446 stocks → 198 liquid+signal (91 bull / 107 bear) → 191 watchlist
+03:07:11 INFO 2023-11-03  LONG=[FEDERALBNK/CAMARILLA s=14.32 a=5 p=50% [STANDARD]]  SHORT=[BAJFINANCE/SUPERTREND s=42.00 a=14 p=64% [MEDIUM]]  -> SHORT wins (score 42.00 > 14.32)
+03:07:11 INFO TRADE 2023-11-03  BAJFINANCE   SHORT driver=SUPERTREND       entry=744.00@10:40  exit=742.50@15:15  TIME_EXIT   P&L Rs +280
+03:07:22 INFO Pre-market 2023-11-06: 446 stocks → 192 liquid+signal (91 bull / 101 bear) → 191 watchlist
+03:08:48 INFO 2023-11-06  LONG=[COALINDIA/CAMARILLA s=12.54 a=4 p=50% [STANDARD]]  SHORT=[MARUTI/SUPERTREND s=39.00 a=13 p=61% [MEDIUM]]  -> SHORT wins (score 39.00 > 12.54)
+03:08:48 INFO TRADE 2023-11-06  MARUTI       SHORT driver=SUPERTREND       entry=10265.00@12:55  exit=10286.00@15:15  TIME_EXIT   P&L Rs -1,728
+03:08:59 INFO Pre-market 2023-11-07: 446 stocks → 196 liquid+signal (103 bull / 93 bear) → 193 watchlist
+03:10:19 INFO 2023-11-07  LONG=[TATAELXSI/CAMARILLA s=14.17 a=4 p=56% [STANDARD]]  SHORT=[SAMMAANCAP/FAILED-BO s=36.75 a=11 p=62% [STANDARD]]  -> SHORT wins (score 36.75 > 14.17)
+03:10:19 INFO TRADE 2023-11-07  SAMMAANCAP   SHORT driver=FAILED-BO        entry=148.75@13:20  exit=149.95@13:30  STOP_HIT    P&L Rs -4,751
+03:10:30 INFO Pre-market 2023-11-08: 446 stocks → 198 liquid+signal (118 bull / 80 bear) → 180 watchlist
+03:11:46 INFO 2023-11-08  LONG=[PAYTM/CAMARILLA s=14.32 a=4 p=50% [STANDARD]]  SHORT=[POLYCAB/SUPERTREND s=42.00 a=14 p=62% [MEDIUM]]  -> SHORT wins (score 42.00 > 14.32)
+03:11:46 INFO TRADE 2023-11-08  POLYCAB      SHORT driver=SUPERTREND       entry=5120.20@10:55  exit=5129.10@15:15  TIME_EXIT   P&L Rs -1,588
+03:11:57 INFO Pre-market 2023-11-09: 446 stocks → 199 liquid+signal (121 bull / 78 bear) → 178 watchlist
+03:13:16 INFO 2023-11-09  LONG=[WELCORP/VPOC s=14.67 a=5 p=56% [STANDARD]]  SHORT=[JINDALSTEL/SUPERTREND s=39.00 a=12 p=61% [MEDIUM]]  -> SHORT wins (score 39.00 > 14.67)
+03:13:16 INFO TRADE 2023-11-09  JINDALSTEL   SHORT driver=SUPERTREND       entry=627.75@10:30  exit=624.45@15:15  TIME_EXIT   P&L Rs +1,900
+03:13:28 INFO Pre-market 2023-11-10: 446 stocks → 198 liquid+signal (116 bull / 82 bear) → 182 watchlist
+03:14:50 INFO 2023-11-10  LONG=[NTPC/CAMARILLA s=14.47 a=4 p=49% [STANDARD]]  SHORT=[M&M/VPOC s=39.00 a=13 p=63% [MEDIUM]]  -> SHORT wins (score 39.00 > 14.47)
+03:14:50 INFO TRADE 2023-11-10  M&M          SHORT driver=VPOC             entry=1540.00@09:15  exit=1524.45@15:15  TIME_EXIT   P&L Rs +4,314
+03:15:01 INFO Pre-market 2023-11-12: 446 stocks → 190 liquid+signal (136 bull / 54 bear) → 154 watchlist
+03:15:58 INFO 2023-11-12  LONG=[none]  SHORT=[none]  NO TRADE
+03:16:09 INFO Pre-market 2023-11-13: 446 stocks → 189 liquid+signal (152 bull / 37 bear) → 137 watchlist
+03:17:11 INFO 2023-11-13  LONG=[HINDALCO/VPOC s=12.17 a=4 p=49% [STANDARD]]  SHORT=[ADANIENT/DESC-TRI s=39.00 a=12 p=62% [STANDARD]]  -> SHORT wins (score 39.00 > 12.17)
+03:17:11 INFO TRADE 2023-11-13  ADANIENT     SHORT driver=DESC-TRI         entry=2129.90@10:20  exit=2144.90@15:15  TIME_EXIT   P&L Rs -3,021
+03:17:23 INFO Pre-market 2023-11-15: 446 stocks → 189 liquid+signal (145 bull / 44 bear) → 144 watchlist
+03:18:32 INFO 2023-11-15  LONG=[none]  SHORT=[CGPOWER/SUPERTREND s=39.50 a=12 p=62% [MEDIUM]]  -> SHORT (only candidate)
+03:18:32 INFO TRADE 2023-11-15  CGPOWER      SHORT driver=SUPERTREND       entry=381.70@09:45  exit=386.39@13:55  STOP_HIT    P&L Rs -6,871
+03:18:43 INFO Pre-market 2023-11-16: 446 stocks → 190 liquid+signal (167 bull / 23 bear) → 123 watchlist
+03:19:40 INFO 2023-11-16  LONG=[none]  SHORT=[ADANIENT/DESC-TRI s=39.62 a=14 p=62% [STANDARD]]  -> SHORT (only candidate)
+03:19:40 INFO TRADE 2023-11-16  ADANIENT     SHORT driver=DESC-TRI         entry=2132.30@09:30  exit=2137.10@15:15  TIME_EXIT   P&L Rs -1,697
+03:19:51 INFO Pre-market 2023-11-17: 446 stocks → 186 liquid+signal (168 bull / 18 bear) → 118 watchlist
+03:20:39 INFO 2023-11-17  LONG=[MFSL/VPOC s=16.79 a=6 p=55% [STANDARD]]  SHORT=[IGL/SUPERTREND s=33.00 a=11 p=59% [MEDIUM]]  -> SHORT wins (score 33.00 > 16.79)
+03:20:39 INFO TRADE 2023-11-17  IGL          SHORT driver=SUPERTREND       entry=194.30@11:20  exit=195.86@12:35  STOP_HIT    P&L Rs -4,748
+03:20:48 INFO Pre-market 2023-11-20: 446 stocks → 194 liquid+signal (170 bull / 24 bear) → 124 watchlist
+03:21:37 INFO 2023-11-20  LONG=[none]  SHORT=[SUNPHARMA/SUPERTREND s=36.00 a=12 p=64% [MEDIUM]]  -> SHORT (only candidate)
+03:21:37 INFO TRADE 2023-11-20  SUNPHARMA    SHORT driver=SUPERTREND       entry=1190.20@09:45  exit=1187.50@15:15  TIME_EXIT   P&L Rs +406
+03:21:46 INFO Pre-market 2023-11-21: 446 stocks → 203 liquid+signal (179 bull / 24 bear) → 124 watchlist
+03:22:34 INFO 2023-11-21  LONG=[IRCTC/VPOC s=14.29 a=4 p=56% [STANDARD]]  SHORT=[BANDHANBNK/DESC-TRI s=48.00 a=16 p=63% [STANDARD]]  -> SHORT wins (score 48.00 > 14.29)
+03:22:34 INFO TRADE 2023-11-21  BANDHANBNK   SHORT driver=DESC-TRI         entry=215.10@09:20  exit=213.90@15:15  TIME_EXIT   P&L Rs +1,511
+03:22:44 INFO Pre-market 2023-11-22: 446 stocks → 208 liquid+signal (193 bull / 15 bear) → 115 watchlist
+03:23:30 INFO 2023-11-22  LONG=[PAGEIND/CAMARILLA s=15.54 a=5 p=50% [STANDARD]]  SHORT=[BANDHANBNK/DESC-TRI s=36.50 a=12 p=60% [STANDARD]]  -> SHORT wins (score 36.50 > 15.54)
+03:23:30 INFO TRADE 2023-11-22  BANDHANBNK   SHORT driver=DESC-TRI         entry=214.50@09:15  exit=212.35@15:15  TIME_EXIT   P&L Rs +2,988
+03:23:39 INFO Pre-market 2023-11-23: 446 stocks → 198 liquid+signal (182 bull / 16 bear) → 116 watchlist
+03:24:24 INFO 2023-11-23  LONG=[COCHINSHIP/CAMARILLA s=12.17 a=4 p=55% [STANDARD]]  SHORT=[AMBUJACEM/SUPERTREND s=39.00 a=13 p=64% [MEDIUM]]  -> SHORT wins (score 39.00 > 12.17)
+03:24:24 INFO TRADE 2023-11-23  AMBUJACEM    SHORT driver=SUPERTREND       entry=413.15@09:45  exit=415.50@15:15  TIME_EXIT   P&L Rs -3,574
+03:24:34 INFO Pre-market 2023-11-24: 446 stocks → 193 liquid+signal (177 bull / 16 bear) → 116 watchlist
+03:25:20 INFO 2023-11-24  LONG=[KPITTECH/VPOC s=14.29 a=4 p=50% [STANDARD]]  SHORT=[BRITANNIA/CPR s=36.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 36.00 > 14.29)
+03:25:20 INFO TRADE 2023-11-24  BRITANNIA    SHORT driver=CPR              entry=4694.95@09:15  exit=4679.22@09:45  TARGET_HIT  P&L Rs +943
+03:25:31 INFO Pre-market 2023-11-28: 446 stocks → 195 liquid+signal (176 bull / 19 bear) → 119 watchlist
+03:26:21 INFO 2023-11-28  LONG=[CHAMBLFERT/VPOC s=15.42 a=5 p=50% [STANDARD]]  SHORT=[SBICARD/SUPERTREND s=51.00 a=17 p=62% [MEDIUM]]  -> SHORT wins (score 51.00 > 15.42)
+03:26:21 INFO TRADE 2023-11-28  SBICARD      SHORT driver=SUPERTREND       entry=737.25@10:40  exit=733.85@15:15  TIME_EXIT   P&L Rs +1,578
+03:26:31 INFO Pre-market 2023-11-29: 446 stocks → 193 liquid+signal (181 bull / 12 bear) → 112 watchlist
+03:27:20 INFO 2023-11-29  LONG=[none]  SHORT=[SRF/SUPERTREND s=36.50 a=12 p=61% [MEDIUM]]  -> SHORT (only candidate)
+03:27:20 INFO TRADE 2023-11-29  SRF          SHORT driver=SUPERTREND       entry=2348.80@12:50  exit=2351.45@15:15  TIME_EXIT   P&L Rs -1,288
+03:27:30 INFO Pre-market 2023-11-30: 446 stocks → 198 liquid+signal (189 bull / 9 bear) → 109 watchlist
+03:28:18 INFO 2023-11-30  LONG=[ULTRACEMCO/CAMARILLA s=16.04 a=5 p=56% [STANDARD]]  SHORT=[VEDL/SUPERTREND s=36.00 a=12 p=64% [MEDIUM]]  -> SHORT wins (score 36.00 > 16.04)
+03:28:18 INFO TRADE 2023-11-30  VEDL         SHORT driver=SUPERTREND       entry=101.45@09:30  exit=102.05@15:15  TIME_EXIT   P&L Rs -3,687
+03:28:28 INFO Pre-market 2023-12-01: 446 stocks → 205 liquid+signal (194 bull / 11 bear) → 111 watchlist
+03:29:16 INFO 2023-12-01  LONG=[DIXON/VPOC s=14.92 a=5 p=57% [STANDARD]]  SHORT=[RBLBANK/SUPERTREND s=36.50 a=11 p=60% [MEDIUM]]  -> SHORT wins (score 36.50 > 14.92)
+03:29:16 INFO TRADE 2023-12-01  RBLBANK      SHORT driver=SUPERTREND       entry=235.05@11:10  exit=233.05@15:15  TIME_EXIT   P&L Rs +3,528
+03:29:27 INFO Pre-market 2023-12-04: 446 stocks → 210 liquid+signal (199 bull / 11 bear) → 111 watchlist
+03:30:16 INFO 2023-12-04  LONG=[ICICIBANK/CAMARILLA s=22.55 a=7 p=55% [STANDARD]]  SHORT=[BALKRISIND/SUPERTREND s=42.00 a=13 p=62% [MEDIUM]]  -> SHORT wins (score 42.00 > 22.55)
+03:30:16 INFO TRADE 2023-12-04  BALKRISIND   SHORT driver=SUPERTREND       entry=2558.00@09:25  exit=2558.70@15:15  TIME_EXIT   P&L Rs -864
+03:30:27 INFO Pre-market 2023-12-05: 446 stocks → 216 liquid+signal (210 bull / 6 bear) → 106 watchlist
+03:31:09 INFO 2023-12-05  LONG=[PATANJALI/MACD s=12.32 a=5 p=57% [STANDARD]]  SHORT=[ICICIPRULI/CPR s=33.00 a=11 p=62% [MEDIUM]]  -> SHORT wins (score 33.00 > 12.32)
+03:31:09 INFO TRADE 2023-12-05  ICICIPRULI   SHORT driver=CPR              entry=560.45@09:15  exit=557.25@09:20  TARGET_HIT  P&L Rs +2,127
+03:31:19 INFO Pre-market 2023-12-06: 446 stocks → 223 liquid+signal (215 bull / 8 bear) → 108 watchlist
+03:32:04 INFO 2023-12-06  LONG=[CHAMBLFERT/CAMARILLA s=14.17 a=4 p=55% [STANDARD]]  SHORT=[DIVISLAB/SUPERTREND s=33.00 a=10 p=60% [MEDIUM]]  -> SHORT wins (score 33.00 > 14.17)
+03:32:04 INFO TRADE 2023-12-06  DIVISLAB     SHORT driver=SUPERTREND       entry=3752.35@10:10  exit=3735.70@15:15  TIME_EXIT   P&L Rs +1,488
+03:32:14 INFO Pre-market 2023-12-07: 446 stocks → 221 liquid+signal (212 bull / 9 bear) → 109 watchlist
+03:32:58 INFO 2023-12-07  LONG=[HUDCO/VPOC s=15.17 a=5 p=56% [STANDARD]]  SHORT=[MARUTI/SUPERTREND s=27.50 a=8 p=58% [MEDIUM]]  -> SHORT wins (score 27.50 > 15.17)
+03:32:58 INFO TRADE 2023-12-07  MARUTI       SHORT driver=SUPERTREND       entry=10775.10@10:55  exit=10705.05@15:15  TIME_EXIT   P&L Rs +2,501
+03:33:08 INFO Pre-market 2023-12-08: 446 stocks → 227 liquid+signal (221 bull / 6 bear) → 106 watchlist
+03:33:50 INFO 2023-12-08  LONG=[SBIN/CPR s=15.79 a=4 p=49% [STANDARD]]  SHORT=[LALPATHLAB/SUPERTREND s=39.00 a=13 p=62% [MEDIUM]]  -> SHORT wins (score 39.00 > 15.79)
+03:33:50 INFO TRADE 2023-12-08  LALPATHLAB   SHORT driver=SUPERTREND       entry=1338.60@10:05  exit=1312.65@12:05  TARGET_HIT  P&L Rs +8,958
+03:34:00 INFO Pre-market 2023-12-11: 446 stocks → 228 liquid+signal (219 bull / 9 bear) → 109 watchlist
+03:34:44 INFO 2023-12-11  LONG=[IRFC/VPOC s=14.67 a=5 p=57% [STANDARD]]  SHORT=[AUROPHARMA/STOCHASTIC s=36.00 a=12 p=64% [HIGH]]  -> SHORT wins (score 36.00 > 14.67)
+03:34:44 INFO TRADE 2023-12-11  AUROPHARMA   SHORT driver=STOCHASTIC       entry=1002.00@12:15  exit=1004.20@15:15  TIME_EXIT   P&L Rs -1,827
+03:34:54 INFO Pre-market 2023-12-12: 446 stocks → 232 liquid+signal (219 bull / 13 bear) → 113 watchlist
+03:35:38 INFO 2023-12-12  LONG=[NIACL/VPOC s=12.29 a=4 p=49% [STANDARD]]  SHORT=[BALRAMCHIN/SUPERTREND s=36.00 a=12 p=61% [MEDIUM]]  -> SHORT wins (score 36.00 > 12.29)
+03:35:38 INFO TRADE 2023-12-12  BALRAMCHIN   SHORT driver=SUPERTREND       entry=395.40@10:10  exit=389.45@15:15  TIME_EXIT   P&L Rs +6,796
+03:35:48 INFO Pre-market 2023-12-13: 446 stocks → 245 liquid+signal (230 bull / 15 bear) → 115 watchlist
+03:36:37 INFO 2023-12-13  LONG=[none]  SHORT=[RRKABEL/STOCHASTIC s=33.00 a=11 p=64% [HIGH]]  -> SHORT (only candidate)
+03:36:37 INFO TRADE 2023-12-13  RRKABEL      SHORT driver=STOCHASTIC       entry=1678.95@12:35  exit=1667.20@15:15  TIME_EXIT   P&L Rs +2,765
+03:36:48 INFO Pre-market 2023-12-14: 446 stocks → 248 liquid+signal (240 bull / 8 bear) → 108 watchlist
+03:37:35 INFO 2023-12-14  LONG=[MPHASIS/CAMARILLA s=15.17 a=5 p=56% [STANDARD]]  SHORT=[ADANIPORTS/BEAR-ENGULF s=36.00 a=11 p=58% [STANDARD]]  -> SHORT wins (score 36.00 > 15.17)
+03:37:35 INFO TRADE 2023-12-14  ADANIPORTS   SHORT driver=BEAR-ENGULF      entry=1063.65@09:50  exit=1077.31@10:45  STOP_HIT    P&L Rs -7,153
+03:37:46 INFO Pre-market 2023-12-15: 446 stocks → 251 liquid+signal (238 bull / 13 bear) → 113 watchlist
+03:38:36 INFO 2023-12-15  LONG=[DEEPAKNTR/VPOC s=12.42 a=4 p=55% [STANDARD]]  SHORT=[CAMS/SUPERTREND s=45.00 a=15 p=62% [MEDIUM]]  -> SHORT wins (score 45.00 > 12.42)
+03:38:36 INFO TRADE 2023-12-15  CAMS         SHORT driver=SUPERTREND       entry=545.60@09:25  exit=544.10@15:15  TIME_EXIT   P&L Rs +646
+03:38:48 INFO Pre-market 2023-12-18: 446 stocks → 254 liquid+signal (240 bull / 14 bear) → 114 watchlist
+03:39:38 INFO 2023-12-18  LONG=[none]  SHORT=[ABCAPITAL/CAMARILLA s=33.50 a=11 p=60% [MEDIUM]]  -> SHORT (only candidate)
+03:39:38 INFO TRADE 2023-12-18  ABCAPITAL    SHORT driver=CAMARILLA        entry=166.03@09:15  exit=164.57@09:35  TARGET_HIT  P&L Rs +3,662
+03:39:49 INFO Pre-market 2023-12-19: 446 stocks → 256 liquid+signal (243 bull / 13 bear) → 113 watchlist
+03:40:38 INFO 2023-12-19  LONG=[VOLTAS/CPR s=12.82 a=5 p=57% [STANDARD]]  SHORT=[ACC/SUPERTREND s=42.00 a=14 p=63% [MEDIUM]]  -> SHORT wins (score 42.00 > 12.82)
+03:40:38 INFO TRADE 2023-12-19  ACC          SHORT driver=SUPERTREND       entry=2226.20@09:20  exit=2201.00@15:15  TIME_EXIT   P&L Rs +4,921
+03:40:49 INFO Pre-market 2023-12-20: 446 stocks → 258 liquid+signal (241 bull / 17 bear) → 117 watchlist
+03:41:41 INFO 2023-12-20  LONG=[ITI/CAMARILLA s=14.54 a=4 p=56% [STANDARD]]  SHORT=[SBILIFE/SUPERTREND s=39.00 a=12 p=63% [MEDIUM]]  -> SHORT wins (score 39.00 > 14.54)
+03:41:41 INFO TRADE 2023-12-20  SBILIFE      SHORT driver=SUPERTREND       entry=1427.05@11:20  exit=1405.02@14:05  TARGET_HIT  P&L Rs +6,985
+03:41:52 INFO Pre-market 2023-12-21: 446 stocks → 253 liquid+signal (205 bull / 48 bear) → 148 watchlist
+03:42:50 INFO 2023-12-21  LONG=[none]  SHORT=[APLAPOLLO/STOCHASTIC s=27.75 a=8 p=62% [HIGH]]  -> SHORT (only candidate)
+03:42:50 INFO TRADE 2023-12-21  APLAPOLLO    SHORT driver=STOCHASTIC       entry=1565.80@10:30  exit=1589.29@12:55  STOP_HIT    P&L Rs -8,225
+03:43:00 INFO Pre-market 2023-12-22: 446 stocks → 254 liquid+signal (229 bull / 25 bear) → 125 watchlist
+03:43:52 INFO 2023-12-22  LONG=[TITAN/CAMARILLA s=17.97 a=5 p=50% [STANDARD]]  SHORT=[CANBK/BEAR-ENGULF s=36.00 a=12 p=62% [STANDARD]]  -> SHORT wins (score 36.00 > 17.97)
+03:43:52 INFO TRADE 2023-12-22  CANBK        SHORT driver=BEAR-ENGULF      entry=80.40@10:10  exit=79.19@15:15  TIME_EXIT   P&L Rs +6,799
+03:44:02 INFO Pre-market 2023-12-26: 446 stocks → 251 liquid+signal (220 bull / 31 bear) → 131 watchlist
+03:44:53 INFO 2023-12-26  LONG=[MAZDOCK/CAMARILLA s=15.17 a=4 p=56% [STANDARD]]  SHORT=[ESCORTS/STOCHASTIC s=33.50 a=11 p=64% [HIGH]]  -> SHORT wins (score 33.50 > 15.17)
+03:44:53 INFO TRADE 2023-12-26  ESCORTS      SHORT driver=STOCHASTIC       entry=2983.25@09:55  exit=2977.65@15:15  TIME_EXIT   P&L Rs +209
+03:45:04 INFO Pre-market 2023-12-27: 446 stocks → 250 liquid+signal (227 bull / 23 bear) → 123 watchlist
+03:45:52 INFO 2023-12-27  LONG=[AARTIIND/VPOC s=14.82 a=6 p=57% [STANDARD]]  SHORT=[LALPATHLAB/STOCHASTIC s=39.00 a=13 p=64% [HIGH]]  -> SHORT wins (score 39.00 > 14.82)
+03:45:52 INFO TRADE 2023-12-27  LALPATHLAB   SHORT driver=STOCHASTIC       entry=1283.30@13:35  exit=1285.80@15:15  TIME_EXIT   P&L Rs -1,701
+03:46:03 INFO Pre-market 2023-12-28: 446 stocks → 254 liquid+signal (234 bull / 20 bear) → 120 watchlist
+03:46:51 INFO 2023-12-28  LONG=[HINDPETRO/ASC-TRI s=15.69 a=7 p=57% [STANDARD]]  SHORT=[BANDHANBNK/SUPERTREND s=39.00 a=12 p=62% [MEDIUM]]  -> SHORT wins (score 39.00 > 15.69)
+03:46:51 INFO TRADE 2023-12-28  BANDHANBNK   SHORT driver=SUPERTREND       entry=237.30@10:10  exit=240.63@14:00  STOP_HIT    P&L Rs -7,745
+03:47:02 INFO Pre-market 2023-12-29: 446 stocks → 256 liquid+signal (233 bull / 23 bear) → 123 watchlist
+03:47:53 INFO 2023-12-29  LONG=[EXIDEIND/VPOC s=14.69 a=6 p=57% [STANDARD]]  SHORT=[MANAPPURAM/SUPERTREND s=33.00 a=11 p=60% [MEDIUM]]  -> SHORT wins (score 33.00 > 14.69)
+03:47:53 INFO TRADE 2023-12-29  MANAPPURAM   SHORT driver=SUPERTREND       entry=171.85@10:15  exit=174.45@12:20  STOP_HIT    P&L Rs -8,290
+03:47:53 INFO Year 2023 complete: 245 trades | effective win rate 55.1% | P&L Rs 107,721
+03:47:54 INFO 
+--- 2023 RESULTS ---
+03:47:54 INFO Total trades   : 245  (0 LONG, 245 SHORT)
+03:47:54 INFO EXACT_WIN      : 38  (15.5%)   — target hit
+03:47:54 INFO WIN (partial)  : 97  (39.6%)   — profitable TIME_EXIT
+03:47:54 INFO LOSS           : 110  (44.9%)   — stopped or exit at loss
+03:47:54 INFO Effective WR   : 55.1%  (EXACT_WIN + WIN)
+03:47:54 INFO Total P&L      : Rs 107,721  (Long Rs 0 | Short Rs 107,721)
+03:47:54 INFO Paper trades   : C:\Users\somal\Downloads\AI_ML\TradingAgent\data\trade_logs\paper_trades.csv
+03:47:54 INFO WF-5 running total: P&L Rs 558,111 [PASS ✓] — wf_results.json updated
+03:47:54 INFO Windows sleep prevention: OFF

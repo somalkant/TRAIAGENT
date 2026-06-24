@@ -1,0 +1,42 @@
+# Trading Agent — Python Dependencies
+# Install: pip install -r requirements.txt
+
+# Kite Connect API
+kiteconnect>=5.0.1
+
+# Data & Processing
+pandas>=2.1.0
+polars>=0.20.0
+pyarrow>=14.0.0
+numpy>=1.26.0
+
+# Technical Indicators
+pandas-ta>=0.4.0
+
+# Free data for global cues (SGX Nifty, Dow futures, India VIX cross-check)
+yfinance>=0.2.36
+
+# Environment / Config
+python-dotenv>=1.0.0
+
+# HTTP / Retries
+requests>=2.31.0
+urllib3>=2.0.0
+
+# Progress bars
+tqdm>=4.66.0
+
+# Backtesting reports (Phase 2)
+vectorbt>=0.26.2
+
+# Notebooks & Charts
+jupyterlab>=4.0.0
+ipywidgets>=8.1.0
+plotly>=5.18.0
+nbformat>=5.9.0
+
+# Scheduling (future)
+schedule>=1.2.0
+
+# Monitoring dashboard (Phase 2.6)
+streamlit>=1.35.0

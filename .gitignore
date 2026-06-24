@@ -1,0 +1,36 @@
+# Credentials — NEVER commit these
+.env
+checkpoints/access_token.json
+
+# Data files (too large for git — re-download on AWS via data pipeline)
+data/stocks/
+data/raw/
+
+# Claude Code project settings (personal/local)
+.claude/
+
+# Runtime logs (regenerated automatically)
+logs/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Tests
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db

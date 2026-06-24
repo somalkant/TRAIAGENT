@@ -1,0 +1,105 @@
+"""
+Composite score split for Phase 2B: separate long and short scores.
+
+Weight format (Phase 2B):
+    weights[strategy_name] = {"long": float, "short": float}
+
+Backward compat: if a weight value is a plain float (old format), it is
+treated as the long weight; short weight defaults to 1.0.
+"""
+from strategies.base import Signal
+
+
+def _get_long_weight(weights: dict, name: str) -> float:
+    w = weights.get(name, 1.0)
+    if isinstance(w, dict):
+        return float(w.get("long", 1.0))
+    return float(w)
+
+
+def _get_short_weight(weights: dict, name: str) -> float:
+    w = weights.get(name, 1.0)
+    if isinstance(w, dict):
+        return float(w.get("short", 1.0))
+    return 1.0   # old format has no short weight — start neutral
+
+
+def long_composite_score(
+    signals: dict[str, Signal],
+    weights: dict,
+    regime_modifiers: dict[str, float],
+) -> float:
+    """Sum of (weight_long × regime_modifier) for all +1 signals."""
+    score = 0.0
+    for name, sig in signals.items():
+        if sig.direction != +1:
+            continue
+        w   = _get_long_weight(weights, name)
+        mod = regime_modifiers.get(name, 1.0)
+        score += w * mod
+    return round(score, 4)
+
+
+def short_composite_score(
+    signals: dict[str, Signal],
+    weights: dict,
+    regime_modifiers: dict[str, float],
+) -> float:
+    """Sum of (weight_short × regime_modifier) for all -1 signals. Always positive."""
+    score = 0.0
+    for name, sig in signals.items():
+        if sig.direction != -1:
+            continue
+        w   = _get_short_weight(weights, name)
+        mod = regime_modifiers.get(name, 1.0)
+        score += w * mod
+    return round(score, 4)
+
+
+def composite_score(
+    signals: dict[str, Signal],
+    weights: dict,
+    regime_modifiers: dict[str, float],
+) -> float:
+    """
+    Legacy single-score function — kept for backward compatibility.
+    Returns long_score - short_score (net directional score).
+    New code should use long_composite_score / short_composite_score directly.
+    """
+    ls = long_composite_score(signals, weights, regime_modifiers)
+    ss = short_composite_score(signals, weights, regime_modifiers)
+    return round(ls - ss, 4)
+
+
+def count_agreeing(signals: dict[str, Signal], direction: int) -> int:
+    """Count how many strategies agree on a direction."""
+    return sum(1 for s in signals.values() if s.direction == direction)
+
+
+def count_agreeing_filtered(
+    signals: dict[str, Signal],
+    direction: int,
+    lifetime_wr: dict,
+    min_wr: float = 50.0,
+) -> int:
+    """
+    Count strategies that agree on direction AND have lifetime win rate >= min_wr.
+    Used in Phase 2 testing — poor strategies are excluded automatically.
+    Supports direction-specific win rates: lifetime_wr values may be
+    {"long": x, "short": y} dicts or plain floats (backward compat).
+    """
+    count = 0
+    dir_key = "long" if direction == +1 else "short"
+    for name, s in signals.items():
+        if s.direction != direction:
+            continue
+        entry = lifetime_wr.get(name)
+        if isinstance(entry, dict):
+            wr = float(entry.get(dir_key, 50.0))
+        elif entry is not None:
+            wr = float(entry)
+        else:
+            wr = 50.0
+        if wr >= min_wr:
+            count += 1
+    return count
