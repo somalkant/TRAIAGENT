@@ -23,22 +23,20 @@ Resumes automatically from last checkpoint.
 Paper trades saved to data/trade_logs/paper_trades.csv
 """
 
-import ctypes
 import logging
 import sys
 from pathlib import Path
 
-# ── prevent Windows sleep ─────────────────────────────────────────────────────
-ES_CONTINUOUS      = 0x80000000
-ES_SYSTEM_REQUIRED = 0x00000001
-
-
+# ── prevent Windows sleep (no-op on Linux/Mac) ────────────────────────────────
 def _keep_awake():
-    ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED)
-
+    if sys.platform == "win32":
+        import ctypes
+        ctypes.windll.kernel32.SetThreadExecutionState(0x80000000 | 0x00000001)
 
 def _allow_sleep():
-    ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
+    if sys.platform == "win32":
+        import ctypes
+        ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
 
 
 # ── logging ───────────────────────────────────────────────────────────────────
