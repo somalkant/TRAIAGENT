@@ -47,6 +47,10 @@ REQ_FILE="requirements-ec2.txt"
 [ -f "$REQ_FILE" ] || REQ_FILE="requirements.txt"
 echo "  Using: $REQ_FILE"
 pip install --quiet -r "$REQ_FILE"
+# pandas-ta declares numba as a dep (numba doesn't support Python 3.14).
+# Install with --no-deps — it only uses numba for optional JIT; EMA/RSI/etc. work without it.
+echo "  Installing pandas-ta (no-deps to skip numba)..."
+pip install --quiet "pandas-ta>=0.4.0" --no-deps
 
 # ── 4. Environment file ────────────────────────
 echo ""

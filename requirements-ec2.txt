@@ -12,7 +12,7 @@ pyarrow>=14.0.0
 numpy>=1.26.0
 
 # Technical Indicators
-pandas-ta>=0.4.0
+# pandas-ta is installed separately with --no-deps (its declared numba dep doesn't support Python 3.14)
 
 # Free data for global cues (SGX Nifty, Dow futures)
 yfinance>=0.2.36
