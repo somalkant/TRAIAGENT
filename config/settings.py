@@ -156,7 +156,9 @@ UNIVERSE_FILE    = BASE_DIR / "config" / "universe.csv"
 TRADE_LOG_DIR    = DATA_DIR / "trade_logs"
 PAPER_TRADES_FILE           = TRADE_LOG_DIR / "paper_trades.csv"  # Phase 2 unified log
 TESTING_MAX_RECOMMENDATIONS = 1       # Phase 2: 1 trade per day
-AGREEMENT_MIN_LIFETIME_WR   = 50.0    # only strategies >= 50% historical win rate count toward agreement
+AGREEMENT_MIN_LIFETIME_WR      = 50.0  # SHORT direction gate (keep strict — short WRs are genuinely strong)
+AGREEMENT_MIN_LIFETIME_WR_LONG = 40.0  # LONG direction gate — lowered from 50% (bear years 2020-2022 drove most LONG WRs below 50%, causing LONG=[none])
+AGREEMENT_MIN_LIFETIME_WR_SHORT = 50.0 # explicit SHORT alias for clarity
 
 # Conviction-based position sizing — scale risk up when a proven strategy drives the trade
 CONVICTION_HIGH_WR   = 65.0  # driver lifetime win% >= 65% → 2x risk (VPOC qualifies; VOL-SPIKE blocked despite 73.8%)

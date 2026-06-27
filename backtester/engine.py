@@ -30,7 +30,8 @@ from config.settings import (
     WEIGHTS_FILE, MEMORY_DIR, NOTEBOOKS_DIR, CHECKPOINT_DIR,
     WEIGHT_UPDATE_EVERY, MAX_RECOMMENDATIONS,
     LEARNING_END_YEAR, TRADE_LOG_DIR, DAILY_LOSS_LIMIT,
-    PAPER_TRADES_FILE, TESTING_MAX_RECOMMENDATIONS, AGREEMENT_MIN_LIFETIME_WR,
+    PAPER_TRADES_FILE, TESTING_MAX_RECOMMENDATIONS,
+    AGREEMENT_MIN_LIFETIME_WR_LONG, AGREEMENT_MIN_LIFETIME_WR_SHORT,
     CONVICTION_HIGH_WR, CONVICTION_MED_WR, CONVICTION_HIGH_MULT, CONVICTION_MED_MULT,
     SHORT_ENABLED,
 )
@@ -339,8 +340,8 @@ def _find_best_candidate(
             continue
 
         if freeze_weights:
-            agreeing = count_agreeing_filtered(signals, direction, _LIFETIME_WR,
-                                               AGREEMENT_MIN_LIFETIME_WR)
+            wr_gate  = AGREEMENT_MIN_LIFETIME_WR_LONG if direction == 1 else AGREEMENT_MIN_LIFETIME_WR_SHORT
+            agreeing = count_agreeing_filtered(signals, direction, _LIFETIME_WR, wr_gate)
         else:
             agreeing = count_agreeing(signals, direction=direction)
 

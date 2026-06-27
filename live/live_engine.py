@@ -30,7 +30,7 @@ from backtester.composite_scorer import (
 )
 from backtester.quality_filter import passes_all_filters
 from backtester.position_sizer import position_size
-from config.settings import AGREEMENT_MIN_LIFETIME_WR, SHORT_ENABLED
+from config.settings import AGREEMENT_MIN_LIFETIME_WR_LONG, AGREEMENT_MIN_LIFETIME_WR_SHORT, SHORT_ENABLED
 from strategies import ALL_STRATEGIES
 from weights.regime import get_regime_modifiers, get_direction_bias
 from watchlist.pre_filter import PreMarketFilter
@@ -201,8 +201,8 @@ def _find_live_candidate(
         if best_sig is None:
             continue
 
-        agreeing     = count_agreeing_filtered(signals, direction, _LIFETIME_WR,
-                                               AGREEMENT_MIN_LIFETIME_WR)
+        wr_gate      = AGREEMENT_MIN_LIFETIME_WR_LONG if direction == 1 else AGREEMENT_MIN_LIFETIME_WR_SHORT
+        agreeing     = count_agreeing_filtered(signals, direction, _LIFETIME_WR, wr_gate)
         turnover     = daily_turnover.get(symbol, 0)
         pred_win_pct = _predicted_win_pct(signals, weights, _LIFETIME_WR, direction=direction)
 
@@ -340,7 +340,8 @@ def _log_top_candidates(
             break
         signals      = stock_signals[symbol]
         today_5m     = data_manager.get_today(symbol)
-        agreeing     = count_agreeing_filtered(signals, direction, _LIFETIME_WR, AGREEMENT_MIN_LIFETIME_WR)
+        wr_gate      = AGREEMENT_MIN_LIFETIME_WR_LONG if direction == 1 else AGREEMENT_MIN_LIFETIME_WR_SHORT
+        agreeing     = count_agreeing_filtered(signals, direction, _LIFETIME_WR, wr_gate)
         turnover     = daily_turnover.get(symbol, 0)
         pred_win_pct = _predicted_win_pct(signals, weights, _LIFETIME_WR, direction=direction)
         best_sig     = _best_signal(signals, direction=direction)
