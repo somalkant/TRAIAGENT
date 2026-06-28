@@ -39,7 +39,7 @@ WF_SCHEDULE = {
     3: {"train": "2016-2020", "test": "2021",      "regime": "Strong momentum bull"},
     4: {"train": "2016-2021", "test": "2022",      "regime": "Sustained bear + high VIX"},
     5: {"train": "2016-2022", "test": "2023-2026", "regime": "Post-bear recovery + live period"},
-    6: {"train": "2016-2023", "test": "2024-2027", "regime": "Post-recovery + DESC-TRI blocked era"},
+    6: {"train": "2016-2024", "test": "2025-2026", "regime": "Post-recovery bull + rate cut cycle"},
 }
 
 

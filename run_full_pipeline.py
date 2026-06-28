@@ -54,6 +54,12 @@ PIPELINE = [
     ("test",   2024,   5),
     ("test",   2025,   5),
     ("test",   2026,   5),
+    # WF6 extension — train on 2023-2024, validate on 2025-2026, then go live with WF6
+    ("train",  2023, None),  # step 21
+    ("train",  2024, None),  # step 22
+    ("freeze", None,   6),   # step 23 — WF6: trained on 2016-2024
+    ("test",   2025,   6),   # step 24
+    ("test",   2026,   6),   # step 25
 ]
 
 
