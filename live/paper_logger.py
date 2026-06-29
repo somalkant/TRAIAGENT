@@ -33,49 +33,67 @@ _COLUMNS = [
 
 
 def save_open_trade(trade_date: date,
-                    long_rec:  dict | None,
-                    short_rec: dict | None) -> None:
+                    long_rec:    dict | None,
+                    short_rec:   dict | None,
+                    long_placed: bool = False,
+                    short_placed: bool = False) -> None:
     """
     Persist open trade state to disk (up to one LONG + one SHORT).
-    Deletes the checkpoint when both slots are None (all positions closed).
+    long_placed / short_placed track whether a slot was used today even if
+    the position has since closed — prevents re-entry after restart.
+    Deletes the checkpoint only when both slots are None AND neither was placed.
     """
-    if long_rec is None and short_rec is None:
+    if long_rec is None and short_rec is None and not long_placed and not short_placed:
         clear_open_trade()
         return
-    payload = {"date": str(trade_date), "long": long_rec, "short": short_rec}
+    payload = {
+        "date":          str(trade_date),
+        "long":          long_rec,
+        "short":         short_rec,
+        "long_placed":   long_placed,
+        "short_placed":  short_placed,
+    }
     OPEN_TRADE_CACHE.parent.mkdir(parents=True, exist_ok=True)
     OPEN_TRADE_CACHE.write_text(json.dumps(payload, default=str))
     symbols = [r["symbol"] for r in (long_rec, short_rec) if r]
-    log.debug(f"Open trade checkpoint saved: {', '.join(symbols)}")
+    log.debug(f"Open trade checkpoint saved: {', '.join(symbols) or 'none open'} "
+              f"(placed: long={long_placed} short={short_placed})")
 
 
-def load_open_trade() -> tuple[date | None, dict | None, dict | None]:
+def load_open_trade() -> tuple[date | None, dict | None, dict | None, bool, bool]:
     """
     Load persisted open trades from a previous run of the agent today.
-    Returns (trade_date, long_rec, short_rec); any slot is None if not open.
+    Returns (trade_date, long_rec, short_rec, long_placed, short_placed).
+    long_placed / short_placed are True if that direction was used today even
+    if the position has since closed — prevents re-entry after restart.
     """
     if not OPEN_TRADE_CACHE.exists():
-        return None, None, None
+        return None, None, None, False, False
     try:
         data = json.loads(OPEN_TRADE_CACHE.read_text())
         saved_date = date.fromisoformat(data["date"])
         if saved_date != date.today():
-            return None, None, None   # stale from a previous day
-        long_rec  = data.get("long")
-        short_rec = data.get("short")
+            return None, None, None, False, False   # stale from a previous day
+        long_rec     = data.get("long")
+        short_rec    = data.get("short")
+        long_placed  = data.get("long_placed",  long_rec  is not None)
+        short_placed = data.get("short_placed", short_rec is not None)
         # backward-compat: old format stored a single "rec" key
         if long_rec is None and short_rec is None and "rec" in data:
             dirn = data["rec"].get("direction", "LONG")
             if dirn == "SHORT":
-                short_rec = data["rec"]
+                short_rec    = data["rec"]
+                short_placed = True
             else:
-                long_rec = data["rec"]
+                long_rec    = data["rec"]
+                long_placed = True
         symbols = [r["symbol"] for r in (long_rec, short_rec) if r]
-        log.info(f"Resumed open trade(s) from checkpoint: {', '.join(symbols)}")
-        return saved_date, long_rec, short_rec
+        log.info(f"Resumed open trade(s) from checkpoint: {', '.join(symbols) or 'none'} "
+                 f"(placed today: long={long_placed} short={short_placed})")
+        return saved_date, long_rec, short_rec, long_placed, short_placed
     except Exception as e:
         log.warning(f"Could not read open trade checkpoint: {e}")
-        return None, None, None
+        return None, None, None, False, False
 
 
 def clear_open_trade() -> None:

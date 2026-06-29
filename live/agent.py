@@ -231,19 +231,25 @@ def main():
         if expected_bars > 0 and actual_bars < expected_bars * 0.8:
             log.info(
                 f"Candle history incomplete: {actual_bars} bars vs {expected_bars} expected "
-                f"— backfilling from Kite API"
+                f"— backfilling from {broker.display_name} API"
             )
-            _backfill_today_bars(kite, dm, today)
+            _backfill_today_bars(kite, dm, today, broker.display_name)
 
     # ── 6. Check if there's a crash-recovered open trade from today ─────────
     state = AgentState()
-    _, long_rec, short_rec = load_open_trade()
+    _, long_rec, short_rec, _long_placed, _short_placed = load_open_trade()
     if long_rec:
         state.set_long(long_rec)
         log.info(f"RECOVERED open LONG:  {long_rec['symbol']} — monitoring for exit")
+    elif _long_placed:
+        state._long_placed = True   # slot used today but trade already closed — block re-entry
+        log.info("RECOVERED: LONG slot already used today (trade closed) — no new LONG")
     if short_rec:
         state.set_short(short_rec)
         log.info(f"RECOVERED open SHORT: {short_rec['symbol']} — monitoring for exit")
+    elif _short_placed:
+        state._short_placed = True  # slot used today but trade already closed — block re-entry
+        log.info("RECOVERED: SHORT slot already used today (trade closed) — no new SHORT")
 
     # ── 7. Ticker WebSocket setup ────────────────────────────────────────────
     tokens     = dm.instrument_tokens
@@ -413,8 +419,8 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                         f"size=Rs {rec['position_rs']:,.0f} ({rec['shares']} shares)"
                     )
             if placed_any:
-                long_rec, short_rec, _, _ = state.snapshot()
-                save_open_trade(today, long_rec, short_rec)
+                long_rec, short_rec, lp, sp = state.snapshot()
+                save_open_trade(today, long_rec, short_rec, lp, sp)
             else:
                 dirs = []
                 if need_long:  dirs.append("LONG")
@@ -520,8 +526,8 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
             changed = True
 
     if changed:
-        new_long, new_short, _, _ = state.snapshot()
-        save_open_trade(today, new_long, new_short)
+        new_long, new_short, lp, sp = state.snapshot()
+        save_open_trade(today, new_long, new_short, lp, sp)
 
 
 def _force_time_exit(state: AgentState, dm: LiveDataManager,
@@ -545,7 +551,7 @@ def _force_time_exit(state: AgentState, dm: LiveDataManager,
         close_fn()
         log_closed_trade(today, rec, exit_price=last_price, exit_reason="TIME_EXIT", exit_time=exit_time)
 
-    save_open_trade(today, None, None)
+    save_open_trade(today, None, None, long_placed, short_placed)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -653,11 +659,12 @@ def _load_history_for_symbols(symbols: list[str], today: date) -> dict:
     return result
 
 
-def _backfill_today_bars(kite, dm: LiveDataManager, today: date) -> None:
+def _backfill_today_bars(kite, dm: LiveDataManager, today: date,
+                         broker_name: str = "broker") -> None:
     """
-    Fetch today's completed 5-min bars from Kite historical API and seed the
-    candle builders.  Called when the agent starts AFTER market open with no
-    checkpoint data (late start or first-ever run mid-day).
+    Fetch today's completed 5-min bars from the active broker's historical API
+    and seed the candle builders.  Called when the agent starts AFTER market
+    open with no checkpoint data (late start or first-ever run mid-day).
 
     Without this, strategies only see bars captured since the agent started —
     missing all price action from 9:15 AM up to the actual start time.
@@ -674,7 +681,7 @@ def _backfill_today_bars(kite, dm: LiveDataManager, today: date) -> None:
         log.info("Late-start backfill: market not open long enough yet — skipping")
         return
 
-    log.info(f"Late-start backfill: fetching today's bars 09:15 → {to_dt.strftime('%H:%M')} from Kite API...")
+    log.info(f"Late-start backfill: fetching today's bars 09:15 → {to_dt.strftime('%H:%M')} from {broker_name} API...")
 
     def _fetch(token: int) -> list[dict]:
         bars = kite.historical_data(
