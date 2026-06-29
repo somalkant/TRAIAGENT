@@ -10,6 +10,11 @@ checkpoints/short_wr_opt/*.json
 # Data files (too large for git — re-download on AWS via data pipeline)
 data/stocks/
 data/raw/
+data/index/
+data/trade_logs/
+
+# Memory / strategy agent (runtime-generated, EC2 writes its own)
+memory/strategy_agent.md
 
 # Claude Code project settings (personal/local)
 .claude/
