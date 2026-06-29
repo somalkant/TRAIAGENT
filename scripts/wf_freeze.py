@@ -43,6 +43,41 @@ WF_SCHEDULE = {
 }
 
 
+def _parse_test_years(test_str: str) -> set:
+    """Parse '2019' or '2023-2026' into a set of integer years."""
+    parts = test_str.split("-")
+    if len(parts) == 1:
+        return {int(parts[0])}
+    return set(range(int(parts[0]), int(parts[-1]) + 1))
+
+
+def _non_overlapping_prior_windows(n: int) -> list:
+    """
+    Return prior WF windows whose test years do NOT overlap with any later prior window.
+
+    Prevents double-counting in lifetime WR computation when consecutive WF windows
+    share test years (e.g. WF5 tests 2023-2026, WF6 tests 2025-2026 — if both were
+    included, 2025-2026 outcomes would be counted twice).
+
+    Rule: if window A's test years intersect with any window B where A < B < n,
+    window A is excluded (window B is more recent and takes precedence).
+    Since perf files have no per-year labels we cannot partial-filter within a file,
+    so the entire older window is dropped.
+    """
+    prior = list(range(1, n))
+    included = []
+    for wf_a in prior:
+        years_a = _parse_test_years(WF_SCHEDULE[wf_a]["test"])
+        overlaps_later = any(
+            years_a & _parse_test_years(WF_SCHEDULE[wf_b]["test"])
+            for wf_b in prior
+            if wf_b > wf_a
+        )
+        if not overlaps_later:
+            included.append(wf_a)
+    return included
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Freeze WF weights snapshot at the end of a training boundary year."
@@ -63,10 +98,14 @@ def main():
     shutil.copy2(WEIGHTS_FILE, frozen_path)
     print(f"\n✓ WF-{n} weights frozen: {frozen_path}")
 
-    # 2. Auto-update lifetime win rates from all prior completed WF test windows
-    #    (WF-1 has no prior data, so this is a no-op for the first freeze)
-    prior_windows = list(range(1, n))
+    # 2. Auto-update lifetime win rates from prior WF test windows (non-overlapping only).
+    #    Overlapping windows are excluded to prevent double-counting test years that
+    #    appear in both an older and a newer WF window (e.g. WF5 vs WF6 share 2025-2026).
+    prior_windows = _non_overlapping_prior_windows(n)
     if prior_windows:
+        skipped = [w for w in range(1, n) if w not in prior_windows]
+        if skipped:
+            print(f"\n  (Skipping WF windows {skipped} — test years overlap with later windows)")
         print(f"\nRecomputing lifetime win rates from WF windows {prior_windows}...")
         logging.basicConfig(level=logging.INFO, format="  %(message)s")
         sys.path.insert(0, str(BASE_DIR))
