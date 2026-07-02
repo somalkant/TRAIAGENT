@@ -56,7 +56,7 @@ def _load_lifetime_winrates(path: Path | None = None) -> dict:
     if path is None:
         path = CHECKPOINT_DIR / "strategy_lifetime_winrates.json"
     if path.exists():
-        with open(path) as f:
+        with open(path, encoding="utf-8-sig") as f:
             data = json.load(f)
         return {k: v for k, v in data.items() if not k.startswith("_")}
     return {}
