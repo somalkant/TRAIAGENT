@@ -49,6 +49,15 @@ NO_ENTRY_AFTER        = time(14, 0)  # 2:00 PM IST — no new positions after th
 SQUARE_OFF_TARGET     = time(15, 15) # 3:15 PM IST — close all positions
 
 # ─────────────────────────────────────────────
+# PROFIT LOCK EXIT POLICY (conservative early profit booking, LONG only)
+# ─────────────────────────────────────────────
+# Only applies to LONG trades whose entry->target distance is >= this many percent.
+PROFIT_LOCK_MIN_TARGET_PCT = 2.0
+# When it applies, cap the exit at this flat % gain from entry instead of the
+# original (larger) target — e.g. target=2%+ away gets capped to a 1% exit.
+PROFIT_LOCK_CAP_PCT        = 1.0
+
+# ─────────────────────────────────────────────
 # TRANSACTION COST MODEL
 # ─────────────────────────────────────────────
 BROKERAGE_PER_LEG  = 20          # Rs 20 per order (Rs 40 round trip)

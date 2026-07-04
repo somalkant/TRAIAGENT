@@ -7,9 +7,10 @@ RESULT_COLORS = {
 }
 
 EXIT_COLORS = {
-    "TARGET_HIT": "#22c55e",
-    "TIME_EXIT":  "#facc15",
-    "STOP_HIT":   "#f87171",
+    "TARGET_HIT":  "#22c55e",
+    "PROFIT_LOCK": "#4ade80",
+    "TIME_EXIT":   "#facc15",
+    "STOP_HIT":    "#f87171",
 }
 
 CONVICTION_COLORS = {

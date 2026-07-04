@@ -68,7 +68,7 @@ def _to_ist(series: pd.Series) -> pd.Series:
 # hang on Python 3.13 due to SSL/WebSocket initialisation during import.
 # from kiteconnect import KiteConnect, KiteTicker  ← moved to main()
 
-from config.settings import WEIGHTS_FILE
+from config.settings import WEIGHTS_FILE, PROFIT_LOCK_MIN_TARGET_PCT, PROFIT_LOCK_CAP_PCT
 from live.instrument_map import load_instrument_map, NIFTY50_TOKEN
 from live.data_manager import LiveDataManager
 from live.live_engine import scan_once
@@ -76,6 +76,7 @@ from live.paper_logger import (
     save_open_trade, load_open_trade, log_closed_trade
 )
 from live.risk_guard import check_risk_limits, write_eod_risk_check
+from live.exit_policy import evaluate_profit_lock
 from watchlist.pre_filter import PreMarketFilter
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -478,10 +479,17 @@ def _log_trade_monitor(state: AgentState, dm: LiveDataManager) -> None:
             to_target = round((last_price - target) / last_price * 100, 2)
             to_stop   = round((stop - last_price)   / last_price * 100, 2)
 
+        lock_tag = ""
+        target_dist = target - entry
+        if direction == "LONG" and entry > 0 and target_dist > 0 and (target_dist / entry * 100) >= PROFIT_LOCK_MIN_TARGET_PCT:
+            lock_trigger = entry * (1 + PROFIT_LOCK_CAP_PCT / 100)
+            to_lock = round((lock_trigger - last_price) / last_price * 100, 2)
+            lock_tag = f"  to_lock={to_lock:+.2f}%"
+
         log.info(
             f"  MONITOR [{direction}] {symbol} @ {last_price:.2f} | "
             f"P&L Rs {pnl:+,.0f} ({pnl_pct:+.2f}%) | "
-            f"to_target={to_target:+.2f}% to_stop={to_stop:+.2f}%{stale_tag}"
+            f"to_target={to_target:+.2f}% to_stop={to_stop:+.2f}%{lock_tag}{stale_tag}"
         )
         if stale_count >= 1:
             log.warning(f"  STALE TICK [{symbol}]: WebSocket may have dropped — exit checks unreliable")
@@ -524,6 +532,14 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
             close_fn()
             log_closed_trade(today, rec, exit_price=stop, exit_reason="STOP_HIT", exit_time=now_str)
             changed = True
+        else:
+            lock_hit, lock_price = evaluate_profit_lock(rec, last_price)
+            if lock_hit:
+                log.info(f"PROFIT LOCK EXIT [{direction}]: {symbol} @ {lock_price:.2f} "
+                         f"(capped at {PROFIT_LOCK_CAP_PCT:.1f}% vs original target={target:.2f})")
+                close_fn()
+                log_closed_trade(today, rec, exit_price=lock_price, exit_reason="PROFIT_LOCK", exit_time=now_str)
+                changed = True
 
     if changed:
         new_long, new_short, lp, sp = state.snapshot()
