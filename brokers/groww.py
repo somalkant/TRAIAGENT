@@ -228,6 +228,7 @@ class GrowwTickerAdapter:
 
         self.on_connect = None
         self.on_ticks   = None
+        self.on_depth   = None   # callback(ws, [{instrument_token, buy_levels, sell_levels}])
         self.on_close   = None
         self.on_error   = None
 
@@ -272,6 +273,7 @@ class GrowwTickerAdapter:
                 ]
                 if instrument_list:
                     self._feed.unsubscribe_ltp(instrument_list)
+                    self._feed.unsubscribe_market_depth(instrument_list)
             except Exception:
                 pass
         if self.on_close:
@@ -325,7 +327,8 @@ class GrowwTickerAdapter:
         log.info(f"GrowwFeed: connecting NATS WebSocket for {len(instrument_list)} stocks...")
         self._feed = GrowwFeed(self._client)
         self._feed.subscribe_ltp(instrument_list, on_data_received=self._on_feed_tick)
-        log.info(f"GrowwFeed: subscribed to {len(instrument_list)} NSE equities")
+        self._feed.subscribe_market_depth(instrument_list, on_data_received=self._on_depth_tick)
+        log.info(f"GrowwFeed: subscribed LTP + market depth for {len(instrument_list)} NSE equities")
 
         if has_nifty:
             self._nifty_thread = threading.Thread(
@@ -353,17 +356,65 @@ class GrowwTickerAdapter:
             all_ltp   = self._feed.get_ltp()
             tick_data = all_ltp.get(exchange, {}).get(segment, {}).get(token_str, {})
 
-            ltp = float(tick_data.get("ltp")    or 0)
-            vol = int(tick_data.get("volume")   or 0)
+            ltp       = float(tick_data.get("ltp")      or 0)
+            vol       = int(tick_data.get("volume")    or 0)
+            bid_qty   = int(tick_data.get("bidQty")    or 0)
+            offer_qty = int(tick_data.get("offerQty")  or 0)
 
             if ltp > 0 and self.on_ticks:
                 self.on_ticks(self, [{
                     "instrument_token": int_token,
                     "last_price":       ltp,
                     "volume_traded":    vol,
+                    "bid_qty":          bid_qty,
+                    "offer_qty":        offer_qty,
                 }])
         except Exception as e:
             log.debug(f"GrowwFeed tick parse error: {e}")
+
+    def _on_depth_tick(self, meta: dict) -> None:
+        """
+        Called by GrowwFeed on each market-depth update (StocksMarketDepthProto).
+        Parses buyBook / sellBook into sorted price-level lists and fires on_depth.
+        """
+        if not self._running or not self.on_depth:
+            return
+        try:
+            token_str = str(meta.get("feed_key", ""))
+            if not token_str.isdigit():
+                return
+            int_token = int(token_str)
+
+            exchange  = meta.get("exchange", "NSE")
+            segment   = meta.get("segment",  "CASH")
+            all_depth = self._feed.get_market_depth()
+            depth_data = all_depth.get(exchange, {}).get(segment, {}).get(token_str, {})
+
+            if not depth_data:
+                return
+
+            def _parse_book(book: dict) -> list[dict]:
+                levels = []
+                for v in book.values():
+                    if isinstance(v, dict):
+                        p = float(v.get("price") or 0)
+                        q = float(v.get("qty")   or 0)
+                        if p > 0:
+                            levels.append({"price": p, "qty": q})
+                return levels
+
+            buy_levels  = sorted(_parse_book(depth_data.get("buyBook",  {})),
+                                 key=lambda x: x["price"], reverse=True)  # best bid first
+            sell_levels = sorted(_parse_book(depth_data.get("sellBook", {})),
+                                 key=lambda x: x["price"])                 # best ask first
+
+            self.on_depth(self, [{
+                "instrument_token": int_token,
+                "buy_levels":       buy_levels,
+                "sell_levels":      sell_levels,
+            }])
+        except Exception as e:
+            log.debug(f"GrowwFeed depth parse error: {e}")
 
     def _nifty_poll_loop(self) -> None:
         """Poll Nifty50 index LTP via REST every 2 s (index not in GrowwFeed equity sub)."""
