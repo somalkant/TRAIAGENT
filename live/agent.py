@@ -77,6 +77,7 @@ from live.paper_logger import (
 )
 from live.risk_guard import check_risk_limits, write_eod_risk_check
 from live.exit_policy import evaluate_profit_lock
+from live.fill_check import check_fill
 from watchlist.pre_filter import PreMarketFilter
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -280,6 +281,10 @@ def main():
             if state.is_long_open() or state.is_short_open():
                 _check_exit(state, dm, today)
 
+        def on_depth(_ws, depth_ticks):
+            for dtick in depth_ticks:
+                dm.on_depth_update(dtick["instrument_token"], dtick)
+
         def on_close(_ws, code, reason):
             log.warning(f"Ticker disconnected: {code} {reason}")
 
@@ -290,6 +295,8 @@ def main():
         new_ws.on_ticks   = on_ticks
         new_ws.on_close   = on_close
         new_ws.on_error   = on_error
+        if hasattr(new_ws, "on_depth"):
+            new_ws.on_depth = on_depth
         new_ws.connect(threaded=True)
         return new_ws
 
@@ -407,6 +414,15 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                         f"stop={rec['signal']['stop']:.2f} | "
                         f"size=Rs {rec['position_rs']:,.0f} ({rec['shares']} shares)"
                     )
+                    fc = check_fill(dm, rec["symbol"],
+                                    rec["signal"]["entry"], rec["shares"], "LONG")
+                    log.info(
+                        f"FILL CHECK   [LONG]:  {rec['symbol']} | "
+                        f"signal={rec['signal']['signal_time']} "
+                        f"entry={rec.get('entry_time', now_t.strftime('%H:%M'))} | "
+                        f"{rec['shares']} shares @ ₹{rec['signal']['entry']:.2f} | "
+                        f"{fc['msg']}"
+                    )
                 elif dirn == "SHORT" and not state.is_short_open():
                     state.set_short(rec)
                     placed_any = True
@@ -418,6 +434,15 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                         f"target={rec['signal']['target']:.2f} "
                         f"stop={rec['signal']['stop']:.2f} | "
                         f"size=Rs {rec['position_rs']:,.0f} ({rec['shares']} shares)"
+                    )
+                    fc = check_fill(dm, rec["symbol"],
+                                    rec["signal"]["entry"], rec["shares"], "SHORT")
+                    log.info(
+                        f"FILL CHECK   [SHORT]: {rec['symbol']} | "
+                        f"signal={rec['signal']['signal_time']} "
+                        f"entry={rec.get('entry_time', now_t.strftime('%H:%M'))} | "
+                        f"{rec['shares']} shares @ ₹{rec['signal']['entry']:.2f} | "
+                        f"{fc['msg']}"
                     )
             if placed_any:
                 long_rec, short_rec, lp, sp = state.snapshot()

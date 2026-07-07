@@ -62,6 +62,10 @@ class LiveDataManager:
         }
         self._nifty_builder = CandleBuilder("NIFTY50")
 
+        # Per-price-level market depth from GrowwFeed (updated on every depth tick)
+        # {"RELIANCE": {"buy": [{price, qty}, ...], "sell": [{price, qty}, ...]}, ...}
+        self._market_depth: dict[str, dict] = {}
+
     # ── startup ──────────────────────────────────────────────────────────────
 
     def load_history_from_parquet(self) -> None:
@@ -146,6 +150,20 @@ class LiveDataManager:
         symbol = self._token_to_sym.get(token)
         if symbol:
             self._builders[symbol].on_tick(price, day_volume)
+            # Zerodha KiteTicker MODE_FULL delivers depth directly in tick dict.
+            # Groww depth arrives via on_depth_update() (separate WebSocket channel).
+            kite_depth = tick.get("depth")
+            if kite_depth:
+                def _norm(levels):
+                    return [
+                        {"price": float(l["price"]),
+                         "qty":   float(l.get("quantity", l.get("qty", 0)))}
+                        for l in levels if l.get("price")
+                    ]
+                self._market_depth[symbol] = {
+                    "buy":  _norm(kite_depth.get("buy",  [])),
+                    "sell": _norm(kite_depth.get("sell", [])),
+                }
 
     # ── bar close (called by agent scheduler every 5 minutes) ────────────────
 
@@ -202,6 +220,24 @@ class LiveDataManager:
     def get_last_price(self, symbol: str) -> float | None:
         """Most recent tick price for an open position (used for exit monitoring)."""
         return self._builders[symbol].last_price
+
+    def on_depth_update(self, token: int, depth_tick: dict) -> None:
+        """Store latest market depth levels for a symbol (called from on_depth callback)."""
+        symbol = self._token_to_sym.get(token)
+        if symbol:
+            self._market_depth[symbol] = {
+                "buy":  depth_tick.get("buy_levels",  []),
+                "sell": depth_tick.get("sell_levels", []),
+            }
+
+    def get_depth(self, symbol: str) -> dict | None:
+        """
+        Latest per-price-level market depth from GrowwFeed StocksMarketDepthProto.
+        Returns {"buy": [{price, qty}, ...], "sell": [{price, qty}, ...]} or None.
+        buy  levels: sorted best-bid-first (highest price first).
+        sell levels: sorted best-ask-first (lowest  price first).
+        """
+        return self._market_depth.get(symbol)
 
     @property
     def instrument_tokens(self) -> list[int]:
