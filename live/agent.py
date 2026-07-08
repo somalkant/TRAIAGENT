@@ -76,7 +76,7 @@ from live.paper_logger import (
     save_open_trade, load_open_trade, log_closed_trade
 )
 from live.risk_guard import check_risk_limits, write_eod_risk_check
-from live.fill_check import check_fill
+from live.fill_check import check_fill, simulate_fill
 from watchlist.pre_filter import PreMarketFilter
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -416,6 +416,7 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                         f"{rec['shares']} shares @ ₹{rec['signal']['entry']:.2f} | "
                         f"{fc['msg']}"
                     )
+                    rec["_fill_state"] = _init_fill_state(fc, rec["shares"])
                 elif dirn == "SHORT" and not state.is_short_open():
                     state.set_short(rec)
                     placed_any = True
@@ -437,6 +438,7 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                         f"{rec['shares']} shares @ ₹{rec['signal']['entry']:.2f} | "
                         f"{fc['msg']}"
                     )
+                    rec["_fill_state"] = _init_fill_state(fc, rec["shares"])
             if placed_any:
                 long_rec, short_rec, _, _ = state.snapshot()
                 save_open_trade(today, long_rec, short_rec)
@@ -447,6 +449,7 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                 log.info(f"  {now_t.strftime('%H:%M')} — no signal for {'/'.join(dirs)}")
 
         if state.is_long_open() or state.is_short_open():
+            _settle_fills(state, dm, now_t)
             _log_trade_monitor(state, dm)
 
         # Intraday 3:15 PM check
@@ -458,6 +461,101 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
 # ─────────────────────────────────────────────────────────────────────────────
 # Exit monitoring
 # ─────────────────────────────────────────────────────────────────────────────
+
+def _init_fill_state(fc: dict, target_shares: int) -> dict:
+    """Create fill tracking state from the initial check_fill() result."""
+    return {
+        "target_shares":  target_shares,
+        "acc_filled":     fc["filled_qty"],
+        "acc_weighted":   fc["avg_price"] * fc["filled_qty"] if fc["filled_qty"] > 0 else 0.0,
+        "settled":        fc["fillable"] is True,   # already complete if FILLED at placement
+        "bars_remaining": 0 if fc["fillable"] is True else 1,  # check once more next bar
+    }
+
+
+def _settle_fills(state: AgentState, dm: LiveDataManager, now_t) -> None:
+    """
+    Called each bar for open positions with unsettled fills.
+    On the bar immediately after placement (+5 min window):
+      - Re-queries live depth
+      - Simulates book-walk to compute avg fill price and remaining qty
+      - Logs FILL SETTLE with final verdict and slippage vs signal entry
+    """
+    long_rec, short_rec, _, _ = state.snapshot()
+    for rec in (long_rec, short_rec):
+        if rec is None:
+            continue
+        fs = rec.get("_fill_state")
+        if fs is None or fs["settled"]:
+            continue
+
+        # Count down the remaining bars in the fill window
+        fs["bars_remaining"] -= 1
+        if fs["bars_remaining"] > 0:
+            continue   # still within window, wait one more bar
+
+        # Window expired — take one final depth snapshot and log
+        fs["settled"] = True
+        symbol      = rec["symbol"]
+        direction   = rec["direction"]
+        shares      = fs["target_shares"]
+        entry_price = float(rec["signal"]["entry"])
+        bar_str     = now_t.strftime("%H:%M")
+        side        = "ask" if direction == "LONG" else "bid"
+
+        depth = dm.get_depth(symbol)
+        if depth is None:
+            log.info(
+                f"FILL SETTLE  [{direction}]: {symbol} | bar={bar_str} | "
+                f"depth unavailable — cannot confirm fill"
+            )
+            return
+
+        # Check what's available NOW at entry_price
+        still_needed = shares - fs["acc_filled"]
+        sim = simulate_fill(depth, still_needed, entry_price, direction)
+
+        # Accumulate into running totals
+        fs["acc_filled"]   += sim["filled_qty"]
+        if sim["filled_qty"] > 0:
+            fs["acc_weighted"] += sim["avg_price"] * sim["filled_qty"]
+
+        total_filled = fs["acc_filled"]
+        avg_price    = fs["acc_weighted"] / total_filled if total_filled > 0 else 0.0
+        slip         = (avg_price - entry_price if direction == "LONG"
+                        else entry_price - avg_price)
+
+        if total_filled >= shares:
+            rec["_avg_fill_price"] = avg_price
+            log.info(
+                f"FILL SETTLE  [{direction}]: {symbol} | bar={bar_str} | "
+                f"FULLY FILLED {shares:,} shares | avg ₹{avg_price:.2f} | "
+                f"slippage ₹{slip:+.2f} vs signal entry ₹{entry_price:.2f}"
+            )
+        else:
+            # Still not fully filled — show what best available price would achieve
+            best_still = sim["best_qty"]
+            could_fill = (total_filled + best_still) >= shares
+            if could_fill and sim["best_price"] is not None:
+                total_best_filled = total_filled + best_still
+                best_wsum = fs["acc_weighted"] + (sim["best_avg"] * best_still if best_still > 0 else 0)
+                best_avg_total = best_wsum / total_best_filled if total_best_filled > 0 else 0.0
+                best_slip = (best_avg_total - entry_price if direction == "LONG"
+                             else entry_price - best_avg_total)
+                best_note = (
+                    f"at best {side} ₹{sim['best_price']:.2f}: FILLS @ avg ₹{best_avg_total:.2f} "
+                    f"(slip ₹{best_slip:+.2f})"
+                )
+            else:
+                best_note = f"insufficient depth even at best {side}"
+
+            partial_str = f"{total_filled:,}/{shares}" if total_filled > 0 else f"0/{shares}"
+            avg_str     = f" @ avg ₹{avg_price:.2f}" if total_filled > 0 else ""
+            log.info(
+                f"FILL SETTLE  [{direction}]: {symbol} | bar={bar_str} | "
+                f"NOT FILLED within 5-min window — {partial_str} shares{avg_str} | {best_note}"
+            )
+
 
 _monitor_last_seen: dict[str, tuple[float, int]] = {}  # symbol -> (price, consecutive_unchanged_bars)
 
