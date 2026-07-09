@@ -58,6 +58,15 @@ PROFIT_LOCK_MIN_TARGET_PCT = 2.0
 PROFIT_LOCK_CAP_PCT        = 1.0
 
 # ─────────────────────────────────────────────
+# ORDER BOOK FILL SIMULATION (paper trading realism)
+# ─────────────────────────────────────────────
+# Max % away from the decided entry price we'll still walk the book and
+# acquire shares at — e.g. entry=1569.80 + 0.1% = levels up to ~1571.37 count.
+# Levels beyond this band are shown as "best available" in logs but not filled
+# (we don't chase price indefinitely).
+FILL_TOLERANCE_PCT = 0.10
+
+# ─────────────────────────────────────────────
 # TRANSACTION COST MODEL
 # ─────────────────────────────────────────────
 BROKERAGE_PER_LEG  = 20          # Rs 20 per order (Rs 40 round trip)

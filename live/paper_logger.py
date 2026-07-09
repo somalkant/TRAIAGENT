@@ -114,7 +114,9 @@ def log_closed_trade(
     Called when exit_reason is known (TARGET_HIT / STOP_HIT / TIME_EXIT).
     """
     sig      = rec["signal"]
-    entry    = float(sig["entry"])
+    # Prefer the order-book-settled weighted avg fill price (real holding price)
+    # over the raw signal entry, once _settle_fills() has confirmed a full fill.
+    entry    = float(rec.get("_avg_fill_price") or sig["entry"])
     pos_rs   = float(rec["position_rs"])
     shares   = int(rec["shares"])
 
