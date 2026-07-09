@@ -18,25 +18,28 @@ Returns FILLED / NOT_FILLED / DEPTH_UNAVAILABLE — never blocks the trade.
 from __future__ import annotations
 import logging
 
+from config.settings import FILL_TOLERANCE_PCT
+
 log = logging.getLogger(__name__)
 
 
 def simulate_fill(depth: dict, target_qty: int, entry_price: float,
-                  direction: str, tolerance: float = 0.05) -> dict:
+                  direction: str, tolerance_pct: float = FILL_TOLERANCE_PCT) -> dict:
     """
     Walk the order book level-by-level to simulate filling target_qty shares.
 
     Two passes:
-      in_range  — levels at/within entry_price ± tolerance (signal-entry fill)
+      in_range   — levels within tolerance_pct% of entry_price (signal-entry fill)
       best_avail — all levels, no price limit (market-price fill)
 
     Returns:
-      filled_qty  : shares fillable within tolerance of entry_price
+      filled_qty  : shares fillable within tolerance_pct% of entry_price
       avg_price   : weighted avg fill price (0.0 if nothing filled)
       best_qty    : shares fillable at best available market price
       best_avg    : weighted avg fill price at best market (0.0 if nothing)
       best_price  : top-of-book price (best ask for LONG, best bid for SHORT)
     """
+    tolerance = entry_price * tolerance_pct / 100
     if direction == "LONG":
         in_range = [l for l in depth.get("sell", []) if l["price"] <= entry_price + tolerance]
         all_side = depth.get("sell", [])

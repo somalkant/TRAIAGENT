@@ -59,6 +59,15 @@ GST_RATE           = 0.18        # 18% on brokerage + exchange charges
 STAMP_RATE_BUY     = 0.00003     # 0.003% on buy side
 SLIPPAGE_PER_SIDE  = 0.0005      # 0.05% assumed slippage each side
 
+# ─────────────────────────────────────────────
+# FILL TOLERANCE
+# ─────────────────────────────────────────────
+# Max % away from the decided entry price we walk the order book to fill.
+# 0.10% on a ₹1570 entry = ₹1.57 band — takes levels at ₹1569.80,
+# ₹1569.90, ₹1570.00 etc rather than stopping at the exact tick.
+# Levels beyond this band appear only in the "best available" diagnostic.
+FILL_TOLERANCE_PCT = 0.10
+
 def calculate_total_cost(buy_value: float, sell_value: float) -> float:
     brokerage = BROKERAGE_PER_LEG * 2
     stt       = sell_value * STT_RATE_SELL

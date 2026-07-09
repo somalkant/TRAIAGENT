@@ -96,7 +96,9 @@ def log_closed_trade(
     Called when exit_reason is known (TARGET_HIT / STOP_HIT / TIME_EXIT).
     """
     sig      = rec["signal"]
-    entry    = float(sig["entry"])
+    # Use settled weighted-avg fill price when available (set by _settle_fills in agent.py);
+    # falls back to signal entry price if fill tracking was unavailable.
+    entry    = float(rec.get("_avg_fill_price") or sig["entry"])
     pos_rs   = float(rec["position_rs"])
     shares   = int(rec["shares"])
 
