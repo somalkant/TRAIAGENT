@@ -36,6 +36,8 @@ from strategies.bearish.bear_engulf import BearEngulfing
 # Phase 2B — dual-direction strategies
 from strategies.dual.pin_bar import PinBar
 from strategies.dual.intraday_struct import IntradayStructure
+# Phase 2B+ — bullish-only strategies (long-side mirrors of bearish ones)
+from strategies.bullish.failed_breakdown import FailedBreakdown
 
 ALL_STRATEGIES = [
     ORB15(), ORB30(), PDH_PDL(), GapContinuation(), VolumeSpikeBreakout(),
@@ -52,6 +54,8 @@ ALL_STRATEGIES = [
     DoubleTop(), DescendingTriangle(), RisingWedge(), BearFlag(),
     FailedBreakout(), DeadCatBounce(), OpenWeakness(), BearEngulfing(),
     PinBar(), IntradayStructure(),
+    # Phase 2B+
+    FailedBreakdown(),
 ]
 
 STRATEGY_NAMES = [s.name for s in ALL_STRATEGIES]

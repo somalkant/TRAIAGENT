@@ -1,4 +1,11 @@
-"""Strategy 15: First 5-min Candle — buy above / sell below first candle of the day."""
+"""
+Strategy 15: First 5-min Candle — buy above / sell below first candle of the day.
+
+Breakout evaluation only starts after the post-open warm-up window (09:30) —
+a break in the first few minutes is the likeliest spot for a liquidity-sweep
+fakeout on the day's thinnest volume; the candle's high/low still defines the
+level, but acting on it is delayed until the warm-up has passed.
+"""
 import pandas as pd
 from strategies.base import BaseStrategy, Signal
 
@@ -21,6 +28,8 @@ class FirstCandle(BaseStrategy):
         for _, c in today_5min.iloc[1:].iterrows():
             if self._after_cutoff(c["datetime"]):
                 break
+            if not self._after_warmup(c["datetime"]):
+                continue   # let the open's initial move settle before acting on the breakout
             if c["close"] > high:
                 return self._buy(high, high + 2 * width, low,
                                   signal_time=self._candle_time(c["datetime"]),

@@ -37,7 +37,7 @@ def _load_trades() -> pd.DataFrame:
     if not LIVE_TRADES_FILE.exists():
         return pd.DataFrame()
     try:
-        df = pd.read_csv(LIVE_TRADES_FILE, parse_dates=["date"])
+        df = pd.read_csv(LIVE_TRADES_FILE, parse_dates=["date"], on_bad_lines="skip")
         return df
     except Exception:
         return pd.DataFrame()

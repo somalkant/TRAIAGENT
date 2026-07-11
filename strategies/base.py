@@ -13,7 +13,9 @@ from datetime import date, time
 import pandas as pd
 
 
-NO_ENTRY_AFTER = time(14, 0)   # 2:00 PM IST
+NO_ENTRY_AFTER      = time(14, 0)   # 2:00 PM IST
+OPEN_WARMUP_UNTIL   = time(9, 30)   # no entries before this — lets the open's initial
+                                     # liquidity sweep/false-move settle before acting
 
 
 @dataclass
@@ -92,4 +94,15 @@ class BaseStrategy:
     def _after_cutoff(dt) -> bool:
         t = pd.Timestamp(dt).time()
         return t >= NO_ENTRY_AFTER
+
+    @staticmethod
+    def _after_warmup(dt) -> bool:
+        """True once past the post-open warm-up window (default 09:30).
+
+        `dt` labels a bar by its *start* (e.g. 09:25 = the 09:25-09:30 candle),
+        so the bar's data is only available once the clock reaches dt+5min —
+        compare against the bar's close time, not its start label.
+        """
+        close_t = (pd.Timestamp(dt) + pd.Timedelta(minutes=5)).time()
+        return close_t >= OPEN_WARMUP_UNTIL
 

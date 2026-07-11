@@ -438,6 +438,271 @@ real-world execution friction. This phase bridges the gap.
   → Full deployment with multi-agent system (Phase 3)
 
 ================================================================================
+## PHASE LIVE-PROD — PRODUCTION PRE-CHECKS (before any real money is deployed)
+## Planning date: 2026-06-29
+================================================================================
+
+The paper trading system is a SIMULATION — no real orders go to the broker.
+Before switching to real money, the following gaps must be closed.
+Each gap has a severity level: BLOCKER (must fix), IMPORTANT (fix before first trade),
+HARDEN (can fix in week 1 of live trading).
+
+--------------------------------------------------------------------------------
+### GAP 1 — ORDER PLACEMENT [BLOCKER]
+--------------------------------------------------------------------------------
+
+Current state:
+  live/agent.py logs "PAPER TRADE PLACED" with no broker API call.
+  brokers/base.py defines NO trading methods (place_order, cancel_order).
+  brokers/groww.py and brokers/zerodha.py implement credentials only.
+
+What to build:
+  1. Add abstract methods to BaseBroker (brokers/base.py):
+       place_order(symbol, qty, direction, order_type, price=None) → order_id
+       cancel_order(order_id) → bool
+       get_order_status(order_id) → dict  {"status": COMPLETE/REJECTED/PENDING, "filled_qty": N}
+
+  2. Implement in GrowwBroker (brokers/groww.py):
+       Use Groww Order API — MIS order type for intraday cash equity.
+       LONG:  order_type=BUY,  product=MIS
+       SHORT: order_type=SELL, product=MIS (sell first, cover later)
+
+  3. Implement in ZerodhaBroker (brokers/zerodha.py):
+       kite.place_order(variety=VARIETY_REGULAR, exchange=NSE, tradingsymbol=symbol,
+                        transaction_type=BUY/SELL, quantity=qty,
+                        product=PRODUCT_MIS, order_type=ORDER_TYPE_MARKET)
+
+  4. In live/agent.py — replace paper log with real order call:
+       order_id = broker.place_order(symbol, qty, direction="LONG", order_type="MARKET")
+       # then poll for fill confirmation (Gap 3)
+
+--------------------------------------------------------------------------------
+### GAP 2 — STOP LOSS AND TARGET AT BROKER LEVEL [BLOCKER]
+--------------------------------------------------------------------------------
+
+Current state:
+  live/agent.py monitors SL and target in software (_check_exit loop every 5 min).
+  If agent crashes, stop loss is UNMONITORED — stock can move past SL with no exit.
+
+Preferred solution — BRACKET ORDER (BO):
+  Both Zerodha and Groww support bracket orders that embed SL + target in the
+  entry order itself. The exchange manages SL and target — agent crash = no risk.
+
+  Zerodha bracket order:
+    kite.place_order(
+        variety      = VARIETY_BO,
+        exchange     = NSE,
+        tradingsymbol= symbol,
+        transaction_type = BUY (LONG) or SELL (SHORT),
+        quantity     = qty,
+        product      = PRODUCT_MIS,
+        order_type   = ORDER_TYPE_LIMIT,
+        price        = entry_price,
+        stoploss     = stop_distance_in_points,   # e.g. entry - stop = 5 pts → stoploss=5
+        squareoff    = target_distance_in_points, # e.g. target - entry = 20 pts → squareoff=20
+    )
+  One API call. Exchange auto-triggers SL or target — no GTT, no software polling needed.
+
+  Groww bracket order: same concept, use Groww BO order type via their Order API.
+
+  Impact on Gap 2: If bracket orders are used, Gap 2 is fully solved by Gap 1.
+  No separate GTT step needed. The SL and target live at the exchange from trade entry.
+
+  Impact on software exit monitor (_check_exit in agent.py):
+  Keep it for TARGET_HIT and TIME_EXIT confirmation — but the actual execution
+  happens at the exchange. Software monitor becomes a status tracker, not executor.
+
+  Fallback (if BO not available for a symbol or order type):
+  Fall back to GTT SL order after regular entry fill (same as before).
+
+--------------------------------------------------------------------------------
+### GAP 3 — ORDER FILL CONFIRMATION [BLOCKER]
+--------------------------------------------------------------------------------
+
+Current state:
+  Paper trading assumes instant full fill at entry price. No fill polling exists.
+
+What to build:
+  After place_order() returns an order_id, poll get_order_status() until:
+    status == COMPLETE   → record actual filled_price and filled_qty
+    status == REJECTED   → log rejection reason, do NOT record as open trade
+    timeout (30 seconds) → cancel order, log failure, skip trade
+
+  Use filled_price (not signal entry price) as the actual entry for:
+    - live_open_trade.json entry_price field
+    - live_paper_trades.csv entry_price column
+    - SL and target recalculation (preserve stop_dist and target_dist from signal)
+
+  Implementation: polling loop in live/agent.py after place_order call:
+    for _ in range(10):  # 10 × 3s = 30s max
+        status = broker.get_order_status(order_id)
+        if status["status"] in ("COMPLETE", "REJECTED"):
+            break
+        time.sleep(3)
+
+--------------------------------------------------------------------------------
+### GAP 4 — ORDER REJECTION HANDLING [BLOCKER]
+--------------------------------------------------------------------------------
+
+Current state:
+  No margin checks, no circuit limit handling, no rejection logic.
+  If order is rejected, current code would still treat it as an open trade.
+
+What to build:
+  After fill confirmation (Gap 3), if status == REJECTED:
+    log.error(f"ORDER REJECTED: {symbol} — {status.get('reason')}")
+    do NOT call state.set_long() / state.set_short()
+    do NOT set long_placed / short_placed to True
+    → agent continues scanning for next signal
+
+  Common rejection reasons to handle:
+    - Insufficient margin (log and halt trading for the day)
+    - Stock in circuit (skip, mark in watchlist filter)
+    - Market order outside trading hours (should not happen if time checks are correct)
+    - Qty too large for market (split order — future enhancement)
+
+--------------------------------------------------------------------------------
+### GAP 5 — POSITION RECONCILIATION ON STARTUP [BLOCKER]
+--------------------------------------------------------------------------------
+
+Current state:
+  On restart, agent only reads live_open_trade.json. If file is corrupted or
+  deleted, _long_placed/_short_placed reset to False → re-entry risk.
+
+What to build:
+  Add broker.get_open_positions() method returning current MIS positions.
+  On agent startup (after Gap 6 fix), reconcile:
+
+    file_state = load_open_trade()        # checkpoint JSON
+    broker_state = broker.get_positions() # actual open MIS positions from broker
+
+    if broker_state has LONG but file_state.long is None:
+        → missed a fill or crash after order — recover from broker_state
+    if file_state.long exists but broker_state has no LONG:
+        → position already closed (SL hit at broker, GTT triggered) — mark as closed
+    if both agree → proceed normally
+
+  Broker state is authoritative for real money. JSON is secondary confirmation.
+
+--------------------------------------------------------------------------------
+### GAP 6 — P&L LIMITS FROM ACTUAL BROKER P&L [IMPORTANT]
+--------------------------------------------------------------------------------
+
+Current state:
+  live/risk_guard.py reads live_paper_trades.csv for daily/monthly P&L limits.
+  For real money, this CSV may lag actual fills or miss broker-level exits.
+
+What to build:
+  Add broker.get_today_pnl() method.
+  In _check_risk_limits() (live/risk_guard.py):
+    paper_pnl = _read_from_csv()          # keep as fallback
+    broker_pnl = broker.get_today_pnl()   # actual realized P&L from broker
+    pnl = broker_pnl if broker_pnl is not None else paper_pnl
+    if pnl <= -DAILY_LOSS_LIMIT: halt trading
+
+  This ensures daily/monthly circuit breakers trigger from actual P&L, not
+  a CSV that may have been written incorrectly.
+
+--------------------------------------------------------------------------------
+### GAP 7 — DUPLICATE ORDER PREVENTION [IMPORTANT]
+--------------------------------------------------------------------------------
+
+Current state:
+  No idempotency. If network times out during place_order() and the code retries,
+  two orders could be placed for the same signal.
+
+What to build:
+  Generate a unique tag per trade signal: f"{today}_{symbol}_{direction}_{signal_time}"
+  Pass as order tag/client_order_id to broker API.
+  Before placing, check if an order with the same tag already exists:
+    existing = broker.get_order_by_tag(tag)
+    if existing: use existing order_id instead of placing new order
+
+  Zerodha supports tag parameter in place_order(). Groww API equivalent to verify.
+
+--------------------------------------------------------------------------------
+### GAP 8 — PARTIAL FILL HANDLING [IMPORTANT]
+--------------------------------------------------------------------------------
+
+Current state:
+  Position size uses full signal qty (e.g., 343 shares). Assumes 100% fill.
+  If only 200 shares fill, P&L calculation is wrong.
+
+What to build:
+  After fill confirmation, use filled_qty (not signal qty) for:
+    - position_rs = filled_price × filled_qty
+    - stop_loss and target unchanged (price-based, not qty-based)
+    - pnl_rs calculation at exit uses filled_qty
+
+  If filled_qty < 80% of signal qty → log warning (unusual for liquid stocks).
+  If filled_qty == 0 → treat as rejection (Gap 4 path).
+
+--------------------------------------------------------------------------------
+### GAP 9 — HARD SQUARE-OFF CRON JOB [IMPORTANT]
+--------------------------------------------------------------------------------
+
+Current state:
+  Square-off at 3:15 PM is handled inside live/agent.py (_force_time_exit).
+  If agent crashes at 3:10 PM, NO square-off runs. Positions carried overnight = banned.
+
+What to build:
+  EC2 cron job (separate from agent process) at 3:14 PM IST:
+    crontab: 44 9 * * 1-5  cd ~/TRAIAGENT && source venv/bin/activate && python live/force_squareoff.py
+
+  live/force_squareoff.py:
+    Reads live_open_trade.json. For each open position, calls broker.place_order()
+    in the opposite direction to close. Runs even if main agent is down.
+
+  This is the real-money safety net — ensures no intraday position becomes overnight.
+
+--------------------------------------------------------------------------------
+### GAP 10 — CIRCUIT BREAKER CHECK BEFORE ORDER [HARDEN]
+--------------------------------------------------------------------------------
+
+Current state:
+  Circuit breaker is checked inside passes_all_filters() using LOWER_CIRCUIT_BUFFER.
+  But this check runs at SIGNAL time (bar close). By ORDER time (30 seconds later),
+  the stock could have hit circuit.
+
+What to build:
+  Just before calling place_order(), re-check live price vs circuit limits:
+    live_price = broker.get_last_price(symbol)
+    if direction == SHORT and live_price <= lower_circuit × 1.02: skip
+    if direction == LONG  and live_price >= upper_circuit × 0.98: skip
+  Live price from broker API (single quote, not WebSocket).
+
+--------------------------------------------------------------------------------
+### IMPLEMENTATION ORDER (before first real-money trade)
+
+  WEEK 1 (BLOCKERS — nothing trades real money until these are done):
+    1. Gap 1: place_order() in BaseBroker + GrowwBroker
+    2. Gap 3: fill confirmation polling loop
+    3. Gap 4: rejection handling (no state update on reject)
+    4. Gap 5: position reconciliation on startup
+    5. Gap 2: GTT stop loss order at broker (or Option B supervisord)
+
+  WEEK 2 (IMPORTANT — add before first real trade goes live):
+    6. Gap 6: P&L limits from broker API
+    7. Gap 7: duplicate order prevention via order tags
+    8. Gap 8: partial fill quantity tracking
+    9. Gap 9: hard square-off cron job on EC2
+
+  WEEK 3 ONWARDS (HARDEN):
+    10. Gap 10: pre-order circuit breaker re-check
+    11. EOD P&L reconciliation: compare CSV vs broker statement
+    12. Alerting: Telegram/email on trade placed, SL hit, daily limit hit
+
+--------------------------------------------------------------------------------
+### STARTING CAPITAL FOR FIRST LIVE RUN
+
+  Do NOT start with Rs 10,00,000.
+  First 2–3 months live: Rs 1,00,000 (10% of full capital).
+  Max position size: Rs 33,333 (scaled proportionally from Rs 5L).
+  Max loss per trade: Rs 2,000 (2% of Rs 1L).
+  Gate to full capital: actual P&L ≥ 70% of paper P&L for 2 consecutive months.
+  See Phase 2.5 (above) for the full performance gate criteria.
+
+================================================================================
 ## PHASE 2.6 — MONITORING DASHBOARD (Streamlit, build alongside Phase 2.5)
 ================================================================================
 
