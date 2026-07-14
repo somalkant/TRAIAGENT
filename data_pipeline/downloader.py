@@ -19,7 +19,7 @@ Features:
 import json
 import time
 import logging
-from datetime import date, timedelta
+from datetime import date, timedelta, time as dtime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -435,11 +435,41 @@ def _download_stock(
     for col in ["open", "high", "low", "close"]:
         df[col] = df[col].astype(float)
     df["volume"] = df["volume"].astype("int64")
+    df = _normalize_intraday_bars(df, symbol)
     df.sort_values("datetime", inplace=True)
     df.drop_duplicates(subset=["datetime"], inplace=True)
 
     _append_parquet(stocks_dir / f"{symbol}.parquet", df)
     return True
+
+
+def _normalize_intraday_bars(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
+    """
+    Defensive guard against a timestamp-shift bug observed on live EOD downloads
+    (bars landed at 14:45-20:55 IST instead of the true 09:15-15:25 NSE session —
+    a consistent +5:30 offset, first seen after switching to the Groww broker).
+    If a day's bars fall entirely outside plausible market hours (09:00-15:35)
+    but shifting the whole day back by 5h30m lands them inside that window, the
+    shift is corrected here and logged loudly so the root cause isn't silently
+    masked — this feeds the pre-market filter's turnover/volume comparisons, so
+    a silent corruption here quietly breaks live trade selection.
+    """
+    if df.empty:
+        return df
+    df = df.copy()
+    shifted_days = 0
+    for d in df["datetime"].dt.date.unique():
+        mask = df["datetime"].dt.date == d
+        day_times = df.loc[mask, "datetime"].dt.time
+        if day_times.min() >= dtime(14, 0) and day_times.max() > dtime(15, 35):
+            shifted = df.loc[mask, "datetime"] - timedelta(hours=5, minutes=30)
+            if shifted.dt.time.min() >= dtime(9, 0) and shifted.dt.time.max() <= dtime(15, 35):
+                df.loc[mask, "datetime"] = shifted
+                shifted_days += 1
+    if shifted_days:
+        log.warning(f"{symbol}: corrected +5:30 timestamp shift on {shifted_days} day(s) — "
+                    f"check the active broker's historical_data() timestamp handling")
+    return df
 
 
 def _download_index(

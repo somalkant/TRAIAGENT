@@ -192,3 +192,45 @@ NIFTY_BULLISH_THRESHOLD    = 1.5   # % change threshold (positive)
 NIFTY_BEARISH_THRESHOLD    = -1.5  # % change threshold (negative)
 
 WF_WEIGHTS_DIR = CHECKPOINT_DIR   # where frozen WF weight snapshots are stored
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LIVE-ONLY EXECUTION SAFETY LAYER (Phase 2.5 — added after live/backtest divergence review)
+# These apply ONLY in live/live_engine.py and live/agent.py. The backtester and
+# its quality_filter.py are left untouched so it remains a stable reference point.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# 1. Entry fidelity — stop chasing price at scan time.
+#    Live no longer re-anchors entry/stop/target to the last traded price.
+#    Instead: fill at the live price only if it hasn't moved unfavorably beyond
+#    this gate from the strategy's researched entry; otherwise skip the trade
+#    entirely (no resting/limit order, no waiting for a retracement).
+ENTRY_DRIFT_GATE_PCT   = 0.30   # max unfavorable drift (%) from researched entry to still take the trade
+SIGNAL_EXPIRY_MIN      = 30     # discard a driver signal older than this many minutes (matches the
+                                # 146-min stale-fill case found in the live/backtest review)
+
+# 2. Risk-policy rejection gates (reject only — never widen/move a stop or target).
+MAX_STOP_DISTANCE_PCT   = 2.0   # reject any candidate whose stop is farther than this from entry
+MIN_TARGET_DISTANCE_PCT = 0.5   # reject targets closer than this (~3.3x the ~0.15% cost breakeven)
+
+# 3. Shorts underperformed longs live (18.8% exact vs 56% backtest) — halve size
+#    until the short edge is confirmed on clean (non-chased) live data.
+LIVE_SHORT_SIZE_MULT = 0.5
+
+# 4. Candle-overlap confidence tier — measures price compression over the last
+#    3 completed 5-min bars. overlap_ratio = width(intersection of [low,high]
+#    ranges) / width(union). >= threshold -> "TIGHT" (compression before the
+#    move) else "LOOSE". Used only to CAP sizing (LOOSE can't get HIGH/MEDIUM
+#    conviction), never as an entry veto — and only once 3 bars exist.
+OVERLAP_TIGHT_THRESHOLD = 0.5
+
+# 5. Profit-lock — a trailing stop, not a hard jump to a fixed level.
+#    Replaying the 36 real live trades against actual bars showed a hard
+#    "+1.0% -> lock +0.7%" REDUCES net P&L (kills the target-hit tail); a wider
+#    trailing stop that only protects the peak was ~neutral to slightly better
+#    and would have converted the worst single loss (KIRLOSENG, ran to +1.77%
+#    then reversed to full stop) into a small winner. Trigger at PROFIT_LOCK_TRIGGER_PCT
+#    favorable move, then trail PROFIT_LOCK_TRAIL_PCT behind the best price seen —
+#    stop only ever ratchets tighter, never loosens.
+PROFIT_LOCK_ENABLED     = True
+PROFIT_LOCK_TRIGGER_PCT = 1.0
+PROFIT_LOCK_TRAIL_PCT   = 0.5

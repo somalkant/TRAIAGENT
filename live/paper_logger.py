@@ -24,11 +24,12 @@ LIVE_TRADES_FILE  = TRADE_LOG_DIR / "live_paper_trades.csv"
 OPEN_TRADE_CACHE  = Path(__file__).parent.parent / "checkpoints" / "live_open_trade.json"
 
 _COLUMNS = [
-    "date", "symbol", "signal_time", "entry_time", "strategy_entry", "entry_price",
+    "date", "symbol", "direction", "signal_time", "entry_time", "strategy_entry", "entry_price",
     "quantity", "position_rs", "stop_loss", "target", "rr", "strategies_fired",
     "agreeing_count", "composite_score", "driver_strategy", "reason", "exit_time",
     "exit_price", "exit_reason", "result", "pnl_rs", "pnl_pct", "predicted_win_pct",
-    "conviction_tier",
+    "conviction_tier", "entry_drift_pct", "signal_age_min", "overlap_ratio",
+    "overlap_tier", "profit_locked",
 ]
 
 
@@ -102,8 +103,13 @@ def log_closed_trade(
     pos_rs   = float(rec["position_rs"])
     shares   = int(rec["shares"])
 
+    if "direction" not in rec:
+        log.warning(f"log_closed_trade: rec for {rec.get('symbol')} has no 'direction' key — "
+                    f"defaulting to LONG. This previously caused an inverted P&L sign on a SHORT trade.")
+    direction = rec.get("direction", "LONG")
+
     # Net P&L after brokerage, STT, exchange, GST, stamp, slippage — same model as backtester
-    direction_int = 1 if rec.get("direction", "LONG") == "LONG" else -1
+    direction_int = 1 if direction == "LONG" else -1
     raw_pnl  = net_pnl(entry, exit_price, shares, direction=direction_int)
     pnl_pct  = round(raw_pnl / (entry * shares) * 100, 2)
 
@@ -112,6 +118,7 @@ def log_closed_trade(
     row = {
         "date":             str(trade_date),
         "symbol":           rec["symbol"],
+        "direction":        direction,
         "signal_time":      sig["signal_time"],
         "entry_time":       rec.get("entry_time", ""),
         "strategy_entry":   sig.get("strategy_entry", entry),
@@ -134,6 +141,11 @@ def log_closed_trade(
         "pnl_pct":          pnl_pct,
         "predicted_win_pct": rec.get("predicted_win_pct", 50.0),
         "conviction_tier":  rec.get("conviction_tier", "STANDARD"),
+        "entry_drift_pct":  rec.get("entry_drift_pct", 0.0),
+        "signal_age_min":   rec.get("signal_age_min", 0.0),
+        "overlap_ratio":    rec.get("overlap_ratio"),
+        "overlap_tier":     rec.get("overlap_tier", "N/A"),
+        "profit_locked":    bool(rec.get("_profit_locked", False)),
     }
 
     new_df = pd.DataFrame([row], columns=_COLUMNS)

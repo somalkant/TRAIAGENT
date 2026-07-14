@@ -68,7 +68,7 @@ def _to_ist(series: pd.Series) -> pd.Series:
 # hang on Python 3.13 due to SSL/WebSocket initialisation during import.
 # from kiteconnect import KiteConnect, KiteTicker  ← moved to main()
 
-from config.settings import WEIGHTS_FILE
+from config.settings import WEIGHTS_FILE, PROFIT_LOCK_ENABLED, PROFIT_LOCK_TRIGGER_PCT, PROFIT_LOCK_TRAIL_PCT
 from live.instrument_map import load_instrument_map, NIFTY50_TOKEN
 from live.data_manager import LiveDataManager
 from live.live_engine import scan_once
@@ -124,6 +124,26 @@ class AgentState:
     def close_short(self) -> None:
         with self._lock:
             self._short = None
+
+    def close_long_if_current(self, rec: dict) -> bool:
+        """
+        Atomic check-and-close: only clears the LONG slot (and returns True) if
+        it still holds this exact rec object. Prevents a duplicate exit log when
+        two tick callbacks race past the exit check before either has closed the
+        position (observed live as a double-logged trade during a ticker reconnect).
+        """
+        with self._lock:
+            if self._long is rec:
+                self._long = None
+                return True
+            return False
+
+    def close_short_if_current(self, rec: dict) -> bool:
+        with self._lock:
+            if self._short is rec:
+                self._short = None
+                return True
+            return False
 
     def is_long_open(self) -> bool:
         with self._lock:
@@ -604,6 +624,47 @@ def _log_trade_monitor(state: AgentState, dm: LiveDataManager) -> None:
             log.warning(f"  STALE TICK [{symbol}]: WebSocket may have dropped — exit checks unreliable")
 
 
+def _update_profit_lock(rec: dict, direction: str, last_price: float) -> None:
+    """
+    Trailing profit-lock: track the best (most favorable) price seen since entry;
+    once PROFIT_LOCK_TRIGGER_PCT favorable move is reached, ratchet the stop to
+    trail PROFIT_LOCK_TRAIL_PCT behind that peak. The stop only ever tightens,
+    never loosens, so this can only reduce risk versus the original stop.
+
+    Replaying the 36 real live trades against actual bars showed a hard
+    "+1.0% -> lock +0.7%" jump reduces net P&L (it kills the target-hit tail);
+    this wider trailing version was ~neutral to slightly better and would have
+    converted the worst single loss (a trade that ran to +1.77% before reversing
+    to a full stop) into a small winner.
+    """
+    entry = float(rec["signal"]["entry"])
+    if entry <= 0:
+        return
+    prev_peak = rec.get("_peak_price", entry)
+    peak = max(prev_peak, last_price) if direction == "LONG" else min(prev_peak, last_price)
+    rec["_peak_price"] = peak
+
+    mfe_pct = ((peak - entry) / entry * 100) if direction == "LONG" else ((entry - peak) / entry * 100)
+    if mfe_pct < PROFIT_LOCK_TRIGGER_PCT:
+        return
+
+    cur_stop = float(rec["signal"]["stop"])
+    if direction == "LONG":
+        trail_stop = round(peak * (1 - PROFIT_LOCK_TRAIL_PCT / 100), 2)
+        if trail_stop > cur_stop:
+            rec["signal"]["stop"] = trail_stop
+            rec["_profit_locked"] = True
+            log.info(f"PROFIT LOCK [LONG]: {rec['symbol']} | peak={peak:.2f} (mfe={mfe_pct:.2f}%) | "
+                     f"stop {cur_stop:.2f} -> {trail_stop:.2f}")
+    else:
+        trail_stop = round(peak * (1 + PROFIT_LOCK_TRAIL_PCT / 100), 2)
+        if trail_stop < cur_stop:
+            rec["signal"]["stop"] = trail_stop
+            rec["_profit_locked"] = True
+            log.info(f"PROFIT LOCK [SHORT]: {rec['symbol']} | peak={peak:.2f} (mfe={mfe_pct:.2f}%) | "
+                     f"stop {cur_stop:.2f} -> {trail_stop:.2f}")
+
+
 def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
     """
     Called on every tick (from broker WebSocket callback).
@@ -611,18 +672,26 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
     """
     now_str = _now_ist().strftime("%H:%M")
     changed = False
+    lock_updated = False
     long_rec, short_rec, _, _ = state.snapshot()
 
-    for rec, close_fn in ((long_rec, state.close_long), (short_rec, state.close_short)):
+    for rec, close_fn in ((long_rec, state.close_long_if_current), (short_rec, state.close_short_if_current)):
         if rec is None:
             continue
         symbol    = rec["symbol"]
         direction = rec.get("direction", "LONG")
         target    = float(rec["signal"]["target"])
-        stop      = float(rec["signal"]["stop"])
         last_price = dm.get_last_price(symbol)
         if last_price is None:
             continue
+
+        if PROFIT_LOCK_ENABLED:
+            stop_before = float(rec["signal"]["stop"])
+            _update_profit_lock(rec, direction, last_price)
+            if float(rec["signal"]["stop"]) != stop_before:
+                lock_updated = True
+
+        stop = float(rec["signal"]["stop"])   # re-read: may have just been ratcheted
 
         if direction == "LONG":
             target_hit = last_price >= target
@@ -633,18 +702,23 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
 
         if target_hit:
             log.info(f"TARGET HIT [{direction}]: {symbol} @ {last_price:.2f} (target={target:.2f})")
-            close_fn()
-            log_closed_trade(today, rec, exit_price=target, exit_reason="TARGET_HIT", exit_time=now_str)
-            changed = True
+            if close_fn(rec):
+                log_closed_trade(today, rec, exit_price=target, exit_reason="TARGET_HIT", exit_time=now_str)
+                changed = True
         elif stop_hit:
-            log.info(f"STOP HIT [{direction}]: {symbol} @ {last_price:.2f} (stop={stop:.2f})")
-            close_fn()
-            log_closed_trade(today, rec, exit_price=stop, exit_reason="STOP_HIT", exit_time=now_str)
-            changed = True
+            locked_tag = " [profit-locked]" if rec.get("_profit_locked") else ""
+            exit_reason = "PROFIT_LOCK_STOP" if rec.get("_profit_locked") else "STOP_HIT"
+            log.info(f"STOP HIT [{direction}]: {symbol} @ {last_price:.2f} (stop={stop:.2f}){locked_tag}")
+            if close_fn(rec):
+                log_closed_trade(today, rec, exit_price=stop, exit_reason=exit_reason, exit_time=now_str)
+                changed = True
 
     if changed:
         new_long, new_short, _, _ = state.snapshot()
         save_open_trade(today, new_long, new_short)
+    elif lock_updated:
+        # persist the ratcheted stop for crash-safety (rec objects were mutated in place)
+        save_open_trade(today, long_rec, short_rec)
 
 
 def _force_time_exit(state: AgentState, dm: LiveDataManager,
@@ -655,7 +729,7 @@ def _force_time_exit(state: AgentState, dm: LiveDataManager,
         log.info("No trade was placed today — no exit needed")
         return
 
-    for rec, close_fn in ((long_rec, state.close_long), (short_rec, state.close_short)):
+    for rec, close_fn in ((long_rec, state.close_long_if_current), (short_rec, state.close_short_if_current)):
         if rec is None:
             continue
         symbol    = rec["symbol"]
@@ -665,8 +739,8 @@ def _force_time_exit(state: AgentState, dm: LiveDataManager,
             last_price = float(rec["signal"]["entry"])
             log.warning(f"  No live price for {symbol} — using entry price as exit")
         log.info(f"TIME EXIT [{direction}]: {symbol} @ {last_price:.2f} (3:15 PM square-off)")
-        close_fn()
-        log_closed_trade(today, rec, exit_price=last_price, exit_reason="TIME_EXIT", exit_time=exit_time)
+        if close_fn(rec):
+            log_closed_trade(today, rec, exit_price=last_price, exit_reason="TIME_EXIT", exit_time=exit_time)
 
     save_open_trade(today, None, None)
 

@@ -30,7 +30,12 @@ from backtester.composite_scorer import (
 )
 from backtester.quality_filter import passes_all_filters
 from backtester.position_sizer import position_size
-from config.settings import AGREEMENT_MIN_LIFETIME_WR_LONG, AGREEMENT_MIN_LIFETIME_WR_SHORT, SHORT_ENABLED
+from config.settings import (
+    AGREEMENT_MIN_LIFETIME_WR_LONG, AGREEMENT_MIN_LIFETIME_WR_SHORT, SHORT_ENABLED,
+    MIN_RISK_REWARD, ENTRY_DRIFT_GATE_PCT, SIGNAL_EXPIRY_MIN,
+    MAX_STOP_DISTANCE_PCT, MIN_TARGET_DISTANCE_PCT,
+    LIVE_SHORT_SIZE_MULT, OVERLAP_TIGHT_THRESHOLD,
+)
 from strategies import ALL_STRATEGIES
 from weights.regime import get_regime_modifiers, get_direction_bias
 from watchlist.pre_filter import PreMarketFilter
@@ -201,6 +206,25 @@ def _find_live_candidate(
         if best_sig is None:
             continue
 
+        # ── Signal staleness — a driver signal can be a re-fired pivot level from
+        #    earlier in the day (signal_time doesn't advance). Discard if too old;
+        #    this is what let the 146-min-lag fill happen in the live/backtest review.
+        now_ist = datetime.now(_IST)
+        sig_age_min = _signal_age_minutes(best_sig.signal_time, now_ist)
+        if sig_age_min is not None and sig_age_min > SIGNAL_EXPIRY_MIN:
+            log.debug(f"  {symbol}: signal stale ({sig_age_min:.0f} min old > {SIGNAL_EXPIRY_MIN}) — skip")
+            continue
+
+        # ── Risk-geometry rejection gates (reject only — never move stop/target) ──
+        stop_dist_pct   = abs(best_sig.entry - best_sig.stop)   / best_sig.entry * 100 if best_sig.entry else 0
+        target_dist_pct = abs(best_sig.target - best_sig.entry) / best_sig.entry * 100 if best_sig.entry else 0
+        if stop_dist_pct > MAX_STOP_DISTANCE_PCT:
+            log.debug(f"  {symbol}: stop distance {stop_dist_pct:.2f}% > {MAX_STOP_DISTANCE_PCT}% — skip")
+            continue
+        if target_dist_pct < MIN_TARGET_DISTANCE_PCT:
+            log.debug(f"  {symbol}: target distance {target_dist_pct:.2f}% < {MIN_TARGET_DISTANCE_PCT}% — skip")
+            continue
+
         wr_gate      = AGREEMENT_MIN_LIFETIME_WR_LONG if direction == 1 else AGREEMENT_MIN_LIFETIME_WR_SHORT
         agreeing     = count_agreeing_filtered(signals, direction, _LIFETIME_WR, wr_gate)
         turnover     = daily_turnover.get(symbol, 0)
@@ -223,57 +247,78 @@ def _find_live_candidate(
         )
 
         if passes:
-            now_ist      = datetime.now(_IST)
-            live_price   = data_manager.get_last_price(symbol)
+            live_price     = data_manager.get_last_price(symbol)
             strategy_entry = best_sig.entry
+            drift_pct      = 0.0
 
             if live_price and live_price > 0:
-                stop_dist   = abs(best_sig.entry - best_sig.stop)
-                target_dist = abs(best_sig.target - best_sig.entry)
-                live_entry  = round(live_price, 2)
+                # ── Guard: live price already through stop or past target — signal is dead ──
+                if direction == +1 and (live_price <= best_sig.stop or live_price >= best_sig.target):
+                    log.debug(f"  {symbol}: live price {live_price:.2f} already past stop/target — skip")
+                    continue
+                if direction == -1 and (live_price >= best_sig.stop or live_price <= best_sig.target):
+                    log.debug(f"  {symbol}: live price {live_price:.2f} already past stop/target — skip")
+                    continue
 
+                # ── Entry fidelity gate — do NOT chase price and do NOT re-anchor
+                #    stop/target to the live price. Fill at the live price only if it
+                #    hasn't moved unfavorably beyond ENTRY_DRIFT_GATE_PCT from the
+                #    researched entry; otherwise skip the trade outright (no resting
+                #    order, no waiting for a retracement).
                 if direction == +1:
-                    live_stop   = round(live_entry - stop_dist, 2)
-                    live_target = round(live_entry + target_dist, 2)
-                    valid = live_stop < live_entry < live_target
+                    drift_pct = (live_price - strategy_entry) / strategy_entry * 100   # +ve = paying more (bad)
                 else:
-                    live_stop   = round(live_entry + stop_dist, 2)
-                    live_target = round(live_entry - target_dist, 2)
-                    valid = live_target < live_entry < live_stop
+                    drift_pct = (strategy_entry - live_price) / strategy_entry * 100   # +ve = selling for less (bad)
 
-                if not valid or stop_dist <= 0:
-                    log.debug(f"  {symbol}: live-price adjusted signal invalid — skip")
+                if drift_pct >= ENTRY_DRIFT_GATE_PCT:
+                    log.info(
+                        f"  {symbol} [{'LONG' if direction==+1 else 'SHORT'}]: SKIPPED — price moved "
+                        f"{drift_pct:+.2f}% unfavorable vs researched entry {strategy_entry:.2f} "
+                        f"(live {live_price:.2f}), gate={ENTRY_DRIFT_GATE_PCT}% — not chasing"
+                    )
                     continue
 
-                # Guard: live price already past strategy target
-                if direction == +1 and live_price >= best_sig.target:
-                    log.debug(f"  {symbol}: signal stale (long) — live price past target")
-                    continue
-                if direction == -1 and live_price <= best_sig.target:
-                    log.debug(f"  {symbol}: signal stale (short) — live price past target")
-                    continue
-
-                best_sig.entry  = live_entry
-                best_sig.stop   = live_stop
-                best_sig.target = live_target
+                # Fill at the actual live price. Stop/target stay at the researched levels.
+                best_sig.entry = round(live_price, 2)
                 if direction == +1:
-                    best_sig.rr = round((live_target - live_entry) / (live_entry - live_stop), 2)
+                    new_rr = (best_sig.target - best_sig.entry) / (best_sig.entry - best_sig.stop)
                 else:
-                    best_sig.rr = round((live_entry - live_target) / (live_stop - live_entry), 2)
+                    new_rr = (best_sig.entry - best_sig.target) / (best_sig.stop - best_sig.entry)
+                best_sig.rr = round(new_rr, 2)
+
+                if best_sig.rr < MIN_RISK_REWARD:
+                    log.debug(f"  {symbol}: RR degraded to {best_sig.rr:.2f} after fill-price recheck — skip")
+                    continue
+
+            # ── Candle-overlap confidence tier (compression before the move) ──────
+            overlap_ratio, overlap_tier = _overlap_confidence(today_5m)
 
             conv_mult, conv_tier = _conviction_multiplier(best_sig.strategy, direction)
-            rs_value, shares     = position_size(best_sig.entry, best_sig.stop, conv_mult)
-            entry_time           = now_ist.strftime("%H:%M")
-            drift_pct            = round((best_sig.entry - strategy_entry) / strategy_entry * 100, 2)
+            if overlap_tier == "LOOSE" and conv_tier in ("HIGH", "MEDIUM"):
+                # Compression signal doesn't support elevated conviction — cap sizing.
+                conv_tier = "STANDARD"
+                conv_mult = 1.0
+
+            short_haircut = False
+            if direction == -1:
+                # Shorts underperformed longs live (18.8% exact vs 56% backtest) —
+                # halve size until the short edge is confirmed on clean live data.
+                conv_mult *= LIVE_SHORT_SIZE_MULT
+                short_haircut = True
+
+            rs_value, shares = position_size(best_sig.entry, best_sig.stop, conv_mult)
+            entry_time       = now_ist.strftime("%H:%M")
 
             dirn_str = "LONG" if direction == +1 else "SHORT"
             log.info(
                 f"SIGNAL [{dirn_str}]: {symbol} | driver={best_sig.strategy} | "
-                f"signal_time={best_sig.signal_time} entry_time={entry_time} | "
+                f"signal_time={best_sig.signal_time} entry_time={entry_time} (age={sig_age_min or 0:.0f}m) | "
                 f"entry={best_sig.entry:.2f} (drift={drift_pct:+.2f}%) | "
                 f"target={best_sig.target:.2f} stop={best_sig.stop:.2f} RR={best_sig.rr:.2f} | "
                 f"agreeing={agreeing} score={adj_score:.2f} pred={pred_win_pct:.1f}% | "
+                f"overlap={overlap_ratio if overlap_ratio is not None else 'n/a'} [{overlap_tier}] | "
                 f"size=Rs {rs_value:,.0f} ({shares} shares) [{conv_tier}]"
+                + (" [SHORT 0.5x]" if short_haircut else "")
             )
             sig_dict                   = best_sig.to_dict()
             sig_dict["strategy_entry"] = strategy_entry
@@ -284,6 +329,10 @@ def _find_live_candidate(
                 "direction":         dirn_str,
                 "signal":            sig_dict,
                 "entry_time":        entry_time,
+                "entry_drift_pct":   round(drift_pct, 3),
+                "signal_age_min":    round(sig_age_min, 1) if sig_age_min is not None else 0.0,
+                "overlap_ratio":     overlap_ratio,
+                "overlap_tier":      overlap_tier,
                 "agreeing":          agreeing,
                 "position_rs":       rs_value,
                 "shares":            shares,
@@ -297,6 +346,39 @@ def _find_live_candidate(
             log.debug(f"  {symbol} [{('LONG' if direction==+1 else 'SHORT')}] filtered: {reason}")
 
     return None
+
+
+def _signal_age_minutes(signal_time: str, now_ist: datetime) -> float | None:
+    """Minutes elapsed since the driver's signal_time (today, IST). None if unparseable."""
+    if not signal_time:
+        return None
+    try:
+        h, m = map(int, signal_time.split(":"))
+        sig_dt = now_ist.replace(hour=h, minute=m, second=0, microsecond=0)
+        return max(0.0, (now_ist - sig_dt).total_seconds() / 60.0)
+    except Exception:
+        return None
+
+
+def _overlap_confidence(today_5m) -> tuple[float | None, str]:
+    """
+    Price-compression confidence tier over the last 3 completed 5-min bars.
+    overlap_ratio = width(intersection of [low,high] ranges) / width(union).
+    High ratio = tight consolidation (compression before a move) = higher confidence.
+    Returns (ratio, "TIGHT"|"LOOSE"|"N/A"). N/A when fewer than 3 bars exist yet
+    (true for most of the 09:15-09:30 window where this system enters most trades).
+    """
+    if today_5m is None or len(today_5m) < 3:
+        return None, "N/A"
+    last3 = today_5m.tail(3)
+    inter_low, inter_high = last3["low"].max(), last3["high"].min()
+    union_low, union_high = last3["low"].min(), last3["high"].max()
+    union_width = union_high - union_low
+    if union_width <= 0:
+        return None, "N/A"
+    ratio = max(0.0, inter_high - inter_low) / union_width
+    tier  = "TIGHT" if ratio >= OVERLAP_TIGHT_THRESHOLD else "LOOSE"
+    return round(ratio, 3), tier
 
 
 # ─────────────────────────────────────────────────────────────────────────────
