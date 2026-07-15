@@ -45,6 +45,17 @@ MAX_POSITION_SIZE     =   5_00_000  # Rs 5,00,000 (50% of capital — conservati
 DAILY_LOSS_LIMIT      =   40_000    # Rs 40,000  — pause all recommendations today
 MONTHLY_LOSS_LIMIT    =  1_00_000   # Rs 1,00,000 — pause system, flag for review
 
+# ─────────────────────────────────────────────
+# TOP-10 STRATEGY LIVE AGENT — RISK LIMITS
+# ─────────────────────────────────────────────
+# Whole-system: same 4%/10% ratios as DAILY_LOSS_LIMIT/MONTHLY_LOSS_LIMIT above,
+# scaled to the 10-strategy system's total capital base (10 x Rs 10L = Rs 1Cr).
+TOP10_SYSTEM_DAILY_LOSS_LIMIT      =  4_00_000   # Rs 4,00,000
+TOP10_SYSTEM_MONTHLY_LOSS_LIMIT    = 10_00_000   # Rs 10,00,000
+# Per-strategy, per-side: same ratios applied to each independent Rs 5L side-pool.
+TOP10_PER_STRATEGY_DAILY_LOSS_LIMIT    = 20_000   # Rs 20,000 (4% of Rs 5L)
+TOP10_PER_STRATEGY_MONTHLY_LOSS_LIMIT  = 50_000   # Rs 50,000 (10% of Rs 5L)
+
 NO_ENTRY_AFTER        = time(14, 0)  # 2:00 PM IST — no new positions after this
 SQUARE_OFF_TARGET     = time(15, 15) # 3:15 PM IST — close all positions
 

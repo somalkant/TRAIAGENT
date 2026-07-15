@@ -1,21 +1,11 @@
 """
-Live Paper Trading Runner — Phase 2.5
+Live Paper Trading Runner — Top-10 Strategy Roster
 
 Run this every morning before 9:15 AM:
-    .\\venv\\Scripts\\python.exe run_live.py
+    .\\venv\\Scripts\\python.exe run_live_top10.py
 
-What it does:
-  1. Prevents Windows from sleeping all day
-  2. Asks which broker to use (Zerodha, Groww, or any future broker)
-  3. Runs the broker's authentication flow (login URL, request_token exchange, etc.)
-  4. Starts the live paper trading agent — runs until 3:15 PM
-
-Logs to logs/live_YYYY-MM-DD.log and to the terminal simultaneously.
-
-Adding a new broker:
-  - Create brokers/<name>.py inheriting BaseBroker
-  - Register it in brokers/__init__.py BROKER_REGISTRY
-  - The selection menu here picks it up automatically
+Same broker-selection / keep-awake / logging boilerplate as run_live.py — only
+the final agent module differs (live.top10_agent instead of live.agent).
 """
 
 import ctypes
@@ -25,7 +15,6 @@ import sys
 from datetime import date
 from pathlib import Path
 
-# ── prevent Windows sleep (no-op on Linux/EC2) ───────────────────────────────
 ES_CONTINUOUS      = 0x80000000
 ES_SYSTEM_REQUIRED = 0x00000001
 
@@ -40,11 +29,10 @@ def _allow_sleep():
         ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
 
 
-# ── logging ───────────────────────────────────────────────────────────────────
 def _setup_logging() -> Path:
     log_dir = Path(__file__).parent / "logs"
     log_dir.mkdir(exist_ok=True)
-    log_file = log_dir / f"live_{date.today()}.log"
+    log_file = log_dir / f"live_top10_{date.today()}.log"
 
     logging.basicConfig(
         level=logging.INFO,
@@ -59,20 +47,14 @@ def _setup_logging() -> Path:
     return log_file
 
 
-# ── broker selection ──────────────────────────────────────────────────────────
 def _select_broker(log):
-    """
-    Ask the user which broker to use and return the configured broker instance.
-    Reads available brokers from BROKER_REGISTRY — no code changes needed here
-    when adding a new broker.
-    """
     from brokers import get_broker, BROKER_REGISTRY
 
     names = list(BROKER_REGISTRY.keys())
 
     print()
     print("=" * 65)
-    print("  Select your broker:")
+    print("  Select your broker (Top-10 strategy live agent):")
     print()
     for i, name in enumerate(names, 1):
         broker = get_broker(name)
@@ -82,7 +64,7 @@ def _select_broker(log):
     print()
 
     while True:
-        choice = input(f"  Enter number (1–{len(names)}): ").strip()
+        choice = input(f"  Enter number (1-{len(names)}): ").strip()
         if choice.isdigit() and 1 <= int(choice) <= len(names):
             selected_name = names[int(choice) - 1]
             broker = get_broker(selected_name)
@@ -91,7 +73,6 @@ def _select_broker(log):
         print(f"  Invalid choice — enter a number between 1 and {len(names)}.")
 
 
-# ── main ──────────────────────────────────────────────────────────────────────
 def main():
     log_file = _setup_logging()
     log = logging.getLogger(__name__)
@@ -115,16 +96,8 @@ def main():
 
 
 def _run_agent(access_token: str, broker_name: str, log) -> None:
-    """Hand off to the live agent with the authenticated token and broker name.
-
-    Runs the Top-10 correlation-reduced strategy roster (live/top10_agent.py) —
-    replaces the old 38-strategy composite-scored agent (live/agent.py) as the
-    default daily entry point. The old agent module is left in place, unused,
-    in case it's ever needed again (run it directly via `python live/agent.py`).
-    """
     from live.top10_agent import main as agent_main
 
-    # Inject token + broker into sys.argv so top10_agent.py's argparse picks them up
     sys.argv = ["top10_agent.py", "--token", access_token, "--broker", broker_name]
 
     log.info("Starting Top-10 strategy live paper trading agent...")
