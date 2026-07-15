@@ -36,6 +36,7 @@ from datetime import date, datetime, timedelta, time as dtime
 
 import pytz
 
+from config.settings import TOP10_FILL_TOLERANCE_PCT, TOP10_MIN_FILL_RATIO
 from live.instrument_map import load_instrument_map, NIFTY50_TOKEN
 from live.data_manager import LiveDataManager
 from live.fill_check import check_fill, simulate_fill
@@ -49,7 +50,6 @@ from live.agent import (
 from top10_backtest.strategies import TOP10_STRATEGIES, TOP10_NAMES
 from top10_backtest.universe import long_universe, short_universe
 from top10_backtest.capital import size
-from top10_backtest.engine import _first_chrono
 
 log = logging.getLogger(__name__)
 
@@ -88,6 +88,14 @@ class Top10AgentState:
         key = side.lower()
         with self._lock:
             self._state[strategy][key] = None
+
+    def unplace(self, strategy: str, side: str) -> None:
+        """Clear the placed flag after a voided (never-filled) trade, so this
+        strategy/side can be scanned again later the same day."""
+        key = side.lower()
+        with self._lock:
+            self._state[strategy][key] = None
+            self._state[strategy][f"{key}_placed"] = False
 
     def get_placed(self, strategy: str, side: str) -> bool:
         key = side.lower()
@@ -160,7 +168,7 @@ def main():
     log.info(f"History loaded for {len(all_history)} symbols")
 
     long_syms  = long_universe(all_history, today)
-    short_syms = short_universe()
+    short_syms = short_universe(all_history, today)
     active     = sorted(long_syms | short_syms)
     log.info(f"LONG universe (>=300cr turnover): {len(long_syms)} stocks")
     log.info(f"SHORT universe (F&O list): {len(short_syms)} stocks")
@@ -337,13 +345,18 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                     continue
                 any_scanned = True
 
-                long_pick, short_pick = _scan_strategy_live(
+                long_candidates, short_candidates = _scan_strategy_live(
                     strategy, dm, long_syms, short_syms, nifty_today, today, want_long, want_short
                 )
-                for side, pick in (("LONG", long_pick), ("SHORT", short_pick)):
-                    if pick is None:
+                for side, candidates in (("LONG", long_candidates), ("SHORT", short_candidates)):
+                    if not candidates:
                         continue
-                    _place_trade(state, dm, name, side, pick, now_t)
+                    picked = _pick_fillable_candidate(dm, name, side, candidates)
+                    if picked is None:
+                        log.info(f"  {now_t.strftime('%H:%M')} — {name} {side}: no candidate cleared "
+                                 f"the depth gate this cycle, will retry next bar")
+                        continue
+                    _place_trade(state, name, side, picked, now_t)
 
             if any_scanned:
                 save_open_trades(today, state.snapshot())
@@ -363,7 +376,9 @@ def _scan_strategy_live(strategy, dm: LiveDataManager, long_syms: set, short_sym
     Mirrors top10_backtest/engine.py::_scan_strategy, but pulling today/history/
     prev_day from LiveDataManager instead of preloaded slices. A BUY signal only
     counts if the symbol is in the LONG universe; a SELL signal only counts if
-    it's in the SHORT (F&O) universe.
+    it's in the SHORT (F&O) universe. Returns the FULL chronologically-sorted
+    candidate list per side (not just the first) so the depth gate below can
+    fall through to the next candidate if the first one is too thin to fill.
     """
     active = (long_syms if want_long else set()) | (short_syms if want_short else set())
     long_candidates, short_candidates = [], []
@@ -389,15 +404,33 @@ def _scan_strategy_live(strategy, dm: LiveDataManager, long_syms: set, short_sym
         elif sig.direction == -1 and eligible_short:
             short_candidates.append((symbol, today_5min, sig))
 
-    return _first_chrono(long_candidates), _first_chrono(short_candidates)
+    key = lambda c: (c[2].signal_time or "99:99", c[0])
+    return sorted(long_candidates, key=key), sorted(short_candidates, key=key)
 
 
-def _place_trade(state: Top10AgentState, dm: LiveDataManager, strategy_name: str,
-                 side: str, pick: tuple, now_t) -> None:
-    symbol, _today_5min, sig = pick
-    qty, notional = size(sig.entry)
-    if qty <= 0:
-        return
+def _pick_fillable_candidate(dm: LiveDataManager, strategy_name: str, side: str, candidates: list):
+    """
+    Pre-trade depth gate: try candidates in chronological order, checking live
+    market depth BEFORE committing the day's slot. The first one clearing
+    TOP10_MIN_FILL_RATIO wins; the rest are logged as skipped, not placed.
+    Returns (symbol, today_5min, sig, qty, notional, fc) or None if nothing
+    in this cycle's candidate list is fillable.
+    """
+    for symbol, today_5min, sig in candidates:
+        qty, notional = size(sig.entry)
+        if qty <= 0:
+            continue
+        fc = check_fill(dm, symbol, sig.entry, qty, side, tolerance_pct=TOP10_FILL_TOLERANCE_PCT)
+        ratio = fc["filled_qty"] / qty if qty else 0.0
+        if fc["fillable"] is None or ratio >= TOP10_MIN_FILL_RATIO:
+            return symbol, today_5min, sig, qty, notional, fc
+        log.info(f"  SKIPPED [{side}] {strategy_name}: {symbol} | only {fc['filled_qty']}/{qty} "
+                 f"({ratio*100:.0f}%) fillable near Rs {sig.entry:.2f} — trying next candidate")
+    return None
+
+
+def _place_trade(state: Top10AgentState, strategy_name: str, side: str, picked: tuple, now_t) -> None:
+    symbol, _today_5min, sig, qty, notional, fc = picked
 
     rec = {
         "strategy":    strategy_name,
@@ -415,7 +448,6 @@ def _place_trade(state: Top10AgentState, dm: LiveDataManager, strategy_name: str
         f"entry={sig.entry:.2f} target={sig.target:.2f} stop={sig.stop:.2f} | "
         f"size=Rs {notional:,.0f} ({qty} shares)"
     )
-    fc = check_fill(dm, symbol, sig.entry, qty, side)
     log.info(f"FILL CHECK   [{side}] {strategy_name}: {symbol} | {qty} shares @ Rs {sig.entry:.2f} | {fc['msg']}")
     rec["_fill_state"] = _init_fill_state(fc, qty)
 
@@ -435,6 +467,14 @@ def _init_fill_state(fc: dict, target_shares: int) -> dict:
 
 
 def _settle_fills_all(state: Top10AgentState, dm: LiveDataManager, now_t) -> None:
+    """
+    Called each bar for open positions with unsettled fills. Below
+    TOP10_MIN_FILL_RATIO at window close, the trade is VOIDED — closed with no
+    P&L logged, and the strategy/side slot is freed for a later retry the
+    same day — instead of being carried through to a fake full-size exit.
+    Otherwise rec["shares"]/rec["position_rs"] are corrected to the ACTUAL
+    filled quantity so P&L reflects what could really have been executed.
+    """
     for strategy_name, side, rec in state.iter_open():
         fs = rec.get("_fill_state")
         if fs is None or fs["settled"]:
@@ -452,35 +492,44 @@ def _settle_fills_all(state: Top10AgentState, dm: LiveDataManager, now_t) -> Non
         side_label  = "ask" if side == "LONG" else "bid"
 
         depth = dm.get_depth(symbol)
-        if depth is None:
-            log.info(f"FILL SETTLE  [{side}] {strategy_name}: {symbol} | bar={bar_str} | "
-                     f"depth unavailable — cannot confirm fill")
-            continue
-
-        still_needed = shares - fs["acc_filled"]
-        sim = simulate_fill(depth, still_needed, entry_price, side)
-        fs["acc_filled"] += sim["filled_qty"]
-        if sim["filled_qty"] > 0:
-            fs["acc_weighted"] += sim["avg_price"] * sim["filled_qty"]
+        if depth is not None:
+            still_needed = shares - fs["acc_filled"]
+            sim = simulate_fill(depth, still_needed, entry_price, side, TOP10_FILL_TOLERANCE_PCT)
+            fs["acc_filled"] += sim["filled_qty"]
+            if sim["filled_qty"] > 0:
+                fs["acc_weighted"] += sim["avg_price"] * sim["filled_qty"]
 
         total_filled = fs["acc_filled"]
         avg_price    = fs["acc_weighted"] / total_filled if total_filled > 0 else 0.0
+        ratio        = total_filled / shares if shares else 0.0
+
+        if ratio < TOP10_MIN_FILL_RATIO:
+            log.info(
+                f"FILL VOID    [{side}] {strategy_name}: {symbol} | bar={bar_str} | "
+                f"only {total_filled}/{shares} ({ratio*100:.0f}%) filled within window — "
+                f"VOIDING trade, no P&L logged, slot freed for retry"
+            )
+            state.unplace(strategy_name, side)
+            continue
+
         slip = (avg_price - entry_price if side == "LONG" else entry_price - avg_price)
+        rec["_avg_fill_price"] = avg_price
+        # Correct qty/notional to what could actually have been filled —
+        # downstream P&L (log_closed_trade) uses rec["shares"]/rec["position_rs"].
+        rec["shares"]      = total_filled
+        rec["position_rs"] = round(total_filled * avg_price, 2)
 
         if total_filled >= shares:
-            rec["_avg_fill_price"] = avg_price
             log.info(
                 f"FILL SETTLE  [{side}] {strategy_name}: {symbol} | bar={bar_str} | "
                 f"FULLY FILLED {shares:,} shares | avg Rs {avg_price:.2f} | "
                 f"slippage Rs {slip:+.2f} vs signal entry Rs {entry_price:.2f}"
             )
         else:
-            partial_str = f"{total_filled:,}/{shares}" if total_filled > 0 else f"0/{shares}"
-            avg_str     = f" @ avg Rs {avg_price:.2f}" if total_filled > 0 else ""
             log.info(
                 f"FILL SETTLE  [{side}] {strategy_name}: {symbol} | bar={bar_str} | "
-                f"NOT FILLED within 5-min window — {partial_str} shares{avg_str} "
-                f"(insufficient depth at Rs {side_label})"
+                f"PARTIALLY FILLED {total_filled:,}/{shares} ({ratio*100:.0f}%) @ avg Rs {avg_price:.2f} | "
+                f"proceeding at reduced size (insufficient depth at Rs {side_label})"
             )
 
 

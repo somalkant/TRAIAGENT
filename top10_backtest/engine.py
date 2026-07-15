@@ -49,7 +49,7 @@ def run(start_date: date, end_date: date, resume: bool = True) -> None:
 
     for trade_date in tqdm(days, desc="Top-10 backtest"):
         long_syms  = long_universe(all_data, trade_date)
-        short_syms = short_universe()
+        short_syms = short_universe(all_data, trade_date)
         active     = long_syms | short_syms
 
         if active:

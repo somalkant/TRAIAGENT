@@ -73,10 +73,14 @@ def simulate_fill(depth: dict, target_qty: int, entry_price: float,
 
 
 def check_fill(dm, symbol: str, entry_price: float, shares: int,
-               direction: str) -> dict:
+               direction: str, tolerance_pct: float = FILL_TOLERANCE_PCT) -> dict:
     """
     dm        : LiveDataManager (has get_depth())
     direction : "LONG" or "SHORT"
+    tolerance_pct : override the default price-tolerance band (e.g. a wider
+                    band for a system whose default 0.10% is too tight and
+                    produces false "not filled" reads on real depth just
+                    outside that band).
 
     Returns dict:
       fillable   : bool | None  (None = depth unavailable, do not block trade)
@@ -102,7 +106,7 @@ def check_fill(dm, symbol: str, entry_price: float, shares: int,
             "msg":        f"market depth not yet received for {symbol}",
         }
 
-    sim        = simulate_fill(depth, shares, entry_price, direction)
+    sim        = simulate_fill(depth, shares, entry_price, direction, tolerance_pct)
     side       = "ask"           if direction == "LONG" else "bid"
     side_label = "sellers (ask)" if direction == "LONG" else "buyers (bid)"
     book_key   = "sell"          if direction == "LONG" else "buy"

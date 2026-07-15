@@ -77,6 +77,16 @@ PROFIT_LOCK_CAP_PCT        = 1.0
 # (we don't chase price indefinitely).
 FILL_TOLERANCE_PCT = 0.10
 
+# Top-10 agent uses a wider band — the default 0.10% produced false "not
+# filled" reads on 2026-07-15 where real depth existed ~0.17% away from the
+# signal price (ample shares, just outside the tight band).
+TOP10_FILL_TOLERANCE_PCT = 0.25
+# Minimum filled_qty/target_qty ratio to (a) bother committing a candidate at
+# the pre-trade gate, and (b) count the position as real once the post-fill
+# settle window closes. Below this at settle time, the trade is voided —
+# not logged as a completed trade with fictional full-size P&L.
+TOP10_MIN_FILL_RATIO = 0.5
+
 # ─────────────────────────────────────────────
 # TRANSACTION COST MODEL
 # ─────────────────────────────────────────────
