@@ -566,6 +566,56 @@ def _log_trade_monitor_all(state: Top10AgentState, dm: LiveDataManager) -> None:
         )
 
 
+def _exit_fill_check(dm: LiveDataManager, strategy_name: str, side: str, symbol: str,
+                     exit_price: float, shares: int) -> tuple[float, int]:
+    """
+    Verify the exit can actually execute near the trigger price — the exit-side
+    counterpart to the entry pre-trade gate. Closing a LONG means SELLING
+    (need buyers -> check the bid book, i.e. the same book-side logic
+    check_fill uses for direction="SHORT"); closing a SHORT means BUYING BACK
+    /covering (need sellers -> the ask book, direction="LONG"'s book side).
+    So the exit direction passed to check_fill is the OPPOSITE of the
+    position's own side.
+
+    Returns (actual_exit_price, filled_qty). filled_qty < shares means the
+    exit could not be fully completed near the trigger price — logged loudly
+    as a real execution penalty, not silently absorbed.
+    """
+    exit_direction = "SHORT" if side == "LONG" else "LONG"
+    verb           = "SOLD" if side == "LONG" else "BOUGHT"
+
+    fc = check_fill(dm, symbol, exit_price, shares, exit_direction, tolerance_pct=TOP10_FILL_TOLERANCE_PCT)
+
+    if fc["fillable"] is None:
+        log.info(f"EXIT FILL    [{side}] {strategy_name}: {symbol} | depth unavailable — "
+                 f"{verb} {shares}/{shares} assumed @ Rs {exit_price:.2f} (unverified)")
+        return exit_price, shares
+
+    filled_qty = fc["filled_qty"]
+    avg_price  = fc["avg_price"]
+    best_qty   = fc["best_qty"]
+    best_avg   = fc["best_avg"]
+
+    if filled_qty >= shares:
+        log.info(f"EXIT FILL    [{side}] {strategy_name}: {symbol} | {verb} {shares}/{shares} "
+                 f"@ avg Rs {avg_price:.2f} — FULL EXIT, no penalty")
+        return avg_price, shares
+
+    if best_qty >= shares:
+        penalty = round(abs(exit_price - best_avg) * shares, 2)
+        log.warning(f"EXIT FILL    [{side}] {strategy_name}: {symbol} | only {filled_qty}/{shares} "
+                    f"near trigger Rs {exit_price:.2f} — chased to avg Rs {best_avg:.2f} to close in full "
+                    f"— PENALTY Rs {penalty:,.2f}")
+        return best_avg, shares
+
+    # Can't fully close even walking the entire book — rare, but must be visible.
+    fallback_price = best_avg if best_qty > 0 else exit_price
+    log.error(f"EXIT FILL    [{side}] {strategy_name}: {symbol} | {verb} only {best_qty}/{shares} "
+              f"even at best available price — INCOMPLETE EXIT, accounted @ Rs {fallback_price:.2f} "
+              f"for all {shares} shares (real slippage may exceed what's modeled here)")
+    return fallback_price, best_qty if best_qty > 0 else shares
+
+
 def _check_exit_all(state: Top10AgentState, dm: LiveDataManager, today: date) -> None:
     """
     Called on every tick batch. Target checked before stop, same order as the
@@ -592,14 +642,16 @@ def _check_exit_all(state: Top10AgentState, dm: LiveDataManager, today: date) ->
         if target_hit:
             log.info(f"TARGET HIT [{side}] {strategy_name}: {symbol} @ {last_price:.2f} (target={target:.2f})")
             state.close(strategy_name, side)
-            log_closed_trade(today, strategy_name, side, rec,
-                             exit_price=target, exit_reason="TARGET_HIT", exit_time=now_str)
+            actual_price, filled_qty = _exit_fill_check(dm, strategy_name, side, symbol, target, rec["shares"])
+            log_closed_trade(today, strategy_name, side, rec, exit_price=actual_price,
+                             exit_reason="TARGET_HIT", exit_time=now_str, exit_qty_filled=filled_qty)
             changed = True
         elif stop_hit:
             log.info(f"STOP HIT [{side}] {strategy_name}: {symbol} @ {last_price:.2f} (stop={stop:.2f})")
             state.close(strategy_name, side)
-            log_closed_trade(today, strategy_name, side, rec,
-                             exit_price=stop, exit_reason="STOP_HIT", exit_time=now_str)
+            actual_price, filled_qty = _exit_fill_check(dm, strategy_name, side, symbol, stop, rec["shares"])
+            log_closed_trade(today, strategy_name, side, rec, exit_price=actual_price,
+                             exit_reason="STOP_HIT", exit_time=now_str, exit_qty_filled=filled_qty)
             changed = True
 
     if changed:
@@ -623,8 +675,9 @@ def _force_time_exit_all(state: Top10AgentState, dm: LiveDataManager, today: dat
             log.warning(f"  No live price for {symbol} — using entry price as exit")
         log.info(f"TIME EXIT [{side}] {strategy_name}: {symbol} @ {last_price:.2f} (3:15 PM square-off)")
         state.close(strategy_name, side)
-        log_closed_trade(today, strategy_name, side, rec,
-                         exit_price=last_price, exit_reason="TIME_EXIT", exit_time=exit_time)
+        actual_price, filled_qty = _exit_fill_check(dm, strategy_name, side, symbol, last_price, rec["shares"])
+        log_closed_trade(today, strategy_name, side, rec, exit_price=actual_price,
+                         exit_reason="TIME_EXIT", exit_time=exit_time, exit_qty_filled=filled_qty)
 
     save_open_trades(today, state.snapshot())
 

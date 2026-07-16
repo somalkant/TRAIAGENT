@@ -22,8 +22,9 @@ OPEN_TRADES_CACHE = CHECKPOINT_DIR / "top10_live_open_trades.json"
 COLUMNS = [
     "date", "side", "strategy", "symbol", "signal_time", "entry_time", "entry_price",
     "qty", "notional_rs", "stop", "target", "exit_time", "exit_price", "exit_reason",
-    "result", "gross_pnl_rs", "total_cost_rs", "net_pnl_rs", "net_pnl_pct",
-    "fill_slippage", "brokerage", "stt", "exchange", "sebi", "gst", "stamp", "slippage",
+    "exit_qty_filled", "exit_fill_pct", "result", "gross_pnl_rs", "total_cost_rs",
+    "net_pnl_rs", "net_pnl_pct", "fill_slippage", "brokerage", "stt", "exchange",
+    "sebi", "gst", "stamp", "slippage",
 ]
 
 
@@ -55,18 +56,26 @@ def clear_open_trades() -> None:
 
 
 def log_closed_trade(trade_date: date, strategy_name: str, side: str, rec: dict,
-                      exit_price: float, exit_reason: str, exit_time: str) -> None:
+                      exit_price: float, exit_reason: str, exit_time: str,
+                      exit_qty_filled: int | None = None) -> None:
     """
     Append a completed trade to top10_live_trades.csv.
     Prefers the order-book-settled weighted avg fill price (real holding price)
     over the raw signal entry, once _settle_fills() has confirmed a fill —
     same convention as the existing live/paper_logger.py.
+
+    exit_qty_filled : shares actually confirmed sellable/buyable-back near the
+                      exit price (from live/top10_agent.py::_exit_fill_check).
+                      Defaults to the full position size if not supplied (e.g.
+                      depth was unavailable and the exit couldn't be verified).
     """
     sig       = rec["signal"]
     entry     = float(rec.get("_avg_fill_price") or sig["entry"])
     qty       = int(rec["shares"])
     notional  = float(rec["position_rs"])
     direction = 1 if side == "LONG" else -1
+    exit_qty_filled = qty if exit_qty_filled is None else int(exit_qty_filled)
+    exit_fill_pct   = round(exit_qty_filled / qty * 100, 1) if qty else 0.0
 
     net   = net_pnl(entry, exit_price, qty, direction=direction)
     gross = (exit_price - entry) * qty * direction
@@ -83,6 +92,7 @@ def log_closed_trade(trade_date: date, strategy_name: str, side: str, rec: dict,
         "entry_price": entry, "qty": qty, "notional_rs": notional,
         "stop": sig["stop"], "target": sig["target"],
         "exit_time": exit_time, "exit_price": round(exit_price, 2), "exit_reason": exit_reason,
+        "exit_qty_filled": exit_qty_filled, "exit_fill_pct": exit_fill_pct,
         "result": result, "gross_pnl_rs": round(gross, 2), "total_cost_rs": cost,
         "net_pnl_rs": round(net, 2), "net_pnl_pct": net_pnl_pct,
         "fill_slippage": round(fill_slip, 2),
@@ -94,7 +104,9 @@ def log_closed_trade(trade_date: date, strategy_name: str, side: str, rec: dict,
     header = not TRADES_FILE.exists()
     new_df.to_csv(TRADES_FILE, mode="a", header=header, index=False)
 
+    verb = "SOLD" if side == "LONG" else "BOUGHT"
+    fill_tag = "" if exit_qty_filled >= qty else f"  *** INCOMPLETE {verb} {exit_qty_filled}/{qty} ***"
     log.info(
         f"TRADE CLOSED [{side}] {strategy_name}: {rec['symbol']} | {exit_reason} @ {exit_price:.2f} | "
-        f"P&L Rs {net:+,.0f} ({net_pnl_pct:+.2f}%) | {result}"
+        f"{verb} {exit_qty_filled}/{qty} | P&L Rs {net:+,.0f} ({net_pnl_pct:+.2f}%) | {result}{fill_tag}"
     )
