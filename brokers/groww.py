@@ -193,6 +193,57 @@ class GrowwClientAdapter:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# NATS log-spam suppression
+# ─────────────────────────────────────────────────────────────────────────────
+
+class _NatsLogFilter(logging.Filter):
+    """
+    Rate-limits growwapi's NATS client logging during connection outages.
+
+    When the Groww NATS WebSocket drops, nats-py auto-reconnects with the
+    original (now stale) subscription token, the server rejects it ("empty
+    response from server when expecting INFO message"), and every failed retry
+    logs "Error: <often empty>" — one line every ~4 seconds until the client
+    gives up. The outage itself is real (the feed watchdog below handles
+    recovery); the spam is not useful, so:
+
+      - empty "Error: " lines are dropped entirely
+      - identical messages repeat at most once per 60s, with a suppressed-count
+      - the first occurrence of any message always passes through
+    """
+
+    _WINDOW_SECS = 60.0
+
+    def __init__(self):
+        super().__init__()
+        self._last_emit: dict[str, float] = {}   # msg -> last emit monotonic ts
+        self._suppressed: dict[str, int] = {}
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        msg = record.getMessage().strip()
+        if msg in ("Error:", "Error: "):          # empty reconnect-failure error
+            return False
+        now = time.monotonic()
+        last = self._last_emit.get(msg)
+        if last is not None and (now - last) < self._WINDOW_SECS:
+            self._suppressed[msg] = self._suppressed.get(msg, 0) + 1
+            return False
+        n = self._suppressed.pop(msg, 0)
+        if n:
+            record.msg = f"{record.msg}  (+{n} repeats suppressed in last {int(self._WINDOW_SECS)}s)"
+            record.args = None
+        self._last_emit[msg] = now
+        return True
+
+
+def _install_nats_log_filter() -> None:
+    """Attach the rate-limit filter to growwapi's NATS client logger (idempotent)."""
+    nats_logger = logging.getLogger("growwapi.groww.nats_client")
+    if not any(isinstance(f, _NatsLogFilter) for f in nats_logger.filters):
+        nats_logger.addFilter(_NatsLogFilter())
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # KiteTicker-compatible polling ticker
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -215,8 +266,13 @@ class GrowwTickerAdapter:
     _BATCH_SIZE      = 50    # REST fallback: Groww get_ltp silently drops beyond this
     _NIFTY_POLL_SECS = 2.0   # Nifty index REST polling interval
 
+    _WATCHDOG_SILENCE_SECS = 60    # rebuild feed if no stock tick for this long in market hours
+    _WATCHDOG_POLL_SECS    = 10
+    _REBUILD_COOLDOWN_SECS = 30    # min gap between rebuild attempts
+
     def __init__(self, api_key: str, access_token: str):
         from growwapi import GrowwAPI
+        _install_nats_log_filter()
         self._client           = GrowwAPI(access_token)
         self._subscribed       : list[int]                    = []
         self._token_to_groww   : dict[int, str]               = {}  # {token: "NSE_SYMBOL"}
@@ -225,6 +281,10 @@ class GrowwTickerAdapter:
         self._feed                                            = None  # GrowwFeed instance
         self._nifty_thread     : Optional[threading.Thread]  = None
         self._fallback_thread  : Optional[threading.Thread]  = None
+        self._watchdog_thread  : Optional[threading.Thread]  = None
+        self._last_stock_tick  : float                        = time.monotonic()
+        self._last_rebuild     : float                        = 0.0
+        self._rebuild_lock                                    = threading.Lock()
 
         self.on_connect = None
         self.on_ticks   = None
@@ -328,14 +388,75 @@ class GrowwTickerAdapter:
         self._feed = GrowwFeed(self._client)
         self._feed.subscribe_ltp(instrument_list, on_data_received=self._on_feed_tick)
         self._feed.subscribe_market_depth(instrument_list, on_data_received=self._on_depth_tick)
+        self._last_stock_tick = time.monotonic()   # fresh silence window for the new feed
         log.info(f"GrowwFeed: subscribed LTP + market depth for {len(instrument_list)} NSE equities")
 
-        if has_nifty:
+        if has_nifty and (self._nifty_thread is None or not self._nifty_thread.is_alive()):
             self._nifty_thread = threading.Thread(
                 target=self._nifty_poll_loop, daemon=True, name="groww-nifty-poll"
             )
             self._nifty_thread.start()
             log.info("GrowwFeed: Nifty50 via REST poll (2 s interval)")
+
+        if self._watchdog_thread is None or not self._watchdog_thread.is_alive():
+            self._watchdog_thread = threading.Thread(
+                target=self._watchdog_loop, daemon=True, name="groww-feed-watchdog"
+            )
+            self._watchdog_thread.start()
+            log.info(f"GrowwFeed: watchdog active (rebuild after "
+                     f"{self._WATCHDOG_SILENCE_SECS}s tick silence)")
+
+    def _watchdog_loop(self) -> None:
+        """
+        Rebuild the NATS feed after a sustained tick outage.
+
+        nats-py's built-in reconnect retries with the ORIGINAL subscription token,
+        which the Groww server rejects once it has expired ("empty response from
+        server when expecting INFO message") — so a dropped connection can never
+        recover by itself. The only reliable recovery is a full rebuild: fresh
+        GrowwFeed, fresh token, fresh subscriptions. Before this watchdog, the
+        agent's 300s bar-level staleness sweep was the only rescue, leaving open
+        positions blind to exits for up to 5+ minutes (observed: 425s).
+        """
+        import pytz
+        ist = pytz.timezone("Asia/Kolkata")
+        from datetime import time as dtime
+
+        while self._running:
+            time.sleep(self._WATCHDOG_POLL_SECS)
+            if not self._running:
+                return
+            now_t = datetime.now(ist).time()
+            if not (dtime(9, 15) <= now_t <= dtime(15, 30)):
+                continue   # no ticks outside market hours is normal
+            silence = time.monotonic() - self._last_stock_tick
+            if silence < self._WATCHDOG_SILENCE_SECS:
+                continue
+            if time.monotonic() - self._last_rebuild < self._REBUILD_COOLDOWN_SECS:
+                continue
+            with self._rebuild_lock:
+                self._last_rebuild = time.monotonic()
+                log.warning(f"GrowwFeed watchdog: no stock ticks for {silence:.0f}s — "
+                            f"rebuilding feed with a fresh subscription...")
+                old_feed = self._feed
+                try:
+                    self._start_feed()
+                    log.info("GrowwFeed watchdog: feed rebuilt successfully")
+                except Exception as e:
+                    log.error(f"GrowwFeed watchdog: rebuild failed ({e}) — retrying in "
+                              f"{self._REBUILD_COOLDOWN_SECS}s")
+                    continue
+                if old_feed is not None:
+                    try:
+                        instrument_list = [
+                            {"exchange": "NSE", "segment": "CASH", "exchange_token": str(t)}
+                            for t in self._subscribed
+                            if t != _NIFTY50_TOKEN and t in self._token_to_groww
+                        ]
+                        old_feed.unsubscribe_ltp(instrument_list)
+                        old_feed.unsubscribe_market_depth(instrument_list)
+                    except Exception:
+                        pass   # old connection is already dead — best-effort cleanup
 
     def _on_feed_tick(self, meta: dict) -> None:
         """
@@ -345,6 +466,7 @@ class GrowwTickerAdapter:
         """
         if not self._running:
             return
+        self._last_stock_tick = time.monotonic()   # feed-watchdog heartbeat
         try:
             token_str = str(meta.get("feed_key", ""))
             if not token_str.isdigit():

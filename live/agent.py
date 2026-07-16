@@ -76,7 +76,7 @@ from live.paper_logger import (
     save_open_trade, load_open_trade, log_closed_trade
 )
 from live.risk_guard import check_risk_limits, write_eod_risk_check
-from live.fill_check import check_fill, simulate_fill
+from live.fill_check import check_fill, simulate_fill, check_exit_fill
 from watchlist.pre_filter import PreMarketFilter
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -288,7 +288,11 @@ def main():
             log.info(f"{broker.display_name} ticker connected and subscribed")
 
         def on_ticks(_ws, ticks):
-            _last_tick[0] = datetime.now()
+            # Staleness clock counts STOCK ticks only — the Nifty index arrives via
+            # an independent REST poll that can stay alive while the stock feed is
+            # dead, which would otherwise mask the outage from the reconnect sweep.
+            if any(t.get("instrument_token") != NIFTY50_TOKEN for t in ticks):
+                _last_tick[0] = datetime.now()
             for tick in ticks:
                 dm.on_tick(tick)
             if state.is_long_open() or state.is_short_open():
@@ -703,6 +707,7 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
         if target_hit:
             log.info(f"TARGET HIT [{direction}]: {symbol} @ {last_price:.2f} (target={target:.2f})")
             if close_fn(rec):
+                _verify_exit_fill(dm, rec, target, "TARGET_HIT")
                 log_closed_trade(today, rec, exit_price=target, exit_reason="TARGET_HIT", exit_time=now_str)
                 changed = True
         elif stop_hit:
@@ -710,6 +715,7 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
             exit_reason = "PROFIT_LOCK_STOP" if rec.get("_profit_locked") else "STOP_HIT"
             log.info(f"STOP HIT [{direction}]: {symbol} @ {last_price:.2f} (stop={stop:.2f}){locked_tag}")
             if close_fn(rec):
+                _verify_exit_fill(dm, rec, stop, exit_reason)
                 log_closed_trade(today, rec, exit_price=stop, exit_reason=exit_reason, exit_time=now_str)
                 changed = True
 
@@ -740,9 +746,31 @@ def _force_time_exit(state: AgentState, dm: LiveDataManager,
             log.warning(f"  No live price for {symbol} — using entry price as exit")
         log.info(f"TIME EXIT [{direction}]: {symbol} @ {last_price:.2f} (3:15 PM square-off)")
         if close_fn(rec):
+            _verify_exit_fill(dm, rec, last_price, "TIME_EXIT")
             log_closed_trade(today, rec, exit_price=last_price, exit_reason="TIME_EXIT", exit_time=exit_time)
 
     save_open_trade(today, None, None)
+
+
+def _verify_exit_fill(dm: LiveDataManager, rec: dict, exit_price: float,
+                      exit_reason: str) -> None:
+    """
+    Depth-check the exit the same way entries are checked: can the OPPOSITE side
+    of the book actually absorb this close at the booked price? Diagnostic only —
+    the paper trade still books at the level (flat slippage is in the cost model);
+    this logs whether the exit would really have completed, and stamps the result
+    on the rec so it lands in live_paper_trades.csv (exit_fill_status column).
+    """
+    try:
+        fc = check_exit_fill(dm, rec["symbol"], exit_price, int(rec["shares"]),
+                             rec.get("direction", "LONG"), exit_reason)
+        rec["_exit_fill_status"] = fc["status"]
+        level = log.info if fc["status"] == "EXIT_CONFIRMED" else log.warning
+        level(f"EXIT FILL   [{rec.get('direction', 'LONG')}]: {rec['symbol']} | {fc['msg']}")
+    except Exception as e:
+        rec["_exit_fill_status"] = "CHECK_ERROR"
+        log.warning(f"EXIT FILL   [{rec.get('direction', 'LONG')}]: {rec['symbol']} | "
+                    f"check failed ({e}) — exit UNVERIFIED")
 
 
 # ─────────────────────────────────────────────────────────────────────────────

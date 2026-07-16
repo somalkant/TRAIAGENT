@@ -144,6 +144,70 @@ def check_fill(dm, symbol: str, entry_price: float, shares: int,
     }
 
 
+def check_exit_fill(dm, symbol: str, exit_price: float, shares: int,
+                    position_direction: str, exit_reason: str) -> dict:
+    """
+    Exit-side counterpart of check_fill() — verifies the OPPOSITE book side has
+    enough quantity to actually close the position at the booked exit price.
+
+      closing a LONG  = SELL  -> walk the bid (buy)  side
+      closing a SHORT = BUY   -> walk the ask (sell) side
+
+    Diagnostic only: the paper trade still books at the level price (the cost
+    model already charges a flat slippage per side); this measures what a real
+    close would have achieved so booked-vs-real exit slippage is visible in logs.
+
+    Returns dict:
+      status : "EXIT_CONFIRMED" | "EXIT_PARTIAL" | "EXIT_NOT_FILLED" | "DEPTH_UNAVAILABLE"
+      msg    : one-liner for the log
+      plus filled_qty / avg_price / best_qty / best_avg / best_price from simulate_fill.
+    """
+    depth = dm.get_depth(symbol) if hasattr(dm, "get_depth") else None
+    side_action = "SELL" if position_direction == "LONG" else "BUY-COVER"
+
+    if depth is None:
+        return {
+            "status": "DEPTH_UNAVAILABLE", "filled_qty": 0, "avg_price": 0.0,
+            "best_qty": 0, "best_avg": 0.0, "best_price": None,
+            "msg": (f"{side_action} {shares} @ ₹{exit_price:.2f} ({exit_reason}) — "
+                    f"depth unavailable, exit UNVERIFIED"),
+        }
+
+    # simulate_fill's "LONG" walks the ask side (buying), anything else walks the
+    # bid side (selling) — so the exit uses the position's opposite label.
+    walk_as    = "SHORT" if position_direction == "LONG" else "LONG"
+    sim        = simulate_fill(depth, shares, exit_price, walk_as)
+    side       = "bid" if position_direction == "LONG" else "ask"
+    book_key   = "buy" if position_direction == "LONG" else "sell"
+    levels_str = _fmt_levels(depth.get(book_key, [])[:3], side)
+
+    # Unfavorable slippage is positive: selling below book price / covering above it.
+    def _slip(avg: float) -> float:
+        return (exit_price - avg) if position_direction == "LONG" else (avg - exit_price)
+
+    if sim["filled_qty"] >= shares:
+        status = "EXIT_CONFIRMED"
+        msg = (f"{side_action} {shares} @ ₹{exit_price:.2f} ({exit_reason}) — "
+               f"EXIT CONFIRMED: {side}s absorb full qty | avg ₹{sim['avg_price']:.2f} "
+               f"(slip ₹{_slip(sim['avg_price']):+.2f} unfavorable)  [{levels_str}]")
+    elif sim["best_qty"] >= shares and sim["best_price"] is not None:
+        status = "EXIT_PARTIAL"
+        msg = (f"{side_action} {shares} @ ₹{exit_price:.2f} ({exit_reason}) — "
+               f"EXIT PARTIAL at level: only {sim['filled_qty']:,}/{shares} within tolerance; "
+               f"full close at market: avg ₹{sim['best_avg']:.2f} "
+               f"(slip ₹{_slip(sim['best_avg']):+.2f} unfavorable)  [{levels_str}]")
+    else:
+        status = "EXIT_NOT_FILLED"
+        avail = max(sim["filled_qty"], sim["best_qty"])
+        msg = (f"{side_action} {shares} @ ₹{exit_price:.2f} ({exit_reason}) — "
+               f"EXIT NOT FILLED: only {avail:,}/{shares} available on the {side} side "
+               f"even at market — real close would move the book  [{levels_str}]")
+
+    return {"status": status, "filled_qty": sim["filled_qty"], "avg_price": sim["avg_price"],
+            "best_qty": sim["best_qty"], "best_avg": sim["best_avg"],
+            "best_price": sim["best_price"], "msg": msg}
+
+
 def _fmt_levels(levels: list[dict], side: str) -> str:
     if not levels:
         return f"no {side} levels"

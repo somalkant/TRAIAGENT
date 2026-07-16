@@ -29,7 +29,7 @@ _COLUMNS = [
     "agreeing_count", "composite_score", "driver_strategy", "reason", "exit_time",
     "exit_price", "exit_reason", "result", "pnl_rs", "pnl_pct", "predicted_win_pct",
     "conviction_tier", "entry_drift_pct", "signal_age_min", "overlap_ratio",
-    "overlap_tier", "profit_locked",
+    "overlap_tier", "profit_locked", "exit_fill_status",
 ]
 
 
@@ -146,6 +146,7 @@ def log_closed_trade(
         "overlap_ratio":    rec.get("overlap_ratio"),
         "overlap_tier":     rec.get("overlap_tier", "N/A"),
         "profit_locked":    bool(rec.get("_profit_locked", False)),
+        "exit_fill_status": rec.get("_exit_fill_status", "N/A"),
     }
 
     new_df = pd.DataFrame([row], columns=_COLUMNS)
@@ -164,6 +165,9 @@ def log_closed_trade(
 
 
 def _result_label(exit_reason: str, pnl: float) -> str:
-    if exit_reason == "TARGET_HIT":
+    # EXACT_WIN requires the target hit to be profitable NET of costs — a
+    # degenerate-geometry fill can hit target and still lose money (seen live:
+    # CRAFTSMAN 2026-06-19, +2.55% entry drift left a 7-Rs target; costs ate it).
+    if exit_reason == "TARGET_HIT" and pnl > 0:
         return "EXACT_WIN"
     return "WIN" if pnl > 0 else "LOSS"
