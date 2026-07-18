@@ -29,7 +29,8 @@ _COLUMNS = [
     "agreeing_count", "composite_score", "driver_strategy", "reason", "exit_time",
     "exit_price", "exit_reason", "result", "pnl_rs", "pnl_pct", "predicted_win_pct",
     "conviction_tier", "entry_drift_pct", "signal_age_min", "overlap_ratio",
-    "overlap_tier", "profit_locked", "exit_fill_status",
+    "overlap_tier", "profit_locked", "exit_fill_status", "atr_pct",
+    "size_cap_reason",
 ]
 
 
@@ -147,6 +148,8 @@ def log_closed_trade(
         "overlap_tier":     rec.get("overlap_tier", "N/A"),
         "profit_locked":    bool(rec.get("_profit_locked", False)),
         "exit_fill_status": rec.get("_exit_fill_status", "N/A"),
+        "atr_pct":          rec.get("atr_pct"),
+        "size_cap_reason":  rec.get("size_cap_reason", "N/A"),
     }
 
     new_df = pd.DataFrame([row], columns=_COLUMNS)

@@ -45,14 +45,16 @@ _SCHEMA_22 = ["date", "symbol", "signal_time", "entry_price", "quantity",
 _SCHEMA_23 = (_SCHEMA_22[:3] + ["entry_time"] + _SCHEMA_22[3:])
 _SCHEMA_24 = (_SCHEMA_23[:4] + ["strategy_entry"] + _SCHEMA_23[4:])
 # 30-col: execution-safety-layer schema before exit_fill_status was added
-_SCHEMA_30 = [c for c in _COLUMNS if c != "exit_fill_status"]
+# 31-col: before the vol-sizing columns (atr_pct, size_cap_reason) were added
+_SCHEMA_31 = [c for c in _COLUMNS if c not in ("atr_pct", "size_cap_reason")]
+_SCHEMA_30 = [c for c in _SCHEMA_31 if c != "exit_fill_status"]
 _SCHEMAS = {22: _SCHEMA_22, 23: _SCHEMA_23, 24: _SCHEMA_24,
-            30: _SCHEMA_30, len(_COLUMNS): _COLUMNS}
+            30: _SCHEMA_30, 31: _SCHEMA_31, len(_COLUMNS): _COLUMNS}
 
 _NUMERIC = ["strategy_entry", "entry_price", "quantity", "position_rs", "stop_loss",
             "target", "rr", "agreeing_count", "composite_score", "exit_price",
             "pnl_rs", "pnl_pct", "predicted_win_pct", "entry_drift_pct",
-            "signal_age_min", "overlap_ratio"]
+            "signal_age_min", "overlap_ratio", "atr_pct"]
 
 
 def load_mixed(path: Path) -> pd.DataFrame:
@@ -112,6 +114,7 @@ def migrate(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     df["overlap_tier"]     = df["overlap_tier"].replace("", "N/A").fillna("N/A")
     df["profit_locked"]    = df["profit_locked"].replace("", "False").fillna("False")
     df["exit_fill_status"] = df["exit_fill_status"].replace("", "N/A").fillna("N/A")
+    df["size_cap_reason"]  = df["size_cap_reason"].replace("", "N/A").fillna("N/A")
     for col in ["entry_drift_pct", "signal_age_min"]:
         df[col] = df[col].fillna(0.0)
 

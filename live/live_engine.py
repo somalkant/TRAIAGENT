@@ -11,6 +11,7 @@ scan_once() returns the best recommendation dict (LONG or SHORT), or None.
 
 import logging
 from datetime import date, datetime
+import pandas as pd
 import pytz
 
 _IST = pytz.timezone("Asia/Kolkata")
@@ -35,6 +36,7 @@ from config.settings import (
     MIN_RISK_REWARD, ENTRY_DRIFT_GATE_PCT, SIGNAL_EXPIRY_MIN,
     MAX_STOP_DISTANCE_PCT, MIN_TARGET_DISTANCE_PCT,
     LIVE_SHORT_SIZE_MULT, OVERLAP_TIGHT_THRESHOLD,
+    MAX_POSITION_SIZE, ATR_RISK_BUDGET_RS, ATR_PERIOD_DAYS,
 )
 from strategies import ALL_STRATEGIES
 from weights.regime import get_regime_modifiers, get_direction_bias
@@ -303,11 +305,28 @@ def _find_live_candidate(
             if direction == -1:
                 # Shorts underperformed longs live (18.8% exact vs 56% backtest) —
                 # halve size until the short edge is confirmed on clean live data.
+                # The multiplier scales BOTH the risk budget and the notional cap:
+                # scaling risk alone did nothing when the 5L cap was what bound
+                # (seen live: POLICYBZR 2026-07-17 sized to the full cap despite
+                # the haircut, losing -7.9k where half-cap would have lost -4k).
                 conv_mult *= LIVE_SHORT_SIZE_MULT
                 short_haircut = True
 
-            rs_value, shares = position_size(best_sig.entry, best_sig.stop, conv_mult)
-            entry_time       = now_ist.strftime("%H:%M")
+            # ── Volatility-normalized sizing (professional constant-risk) ─────────
+            # notional = min(cap, stop_risk/stop%, ATR_budget/ATR%): every position
+            # targets the same rupee move on an average day. Strategy stops track
+            # real volatility poorly (0.16 correlation measured over the first 42
+            # live trades) — the ATR term is what catches a deceptively tight stop
+            # on a wild name (2% stop on a 5% ATR stock = noise stop at max size).
+            atr = _atr_pct_from_history(data_manager.get_history(symbol))
+            notional_cap = MAX_POSITION_SIZE * (LIVE_SHORT_SIZE_MULT if direction == -1 else 1.0)
+            rs_value, shares = position_size(
+                best_sig.entry, best_sig.stop, conv_mult,
+                atr_pct=atr, atr_risk_rs=ATR_RISK_BUDGET_RS, max_notional=notional_cap,
+            )
+            size_cap_reason = _binding_constraint(
+                best_sig.entry, best_sig.stop, conv_mult, atr, notional_cap)
+            entry_time = now_ist.strftime("%H:%M")
 
             dirn_str = "LONG" if direction == +1 else "SHORT"
             log.info(
@@ -317,8 +336,9 @@ def _find_live_candidate(
                 f"target={best_sig.target:.2f} stop={best_sig.stop:.2f} RR={best_sig.rr:.2f} | "
                 f"agreeing={agreeing} score={adj_score:.2f} pred={pred_win_pct:.1f}% | "
                 f"overlap={overlap_ratio if overlap_ratio is not None else 'n/a'} [{overlap_tier}] | "
-                f"size=Rs {rs_value:,.0f} ({shares} shares) [{conv_tier}]"
-                + (" [SHORT 0.5x]" if short_haircut else "")
+                f"ATR14={f'{atr:.1f}%' if atr else 'n/a'} | "
+                f"size=Rs {rs_value:,.0f} ({shares} shares) [{conv_tier}, sized by {size_cap_reason}]"
+                + (" [SHORT 0.5x risk+cap]" if short_haircut else "")
             )
             sig_dict                   = best_sig.to_dict()
             sig_dict["strategy_entry"] = strategy_entry
@@ -333,6 +353,8 @@ def _find_live_candidate(
                 "signal_age_min":    round(sig_age_min, 1) if sig_age_min is not None else 0.0,
                 "overlap_ratio":     overlap_ratio,
                 "overlap_tier":      overlap_tier,
+                "atr_pct":           round(atr, 2) if atr is not None else None,
+                "size_cap_reason":   size_cap_reason,
                 "agreeing":          agreeing,
                 "position_rs":       rs_value,
                 "shares":            shares,
@@ -346,6 +368,43 @@ def _find_live_candidate(
             log.debug(f"  {symbol} [{('LONG' if direction==+1 else 'SHORT')}] filtered: {reason}")
 
     return None
+
+
+def _atr_pct_from_history(hist, period: int = ATR_PERIOD_DAYS) -> float | None:
+    """
+    14-day daily ATR as % of the latest close, from 5-min parquet history
+    (which ends yesterday — no look-ahead). None if under period+1 days of data.
+    """
+    if hist is None or hist.empty:
+        return None
+    try:
+        daily = (hist.groupby(hist["datetime"].dt.date)
+                 .agg(high=("high", "max"), low=("low", "min"), close=("close", "last")))
+        if len(daily) < period + 1:
+            return None
+        pc = daily["close"].shift(1)
+        tr = pd.concat([daily["high"] - daily["low"],
+                        (daily["high"] - pc).abs(),
+                        (daily["low"] - pc).abs()], axis=1).max(axis=1)
+        ref = float(daily["close"].iloc[-1])
+        if ref <= 0:
+            return None
+        return float(tr.tail(period).mean() / ref * 100)
+    except Exception:
+        return None
+
+
+def _binding_constraint(entry: float, stop: float, conv_mult: float,
+                        atr: float | None, notional_cap: float) -> str:
+    """Which sizing term won: NOTIONAL_CAP, STOP_RISK, or ATR_VOL (for the log/CSV)."""
+    from config.settings import MAX_LOSS_PER_TRADE
+    stop_pct = abs(entry - stop) / entry if entry else 0
+    terms = {"NOTIONAL_CAP": notional_cap}
+    if stop_pct > 0:
+        terms["STOP_RISK"] = MAX_LOSS_PER_TRADE * conv_mult / stop_pct
+    if atr and atr > 0:
+        terms["ATR_VOL"] = ATR_RISK_BUDGET_RS / (atr / 100)
+    return min(terms, key=terms.get)
 
 
 def _signal_age_minutes(signal_time: str, now_ist: datetime) -> float | None:

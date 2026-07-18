@@ -234,3 +234,16 @@ OVERLAP_TIGHT_THRESHOLD = 0.5
 PROFIT_LOCK_ENABLED     = True
 PROFIT_LOCK_TRIGGER_PCT = 1.0
 PROFIT_LOCK_TRAIL_PCT   = 0.5
+
+# 6. Volatility-normalized position sizing (live only, from 2026-07-20).
+#    Replaying the 42 live trades showed actual rupee-risk per trade ranged
+#    Rs 179 -> Rs 31,167 (the 5L notional cap binds almost always, making the
+#    system fixed-notional / variable-risk), and strategy stop distances had
+#    only 0.16 correlation with real volatility — the four worst losses were
+#    all ~2% stops on 3-5% ATR names (stop inside one average day's range).
+#    Professional sizing: notional = min(cap, stop_risk/stop%, ATR_budget/ATR%)
+#    so every position moves roughly the same rupees on a normal day. Shorts
+#    take half risk AND half cap (LIVE_SHORT_SIZE_MULT — previously the haircut
+#    only scaled risk, which the binding notional cap made ineffective).
+ATR_RISK_BUDGET_RS = 12_000   # target rupee move per position on an average day
+ATR_PERIOD_DAYS    = 14       # daily ATR lookback
