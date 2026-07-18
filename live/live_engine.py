@@ -301,14 +301,12 @@ def _find_live_candidate(
                 conv_tier = "STANDARD"
                 conv_mult = 1.0
 
+            # Short-side multiplier scales BOTH the risk budget and the notional
+            # cap (scaling risk alone does nothing when the cap binds — seen live
+            # on POLICYBZR 2026-07-17). At 1.0 (paper trading) this is a no-op;
+            # set LIVE_SHORT_SIZE_MULT=0.5 for real-money pilot sizing.
             short_haircut = False
-            if direction == -1:
-                # Shorts underperformed longs live (18.8% exact vs 56% backtest) —
-                # halve size until the short edge is confirmed on clean live data.
-                # The multiplier scales BOTH the risk budget and the notional cap:
-                # scaling risk alone did nothing when the 5L cap was what bound
-                # (seen live: POLICYBZR 2026-07-17 sized to the full cap despite
-                # the haircut, losing -7.9k where half-cap would have lost -4k).
+            if direction == -1 and LIVE_SHORT_SIZE_MULT != 1.0:
                 conv_mult *= LIVE_SHORT_SIZE_MULT
                 short_haircut = True
 
@@ -338,7 +336,7 @@ def _find_live_candidate(
                 f"overlap={overlap_ratio if overlap_ratio is not None else 'n/a'} [{overlap_tier}] | "
                 f"ATR14={f'{atr:.1f}%' if atr else 'n/a'} | "
                 f"size=Rs {rs_value:,.0f} ({shares} shares) [{conv_tier}, sized by {size_cap_reason}]"
-                + (" [SHORT 0.5x risk+cap]" if short_haircut else "")
+                + (f" [SHORT {LIVE_SHORT_SIZE_MULT}x risk+cap]" if short_haircut else "")
             )
             sig_dict                   = best_sig.to_dict()
             sig_dict["strategy_entry"] = strategy_entry

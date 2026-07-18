@@ -212,9 +212,14 @@ SIGNAL_EXPIRY_MIN      = 30     # discard a driver signal older than this many m
 MAX_STOP_DISTANCE_PCT   = 2.0   # reject any candidate whose stop is farther than this from entry
 MIN_TARGET_DISTANCE_PCT = 0.5   # reject targets closer than this (~3.3x the ~0.15% cost breakeven)
 
-# 3. Shorts underperformed longs live (18.8% exact vs 56% backtest) — halve size
-#    until the short edge is confirmed on clean (non-chased) live data.
-LIVE_SHORT_SIZE_MULT = 0.5
+# 3. Short-side size multiplier (scales BOTH risk budget and notional cap).
+#    1.0 for paper trading: simulated losses are information, not money — run
+#    the intended production size so the 10-day review measures the short edge
+#    at representative scale. The half-size discipline belongs to REAL capital:
+#    set 0.5 on real-money day one until the short edge is proven live
+#    (fractional-Kelly pilot sizing). The gates + ATR governor remain the
+#    actual tail protection at any multiplier.
+LIVE_SHORT_SIZE_MULT = 1.0
 
 # 4. Candle-overlap confidence tier — measures price compression over the last
 #    3 completed 5-min bars. overlap_ratio = width(intersection of [low,high]
