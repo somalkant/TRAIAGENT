@@ -24,7 +24,7 @@ COLUMNS = [
     "qty", "notional_rs", "stop", "target", "exit_time", "exit_price", "exit_reason",
     "exit_qty_filled", "exit_fill_pct", "result", "gross_pnl_rs", "total_cost_rs",
     "net_pnl_rs", "net_pnl_pct", "fill_slippage", "brokerage", "stt", "exchange",
-    "sebi", "gst", "stamp", "slippage",
+    "sebi", "gst", "stamp", "slippage", "move_strength",
 ]
 
 
@@ -97,6 +97,7 @@ def log_closed_trade(trade_date: date, strategy_name: str, side: str, rec: dict,
         "net_pnl_rs": round(net, 2), "net_pnl_pct": net_pnl_pct,
         "fill_slippage": round(fill_slip, 2),
         **{k: round(v, 2) for k, v in costs.items()},
+        "move_strength": rec.get("move_strength", "UNRATED"),
     }
 
     new_df = pd.DataFrame([row], columns=COLUMNS)

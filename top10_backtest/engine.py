@@ -57,11 +57,20 @@ def run(start_date: date, end_date: date, resume: bool = True) -> None:
             nifty_today = _get_today(nifty_all, trade_date) if nifty_all is not None else pd.DataFrame()
 
             day_rows = []
+            # (symbol, side) -> strategy that claimed it today. Once one strategy takes
+            # a LONG (or SHORT) in a stock, no other strategy may take the SAME side in
+            # that stock the same day -- that's a duplicated bet, not diversification.
+            # The opposite side stays open to a different strategy (a genuine, distinct
+            # bet). Strategies are tried in TOP10_STRATEGIES order, so that order acts
+            # as the tie-break when two strategies would otherwise want the same
+            # (symbol, side) the same day.
+            taken: dict[tuple[str, str], str] = {}
             for strategy in TOP10_STRATEGIES:
-                long_pick, short_pick = _scan_strategy(
+                long_candidates, short_candidates = _scan_strategy(
                     strategy, symbol_slices, long_syms, short_syms, nifty_today, trade_date
                 )
-                for side, pick in (("LONG", long_pick), ("SHORT", short_pick)):
+                for side, candidates in (("LONG", long_candidates), ("SHORT", short_candidates)):
+                    pick = _first_available(candidates, side, taken)
                     if pick is None:
                         continue
                     symbol, today, sig = pick
@@ -69,6 +78,7 @@ def run(start_date: date, end_date: date, resume: bool = True) -> None:
                     if row is not None:
                         day_rows.append(row)
                         ledger.record(strategy.name, side, row["net_pnl_rs"])
+                        taken[(symbol, side)] = strategy.name
 
             if day_rows:
                 append_trades(day_rows)
@@ -110,6 +120,11 @@ def _scan_strategy(strategy, symbol_slices: dict, long_syms: set[str], short_sym
     symbol is in the LONG universe; a SELL signal only counts if it's in the
     SHORT (F&O) universe — a signal on a symbol outside the relevant universe
     is not tradeable under this test's rules and is discarded.
+
+    Returns the full chronologically-sorted candidate list per side (not just
+    the first) so cross-strategy (symbol, side) exclusivity in run() can fall
+    through to the next candidate when the first is already claimed by
+    another strategy today.
     """
     long_candidates, short_candidates = [], []
     for symbol, (today, history, prev_day) in symbol_slices.items():
@@ -127,15 +142,17 @@ def _scan_strategy(strategy, symbol_slices: dict, long_syms: set[str], short_sym
         elif sig.direction == -1 and eligible_short:
             short_candidates.append((symbol, today, sig))
 
-    return _first_chrono(long_candidates), _first_chrono(short_candidates)
+    key = lambda c: (c[2].signal_time or "99:99", c[0])
+    return sorted(long_candidates, key=key), sorted(short_candidates, key=key)
 
 
-def _first_chrono(candidates: list) -> tuple | None:
-    """First signal by signal_time; ties broken by symbol alphabetical order."""
-    if not candidates:
-        return None
-    candidates.sort(key=lambda c: (c[2].signal_time or "99:99", c[0]))
-    return candidates[0]
+def _first_available(candidates: list, side: str, taken: dict[tuple[str, str], str]) -> tuple | None:
+    """First candidate (by signal_time, symbol alphabetical) whose (symbol, side)
+    isn't already claimed by a different strategy today."""
+    for symbol, today, sig in candidates:
+        if (symbol, side) not in taken:
+            return symbol, today, sig
+    return None
 
 
 def _build_trade_row(trade_date: date, side: str, strategy_name: str, symbol: str,

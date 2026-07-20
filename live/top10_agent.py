@@ -50,6 +50,7 @@ from live.agent import (
 from top10_backtest.strategies import TOP10_STRATEGIES, TOP10_NAMES
 from top10_backtest.universe import long_universe, short_universe
 from top10_backtest.capital import size
+from top10_backtest.strength import classify_strength
 
 log = logging.getLogger(__name__)
 
@@ -129,6 +130,55 @@ class Top10AgentState:
             for name, s in saved.items():
                 if name in self._state:
                     self._state[name] = dict(s)
+
+
+class SymbolSideRegistry:
+    """
+    Cross-strategy exclusivity for the whole trading day: once a strategy
+    claims (symbol, side), no OTHER strategy may take the same side of that
+    symbol today. The opposite side stays open to a different strategy — a
+    LONG from one strategy and a SHORT from another on the same stock is a
+    genuine, independent bet, not a duplicated one. Exclusivity persists for
+    the rest of the day even after the claiming position closes (the point is
+    to avoid two pools riding the same bet, not just avoiding literal
+    concurrent overlap).
+    """
+
+    def __init__(self):
+        self._taken: dict[tuple[str, str], str] = {}
+        self._lock = threading.Lock()
+
+    def is_available(self, symbol: str, side: str, strategy: str) -> bool:
+        with self._lock:
+            holder = self._taken.get((symbol, side))
+            return holder is None or holder == strategy
+
+    def claim(self, symbol: str, side: str, strategy: str) -> None:
+        with self._lock:
+            self._taken[(symbol, side)] = strategy
+
+
+def _build_symbol_side_registry(today: date, state: Top10AgentState) -> SymbolSideRegistry:
+    """Rebuilds today's claims from the trades CSV (source of truth) plus any
+    currently-open positions — makes this restart-safe with no separate
+    checkpoint file to keep in sync."""
+    import pandas as pd
+    from live.top10_logger import TRADES_FILE
+
+    registry = SymbolSideRegistry()
+    if TRADES_FILE.exists():
+        try:
+            df = pd.read_csv(TRADES_FILE)
+            today_rows = df[df["date"] == str(today)]
+            for _, row in today_rows.iterrows():
+                registry.claim(row["symbol"], row["side"], row["strategy"])
+        except Exception as e:
+            log.warning(f"Could not rebuild symbol/side registry from trades CSV: {e}")
+
+    for strategy_name, side, rec in state.iter_open():
+        registry.claim(rec["symbol"], side, strategy_name)
+
+    return registry
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -211,6 +261,8 @@ def main():
             if s.get("short"):
                 log.info(f"RECOVERED open SHORT [{name}]: {s['short']['symbol']} — monitoring for exit")
 
+    symbol_registry = _build_symbol_side_registry(today, state)
+
     # ── 7. Ticker WebSocket setup ────────────────────────────────────────────
     tokens     = dm.instrument_tokens
     _last_tick = [None]
@@ -262,7 +314,7 @@ def main():
     # ── 8. Main scheduling loop ──────────────────────────────────────────────
     try:
         _run_market_loop(_ws_holder, _last_tick, _make_ticker, dm, state, halted,
-                         long_syms, short_syms, today)
+                         long_syms, short_syms, today, symbol_registry)
     except KeyboardInterrupt:
         log.info("Interrupted by user")
     finally:
@@ -286,7 +338,8 @@ _TICKER_STALE_SECS = 300
 
 def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                      dm: LiveDataManager, state: Top10AgentState,
-                     halted: dict, long_syms: set, short_syms: set, today: date) -> None:
+                     halted: dict, long_syms: set, short_syms: set, today: date,
+                     symbol_registry: SymbolSideRegistry) -> None:
     while True:
         now   = _now_ist()
         now_t = now.time()
@@ -351,12 +404,13 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                 for side, candidates in (("LONG", long_candidates), ("SHORT", short_candidates)):
                     if not candidates:
                         continue
-                    picked = _pick_fillable_candidate(dm, name, side, candidates)
+                    picked = _pick_fillable_candidate(dm, name, side, candidates, symbol_registry)
                     if picked is None:
                         log.info(f"  {now_t.strftime('%H:%M')} — {name} {side}: no candidate cleared "
                                  f"the depth gate this cycle, will retry next bar")
                         continue
                     _place_trade(state, name, side, picked, now_t)
+                    symbol_registry.claim(picked[0], side, name)
 
             if any_scanned:
                 save_open_trades(today, state.snapshot())
@@ -399,54 +453,63 @@ def _scan_strategy_live(strategy, dm: LiveDataManager, long_syms: set, short_sym
         if not sig.is_valid:
             continue
 
+        strength = classify_strength(sig.direction, today_5min, history_5min, sig.signal_time)
+
         if sig.direction == 1 and eligible_long:
-            long_candidates.append((symbol, today_5min, sig))
+            long_candidates.append((symbol, today_5min, sig, strength))
         elif sig.direction == -1 and eligible_short:
-            short_candidates.append((symbol, today_5min, sig))
+            short_candidates.append((symbol, today_5min, sig, strength))
 
     key = lambda c: (c[2].signal_time or "99:99", c[0])
     return sorted(long_candidates, key=key), sorted(short_candidates, key=key)
 
 
-def _pick_fillable_candidate(dm: LiveDataManager, strategy_name: str, side: str, candidates: list):
+def _pick_fillable_candidate(dm: LiveDataManager, strategy_name: str, side: str, candidates: list,
+                             symbol_registry: SymbolSideRegistry):
     """
-    Pre-trade depth gate: try candidates in chronological order, checking live
-    market depth BEFORE committing the day's slot. The first one clearing
-    TOP10_MIN_FILL_RATIO wins; the rest are logged as skipped, not placed.
-    Returns (symbol, today_5min, sig, qty, notional, fc) or None if nothing
-    in this cycle's candidate list is fillable.
+    Pre-trade gate: try candidates in chronological order, checking (a) cross-
+    strategy symbol/side exclusivity and (b) live market depth BEFORE
+    committing the day's slot. The first one clearing both wins; the rest are
+    logged as skipped, not placed. Returns (symbol, today_5min, sig, strength,
+    qty, notional, fc) or None if nothing in this cycle's candidate list
+    qualifies.
     """
-    for symbol, today_5min, sig in candidates:
+    for symbol, today_5min, sig, strength in candidates:
+        if not symbol_registry.is_available(symbol, side, strategy_name):
+            log.info(f"  SKIPPED [{side}] {strategy_name}: {symbol} | already taken {side} by another "
+                     f"strategy today — trying next candidate")
+            continue
         qty, notional = size(sig.entry)
         if qty <= 0:
             continue
         fc = check_fill(dm, symbol, sig.entry, qty, side, tolerance_pct=TOP10_FILL_TOLERANCE_PCT)
         ratio = fc["filled_qty"] / qty if qty else 0.0
         if fc["fillable"] is None or ratio >= TOP10_MIN_FILL_RATIO:
-            return symbol, today_5min, sig, qty, notional, fc
+            return symbol, today_5min, sig, strength, qty, notional, fc
         log.info(f"  SKIPPED [{side}] {strategy_name}: {symbol} | only {fc['filled_qty']}/{qty} "
                  f"({ratio*100:.0f}%) fillable near Rs {sig.entry:.2f} — trying next candidate")
     return None
 
 
 def _place_trade(state: Top10AgentState, strategy_name: str, side: str, picked: tuple, now_t) -> None:
-    symbol, _today_5min, sig, qty, notional, fc = picked
+    symbol, _today_5min, sig, strength, qty, notional, fc = picked
 
     rec = {
-        "strategy":    strategy_name,
-        "direction":   side,
-        "symbol":      symbol,
-        "signal":      sig.to_dict(),
-        "entry_time":  now_t.strftime("%H:%M"),
-        "shares":      qty,
-        "position_rs": notional,
+        "strategy":      strategy_name,
+        "direction":     side,
+        "symbol":        symbol,
+        "signal":        sig.to_dict(),
+        "entry_time":    now_t.strftime("%H:%M"),
+        "shares":        qty,
+        "position_rs":   notional,
+        "move_strength": strength,
     }
     state.set(strategy_name, side, rec)
     log.info(
         f"PAPER TRADE PLACED [{side}] {strategy_name}: {symbol} | "
         f"signal_time={sig.signal_time} entry_time={rec['entry_time']} | "
         f"entry={sig.entry:.2f} target={sig.target:.2f} stop={sig.stop:.2f} | "
-        f"size=Rs {notional:,.0f} ({qty} shares)"
+        f"size=Rs {notional:,.0f} ({qty} shares) | strength={strength}"
     )
     log.info(f"FILL CHECK   [{side}] {strategy_name}: {symbol} | {qty} shares @ Rs {sig.entry:.2f} | {fc['msg']}")
     rec["_fill_state"] = _init_fill_state(fc, qty)

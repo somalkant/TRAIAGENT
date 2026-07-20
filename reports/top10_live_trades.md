@@ -96,16 +96,6 @@ skipped 14 thin candidates and fell through to the next one instead of committin
 |---|---|---|---|---|---|
 | 18 | 4 | 5 | 9 | **+₹5,445.54** | **+0.06%** |
 
----
-
-## Running totals (both days)
-
-| Date | Trades | EXACT_WIN | WIN | LOSS | Net P&L | Avg P&L %/trade |
-|---|---|---|---|---|---|---|
-| 2026-07-15 | 18 | 3 | 7 | 8 | +₹46,556.81 | +0.52% |
-| 2026-07-16 | 18 | 4 | 5 | 9 | +₹5,445.54 | +0.06% |
-| **Total** | **36** | **7** | **12** | **17** | **+₹52,002.35** | **+0.29%** |
-
 **Known caveat on 2026-07-16 figures**: a bug found the same day means the actual verified fill
 price (from the pre-trade depth gate) isn't propagated into P&L for trades that filled immediately
 at the gate — only for the one trade that settled a bar later. True P&L for 2026-07-16, recomputed
@@ -116,6 +106,67 @@ source CSV or this table. Fix pending.
 the same depth-check the entry side already had — closing a LONG checks the bid book (need buyers
 to sell to), closing a SHORT checks the ask book (need sellers to buy back from). The CSV gained
 two columns, `exit_qty_filled` / `exit_fill_pct`, and the log shows `SOLD X/Y` or `BOUGHT X/Y` at
-every exit. The 36 trades above predate this feature — their `exit_qty_filled` is backfilled as a
-100%-assumed, **unverified** placeholder, not a real measurement. From 2026-07-17 onward the figures
-are real.
+every exit. The 36 trades from 2026-07-15/16 predate this feature — their `exit_qty_filled` is
+backfilled as a 100%-assumed, **unverified** placeholder, not a real measurement. From 2026-07-17
+onward the figures are real.
+
+---
+
+## 2026-07-17
+
+Third live session — first day with real (not backfilled) exit-fill verification. All 18 exits
+closed at 100% fill, no penalty on any of them — the depth checks confirmed clean.
+
+### LONG
+
+| Strategy | Symbol | Entry Time | Entry Price | Qty | Exit Time | Exit Price | Exit Reason | Result | P&L (₹) | P&L % |
+|---|---|---|---|---|---|---|---|---|---|---|
+| VWAP-REV | AEGISLOG | 11:15 | 1296.90 | 385 | 12:53 | 1323.93 | TARGET_HIT | EXACT_WIN | +9,670.70 | +1.94% |
+| VPOC | AXISBANK | 09:20 | 1308.60 | 382 | 09:32 | 1317.08 | TARGET_HIT | EXACT_WIN | +2,508.48 | +0.50% |
+| FAILED-BD | BEL | 09:35 | 407.85 | 1225 | 15:15 | 409.40 | TIME_EXIT | WIN | +1,168.11 | +0.23% |
+| PIN-BAR | BEL | 09:35 | 407.85 | 1225 | 15:15 | 409.40 | TIME_EXIT | WIN | +1,168.11 | +0.23% |
+| INTRADAY-STRUCT | HINDUNILVR | 10:15 | 2134.70 | 234 | 12:42 | 2142.14 | TARGET_HIT | EXACT_WIN | +1,011.17 | +0.20% |
+| SUPERTREND | ONGC | 09:25 | 247.33 | 2021 | 15:15 | 247.23 | TIME_EXIT | LOSS | -932.15 | -0.19% |
+| RSI-EXT | ADANIGREEN | 09:20 | 1528.10 | 327 | 15:15 | 1515.00 | TIME_EXIT | LOSS | -5,008.79 | -1.00% |
+| REL-STR | ADANIENSOL | 09:45 | 1741.30 | 287 | 15:15 | 1722.01 | TIME_EXIT | LOSS | -6,260.89 | -1.25% |
+| ORB-15 | ADANIGREEN | 09:40 | 1548.80 | 322 | 10:43 | 1525.84 | STOP_HIT | LOSS | -8,115.40 | -1.63% |
+
+**LONG summary**: 9 trades — 3 EXACT_WIN, 2 WIN, 4 LOSS — net **-₹4,790.66** — avg P&L/trade **-0.11%**
+
+### SHORT
+
+| Strategy | Symbol | Entry Time | Entry Price | Qty | Exit Time | Exit Price | Exit Reason | Result | P&L (₹) | P&L % |
+|---|---|---|---|---|---|---|---|---|---|---|
+| REL-STR | ADANIGREEN | 09:45 | 1544.70 | 323 | 15:15 | 1515.53 | TIME_EXIT | WIN | +8,699.82 | +1.74% |
+| VPOC | COFORGE | 09:20 | 1550.22 | 322 | 09:44 | 1532.88 | TARGET_HIT | EXACT_WIN | +4,858.11 | +0.97% |
+| PIN-BAR | BHARTIARTL | 09:35 | 1918.30 | 260 | 15:15 | 1909.50 | TIME_EXIT | WIN | +1,562.09 | +0.31% |
+| ORB-15 | CANBK | 11:15 | 125.28 | 3991 | 15:15 | 125.11 | TIME_EXIT | LOSS | -50.04 | -0.01% |
+| VWAP-REV | SWIGGY | 11:45 | 276.65 | 1807 | 15:15 | 277.22 | TIME_EXIT | LOSS | -1,770.61 | -0.35% |
+| RSI-EXT | BAJAJ-AUTO | 09:20 | 10413.00 | 48 | 15:15 | 10446.50 | TIME_EXIT | LOSS | -2,337.59 | -0.47% |
+| FAILED-BO | RELIANCE | 09:35 | 1309.00 | 381 | 09:43 | 1317.10 | STOP_HIT | LOSS | -3,815.04 | -0.76% |
+| INTRADAY-STRUCT | BAJFINANCE | 10:15 | 1045.90 | 478 | 10:18 | 1052.43 | STOP_HIT | LOSS | -3,850.11 | -0.77% |
+| SUPERTREND | ITC | 09:25 | 278.35 | 1796 | 10:17 | 280.80 | STOP_HIT | LOSS | -5,131.51 | -1.03% |
+
+**SHORT summary**: 9 trades — 1 EXACT_WIN, 2 WIN, 6 LOSS — net **-₹1,834.88** — avg P&L/trade **-0.04%**
+
+### Day totals — 2026-07-17
+
+| Trades | EXACT_WIN | WIN | LOSS | Net P&L | Avg P&L %/trade |
+|---|---|---|---|---|---|
+| 18 | 4 | 4 | 10 | **-₹6,625.54** | **-0.07%** |
+
+Note: `FAILED-BD` and `PIN-BAR` both landed on the exact same trade today (LONG BEL, identical entry/exit) —
+two independent strategies picked the same stock/direction/timing, each with their own ₹5L pool. Coincidence
+worth watching for if it recurs, given the earlier finding that overlapping strategy picks compound demand
+on the same book.
+
+---
+
+## Running totals (all days)
+
+| Date | Trades | EXACT_WIN | WIN | LOSS | Net P&L | Avg P&L %/trade |
+|---|---|---|---|---|---|---|
+| 2026-07-15 | 18 | 3 | 7 | 8 | +₹46,556.81 | +0.52% |
+| 2026-07-16 | 18 | 4 | 5 | 9 | +₹5,445.54 | +0.06% |
+| 2026-07-17 | 18 | 4 | 4 | 10 | -₹6,625.54 | -0.07% |
+| **Total** | **54** | **11** | **16** | **27** | **+₹45,376.81** | **+0.17%** |
