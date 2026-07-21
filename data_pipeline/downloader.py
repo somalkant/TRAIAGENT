@@ -453,6 +453,13 @@ def _normalize_intraday_bars(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
     shift is corrected here and logged loudly so the root cause isn't silently
     masked — this feeds the pre-market filter's turnover/volume comparisons, so
     a silent corruption here quietly breaks live trade selection.
+
+    Confirmed root cause (2026-07-21): this in-memory guard was necessary but
+    not sufficient — the ACTUAL shift was being introduced downstream, in
+    _append_parquet()'s cast of naive new rows onto an existing tz-aware
+    schema (see _strip_tz docstring). That's now fixed at the source, so this
+    function should rarely trigger going forward; kept as a safety net in
+    case Groww's raw API timestamps are ever genuinely mistimed.
     """
     if df.empty:
         return df
@@ -509,11 +516,42 @@ def _download_index(
     _append_parquet(index_dir / f"{filename}.parquet", df)
 
 
+def _strip_tz(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Drop any tz label from the datetime column, keeping the wall-clock digits
+    unchanged (tz_localize(None), never tz_convert — this system only ever
+    stores IST wall-clock time, so a tz label carries no information and only
+    creates risk).
+
+    This system's data is a mix of two sources with different tz habits: the
+    original bulk historical download (Kite) returns tz-aware timestamps, so
+    older parquet files ended up with a tz-aware schema; the daily EOD
+    downloader (Groww, via _download_stock) produces naive datetimes. Casting
+    a naive column to an existing tz-aware Arrow schema (as _append_parquet
+    used to do via table.cast(existing.schema)) does NOT just relabel it — it
+    reinterprets the naive value as UTC and shifts it to the target offset,
+    silently adding +5:30 to every appended row. Reproduced directly: a
+    correctly-timestamped 09:15 naive row, appended to an existing
+    tz-aware(+05:30) file, read back as 14:45+05:30. This is the actual root
+    cause of the "+5:30 shift" bug — not a Groww API timestamp defect — and it
+    reintroduced the shift on every EOD append even after the 2026-07-16
+    per-day detection/correction fix, since that fix only touched the
+    in-memory dataframe *before* this cast, not the cast itself.
+    """
+    if isinstance(df["datetime"].dtype, pd.DatetimeTZDtype):
+        df = df.copy()
+        df["datetime"] = df["datetime"].dt.tz_localize(None)
+    return df
+
+
 def _append_parquet(path: Path, df: pd.DataFrame) -> None:
     """Append new rows to a Parquet file, or create it if it doesn't exist."""
+    df = _strip_tz(df)
     table = pa.Table.from_pandas(df, preserve_index=False)
     if path.exists():
         existing = pq.read_table(path)
+        existing_df = _strip_tz(existing.to_pandas())
+        existing = pa.Table.from_pandas(existing_df, preserve_index=False)
         # Cast new table to match the existing file's schema exactly.
         # Kite sometimes returns integer prices for whole-number stocks,
         # which causes an int64 vs double mismatch on concat.
@@ -521,7 +559,7 @@ def _append_parquet(path: Path, df: pd.DataFrame) -> None:
             table = table.cast(existing.schema)
         except Exception:
             # Fallback: unify via pandas (handles edge-case type promotions)
-            merged_df = (pd.concat([existing.to_pandas(), df])
+            merged_df = (pd.concat([existing_df, df])
                          .drop_duplicates(subset=["datetime"])
                          .sort_values("datetime")
                          .reset_index(drop=True))
