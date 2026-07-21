@@ -669,6 +669,31 @@ def _update_profit_lock(rec: dict, direction: str, last_price: float) -> None:
                      f"stop {cur_stop:.2f} -> {trail_stop:.2f}")
 
 
+def _exit_ref_price(dm: LiveDataManager, symbol: str, direction: str,
+                    fallback_price: float) -> tuple[float, str]:
+    """
+    The price a real close would actually execute at right now: best bid for
+    closing a LONG (you're selling), best ask for covering a SHORT (you're
+    buying). Falls back to the last-traded tick (fallback_price) when depth
+    isn't available yet or that side of the book is empty.
+
+    Exit decisions (stop/target triggers, profit-lock peak tracking) use this
+    instead of the raw LTP tick. Fixes a class of premature stop-outs where a
+    single LTP print is stale, off-market, or an odd-lot execution that the
+    live order book has already moved past — observed live: INDUSINDBK
+    2026-07-21 09:36 — an LTP tick of 1050.45 triggered a 1050.87 profit-lock
+    stop, but the book's best bid at that same instant was 1051.60 (above the
+    stop) — a real sell there would not have been stopped out.
+    """
+    depth = dm.get_depth(symbol) if hasattr(dm, "get_depth") else None
+    if depth:
+        book_key = "buy" if direction == "LONG" else "sell"
+        levels = depth.get(book_key) or []
+        if levels:
+            return float(levels[0]["price"]), "book"
+    return fallback_price, "ltp"
+
+
 def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
     """
     Called on every tick (from broker WebSocket callback).
@@ -689,23 +714,27 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
         if last_price is None:
             continue
 
+        # Book-corroborated decision price — see _exit_ref_price docstring.
+        ref_price, ref_source = _exit_ref_price(dm, symbol, direction, last_price)
+
         if PROFIT_LOCK_ENABLED:
             stop_before = float(rec["signal"]["stop"])
-            _update_profit_lock(rec, direction, last_price)
+            _update_profit_lock(rec, direction, ref_price)
             if float(rec["signal"]["stop"]) != stop_before:
                 lock_updated = True
 
         stop = float(rec["signal"]["stop"])   # re-read: may have just been ratcheted
 
         if direction == "LONG":
-            target_hit = last_price >= target
-            stop_hit   = last_price <= stop
+            target_hit = ref_price >= target
+            stop_hit   = ref_price <= stop
         else:
-            target_hit = last_price <= target
-            stop_hit   = last_price >= stop
+            target_hit = ref_price <= target
+            stop_hit   = ref_price >= stop
 
         if target_hit:
-            log.info(f"TARGET HIT [{direction}]: {symbol} @ {last_price:.2f} (target={target:.2f})")
+            log.info(f"TARGET HIT [{direction}]: {symbol} @ {ref_price:.2f} "
+                     f"(ltp={last_price:.2f}, src={ref_source}) (target={target:.2f})")
             if close_fn(rec):
                 _verify_exit_fill(dm, rec, target, "TARGET_HIT")
                 log_closed_trade(today, rec, exit_price=target, exit_reason="TARGET_HIT", exit_time=now_str)
@@ -713,11 +742,24 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
         elif stop_hit:
             locked_tag = " [profit-locked]" if rec.get("_profit_locked") else ""
             exit_reason = "PROFIT_LOCK_STOP" if rec.get("_profit_locked") else "STOP_HIT"
-            log.info(f"STOP HIT [{direction}]: {symbol} @ {last_price:.2f} (stop={stop:.2f}){locked_tag}")
+            log.info(f"STOP HIT [{direction}]: {symbol} @ {ref_price:.2f} "
+                     f"(ltp={last_price:.2f}, src={ref_source}) (stop={stop:.2f}){locked_tag}")
             if close_fn(rec):
                 _verify_exit_fill(dm, rec, stop, exit_reason)
                 log_closed_trade(today, rec, exit_price=stop, exit_reason=exit_reason, exit_time=now_str)
                 changed = True
+        elif ref_source == "book":
+            # The corroboration guard at work: LTP alone would have triggered
+            # but the live book disagreed — log visibly (not as a warning,
+            # this is the fix doing its job) so it's traceable in review.
+            ltp_stop_hit = (last_price <= stop) if direction == "LONG" else (last_price >= stop)
+            ltp_target_hit = (last_price >= target) if direction == "LONG" else (last_price <= target)
+            if ltp_stop_hit and not stop_hit:
+                log.info(f"STOP CHECK  [{direction}]: {symbol} | LTP {last_price:.2f} past stop "
+                         f"{stop:.2f} but book price {ref_price:.2f} disagrees — holding position")
+            elif ltp_target_hit and not target_hit:
+                log.info(f"TARGET CHECK[{direction}]: {symbol} | LTP {last_price:.2f} past target "
+                         f"{target:.2f} but book price {ref_price:.2f} disagrees — holding position")
 
     if changed:
         new_long, new_short, _, _ = state.snapshot()
