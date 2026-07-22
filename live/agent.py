@@ -717,6 +717,20 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
         # Book-corroborated decision price — see _exit_ref_price docstring.
         ref_price, ref_source = _exit_ref_price(dm, symbol, direction, last_price)
 
+        # Skip redundant reprocessing: the feed can redeliver an identical
+        # (LTP, book-price) pair many times in a burst — observed live on
+        # BOSCHLTD 2026-07-22, ~1,000 duplicate "TARGET CHECK" log lines in
+        # one session, tied to repeated NATS reconnects replaying a backlog.
+        # If BOTH prices are bit-identical to the last check we actually
+        # acted on, nothing about the trade's state can have changed, so it's
+        # safe to skip the profit-lock update, the trigger check, and the log
+        # line — any genuine change in either price still runs the full
+        # check exactly as before.
+        dedup_key = (last_price, ref_price)
+        if rec.get("_last_checked") == dedup_key:
+            continue
+        rec["_last_checked"] = dedup_key
+
         if PROFIT_LOCK_ENABLED:
             stop_before = float(rec["signal"]["stop"])
             _update_profit_lock(rec, direction, ref_price)
