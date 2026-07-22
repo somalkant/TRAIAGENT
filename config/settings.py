@@ -252,3 +252,25 @@ PROFIT_LOCK_TRAIL_PCT   = 0.5
 #    only scaled risk, which the binding notional cap made ineffective).
 ATR_RISK_BUDGET_RS = 12_000   # target rupee move per position on an average day
 ATR_PERIOD_DAYS    = 14       # daily ATR lookback
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NEWS SIGNAL (Phase 2.7 — MONITOR ONLY, added 2026-07-22)
+# Pulls yesterday/today headlines for the traded symbol at entry time and asks
+# whether the news is bullish/bearish, then aligns that to our LONG/SHORT
+# direction. Writes news_* columns to the trade log + one NEWS line to the log.
+# It NEVER gates, sizes, or delays a trade — a failure just records UNAVAILABLE.
+# Runs at most 1-2 times/day (once per placed trade), off the scan critical path.
+# ─────────────────────────────────────────────────────────────────────────────
+NEWS_ENABLED           = True
+NEWS_CLASSIFIER        = "gemini"   # "gemini" | "keyword" | "off"
+NEWS_LOOKBACK_HOURS    = 36         # window back from entry (covers overnight + prev session)
+NEWS_MAX_ITEMS         = 8          # cap headlines sent to the classifier
+NEWS_FETCH_TIMEOUT_SEC = 4          # Google News RSS fetch timeout
+NEWS_LLM_TIMEOUT_SEC   = 10         # Gemini call timeout (~2s typical for flash-lite; margin for slow calls)
+NEWS_SUPPORT_THRESHOLD = 0.20       # |aligned score| above this => SUPPORTS/CONTRADICTS, else NEUTRAL
+GEMINI_MODEL           = "gemini-flash-lite-latest"  # alias tracking current free-tier flash-lite.
+                                                     # Chosen over gemini-flash-latest: ~2s vs ~5s, no
+                                                     # thinking-token starvation, higher free quota.
+                                                     # (pinned gemini-2.0-flash 429s on new free keys;
+                                                     #  1.5/2.5-flash are 404 for new users.)
+NEWS_CACHE_DIR         = CHECKPOINT_DIR / "news_cache"

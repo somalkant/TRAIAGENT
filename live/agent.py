@@ -68,13 +68,17 @@ def _to_ist(series: pd.Series) -> pd.Series:
 # hang on Python 3.13 due to SSL/WebSocket initialisation during import.
 # from kiteconnect import KiteConnect, KiteTicker  ← moved to main()
 
-from config.settings import WEIGHTS_FILE, PROFIT_LOCK_ENABLED, PROFIT_LOCK_TRIGGER_PCT, PROFIT_LOCK_TRAIL_PCT
+from config.settings import (
+    WEIGHTS_FILE, PROFIT_LOCK_ENABLED, PROFIT_LOCK_TRIGGER_PCT, PROFIT_LOCK_TRAIL_PCT,
+    NEWS_ENABLED,
+)
 from live.instrument_map import load_instrument_map, NIFTY50_TOKEN
 from live.data_manager import LiveDataManager
 from live.live_engine import scan_once
 from live.paper_logger import (
     save_open_trade, load_open_trade, log_closed_trade
 )
+from live.news_signal import assess_news, company_name_for
 from live.risk_guard import check_risk_limits, write_eod_risk_check
 from live.fill_check import check_fill, simulate_fill, check_exit_fill
 from watchlist.pre_filter import PreMarketFilter
@@ -441,6 +445,7 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                         f"{fc['msg']}"
                     )
                     rec["_fill_state"] = _init_fill_state(fc, rec["shares"])
+                    _attach_news(rec, "LONG", today)
                 elif dirn == "SHORT" and not state.is_short_open():
                     state.set_short(rec)
                     placed_any = True
@@ -463,6 +468,7 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                         f"{fc['msg']}"
                     )
                     rec["_fill_state"] = _init_fill_state(fc, rec["shares"])
+                    _attach_news(rec, "SHORT", today)
             if placed_any:
                 long_rec, short_rec, _, _ = state.snapshot()
                 save_open_trade(today, long_rec, short_rec)
@@ -480,6 +486,33 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
         if now_t >= SQUARE_OFF:
             _force_time_exit(state, dm, today, now_t.strftime("%H:%M"))
             break
+
+
+def _attach_news(rec: dict, direction: str, trade_date) -> None:
+    """
+    MONITOR ONLY (Phase 2.7): assess yesterday's/today's news for the just-placed
+    trade and emit one NEWS log line. The result is attached to rec['news'] so it
+    persists in the open-trade checkpoint and can be written to the trade log at
+    exit (Phase 3). This NEVER affects the trade — assess_news() returns a
+    well-formed UNAVAILABLE dict on any failure and cannot raise.
+
+    Runs synchronously on the placement bar (1-2x/day, ~3s). Exit monitoring runs
+    on the WebSocket tick thread, so this brief pause never delays an exit.
+    """
+    if not NEWS_ENABLED:
+        return
+    try:
+        company = company_name_for(rec["symbol"])
+        ns = assess_news(rec["symbol"], company, direction, trade_date)
+        rec["news"] = ns
+        log.info(
+            f"NEWS [{direction}]: {rec['symbol']} | "
+            f"{ns['news_signal']} (score {ns['news_score']:+.2f}, "
+            f"conf {ns['news_conf']:.2f}, {ns['news_count']} items) | "
+            f"\"{ns['news_headline']}\" | src={ns['news_source']}"
+        )
+    except Exception as e:                       # noqa: BLE001 — belt-and-suspenders
+        log.warning(f"NEWS [{direction}]: {rec.get('symbol')} — skipped ({e})")
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -31,6 +31,8 @@ _COLUMNS = [
     "conviction_tier", "entry_drift_pct", "signal_age_min", "overlap_ratio",
     "overlap_tier", "profit_locked", "exit_fill_status", "atr_pct",
     "size_cap_reason",
+    # News signal (Phase 2.7, MONITOR ONLY) — assessed at entry, written at exit.
+    "news_signal", "news_score", "news_conf", "news_headline", "news_count", "news_source",
 ]
 
 
@@ -151,6 +153,20 @@ def log_closed_trade(
         "atr_pct":          rec.get("atr_pct"),
         "size_cap_reason":  rec.get("size_cap_reason", "N/A"),
     }
+
+    # News signal (MONITOR ONLY) — attached at entry by live/agent.py._attach_news,
+    # persisted through the open-trade checkpoint. Absent when NEWS is disabled or
+    # for trades placed before the feature existed → "N/A" (distinct from the
+    # assessed value "UNAVAILABLE", which means it was tried and failed).
+    news = rec.get("news") or {}
+    row.update({
+        "news_signal":   news.get("news_signal", "N/A"),
+        "news_score":    news.get("news_score"),
+        "news_conf":     news.get("news_conf"),
+        "news_headline": news.get("news_headline", ""),
+        "news_count":    news.get("news_count"),
+        "news_source":   news.get("news_source", "N/A"),
+    })
 
     new_df = pd.DataFrame([row], columns=_COLUMNS)
     LIVE_TRADES_FILE.parent.mkdir(parents=True, exist_ok=True)
