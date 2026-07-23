@@ -37,6 +37,8 @@ from config.settings import (
     MAX_STOP_DISTANCE_PCT, MIN_TARGET_DISTANCE_PCT,
     LIVE_SHORT_SIZE_MULT, OVERLAP_TIGHT_THRESHOLD,
     MAX_POSITION_SIZE, ATR_RISK_BUDGET_RS, ATR_PERIOD_DAYS,
+    STOP_VIABILITY_ENABLED, MIN_STOP_ATR_RATIO, MIN_STOP_ATR_RATIO_OPEN,
+    STOP_VIABILITY_OPEN_UNTIL,
 )
 from strategies import ALL_STRATEGIES
 from weights.regime import get_regime_modifiers, get_direction_bias
@@ -317,6 +319,30 @@ def _find_live_candidate(
             # live trades) — the ATR term is what catches a deceptively tight stop
             # on a wild name (2% stop on a 5% ATR stock = noise stop at max size).
             atr = _atr_pct_from_history(data_manager.get_history(symbol))
+
+            # ── Stop-viability gate (reject-only) ─────────────────────────────
+            # A stop that is a trivial fraction of ATR sits inside the noise band
+            # and has near-zero survival odds regardless of the directional call
+            # (HINDALCO 2026-07-23: 0.15% stop on 2.17% ATR = 7% of a daily range,
+            # noise-stopped in 75s). Reject — never widen — and let the scan fall
+            # through to the next-best candidate. Strictest in the opening window.
+            if STOP_VIABILITY_ENABLED and atr and atr > 0:
+                stop_pct_now = abs(best_sig.entry - best_sig.stop) / best_sig.entry * 100
+                ratio        = stop_pct_now / atr
+                in_open      = now_ist.time() < STOP_VIABILITY_OPEN_UNTIL
+                floor        = MIN_STOP_ATR_RATIO_OPEN if in_open else MIN_STOP_ATR_RATIO
+                if ratio < floor:
+                    _dirn = "LONG" if direction == +1 else "SHORT"
+                    log.info(
+                        f"  SKIP [viability] {symbol} [{_dirn}]: driver={best_sig.strategy} "
+                        f"entry={best_sig.entry:.2f} stop={best_sig.stop:.2f} "
+                        f"target={best_sig.target:.2f} RR={best_sig.rr:.2f} | "
+                        f"stop {stop_pct_now:.2f}% = {ratio:.2f}x ATR({atr:.1f}%) "
+                        f"< floor {floor:.2f}x{' [open window]' if in_open else ''} — "
+                        f"stop inside noise band, skipping (next candidate gets the slot)"
+                    )
+                    continue
+
             notional_cap = MAX_POSITION_SIZE * (LIVE_SHORT_SIZE_MULT if direction == -1 else 1.0)
             rs_value, shares = position_size(
                 best_sig.entry, best_sig.stop, conv_mult,

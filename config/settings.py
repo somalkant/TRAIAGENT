@@ -253,6 +253,24 @@ PROFIT_LOCK_TRAIL_PCT   = 0.5
 ATR_RISK_BUDGET_RS = 12_000   # target rupee move per position on an average day
 ATR_PERIOD_DAYS    = 14       # daily ATR lookback
 
+# 7. Stop-viability gate (live only, from 2026-07-23).
+#    Reject a trade whose stop sits INSIDE the instrument's noise band — a stop
+#    that is a trivial fraction of ATR has near-zero survival odds regardless of
+#    the directional call. This is the mirror of MAX_STOP_DISTANCE_PCT (which
+#    rejects stops too WIDE); here we reject stops too TIGHT vs volatility.
+#    Rejection only — never widens a stop; the scan then falls through to the
+#    next-best candidate, so the day's slot is not burned.
+#    Seen live: HINDALCO 2026-07-23 — a 0.15% stop on a 2.17% ATR name (7% of a
+#    daily range) noise-stopped 75s after entry on a "68% predicted win". The
+#    win-rate model doesn't penalise noise-level stops; this re-adds that check.
+#    Fires strictest in the opening high-volatility window. Reject-only + the
+#    SKIP log line is a shadow record: every skip is countable and the full
+#    setup (entry/stop/target/RR) is logged so its outcome can be reviewed.
+STOP_VIABILITY_ENABLED    = True
+MIN_STOP_ATR_RATIO        = 0.20        # skip if stop% < 0.20 x ATR% (rest of session)
+MIN_STOP_ATR_RATIO_OPEN   = 0.30        # stricter in the opening high-noise window
+STOP_VIABILITY_OPEN_UNTIL = time(9, 45) # "opening window" cutoff (IST)
+
 # ─────────────────────────────────────────────────────────────────────────────
 # NEWS SIGNAL (Phase 2.7 — MONITOR ONLY, added 2026-07-22)
 # Pulls yesterday/today headlines for the traded symbol at entry time and asks
