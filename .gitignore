@@ -12,6 +12,7 @@ data/stocks/
 data/raw/
 data/index/
 data/trade_logs/
+data/_phantom_bar_cleanup_backup_2026-07-22/   # local safety backup of cleaned parquets
 
 # Memory / strategy agent (runtime-generated, EC2 writes its own)
 memory/strategy_agent.md

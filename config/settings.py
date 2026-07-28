@@ -88,6 +88,94 @@ TOP10_FILL_TOLERANCE_PCT = 0.25
 TOP10_MIN_FILL_RATIO = 0.5
 
 # ─────────────────────────────────────────────
+# TOP-10 METHODOLOGY IMPROVEMENTS (post-10-session live review)
+# ---------------------------------------------------------------------------
+# Three independent, individually-toggleable filters added after the first 10
+# live sessions showed a 37% win rate at ~1.0 payoff (structurally unprofitable):
+# regime-blindness (all strategies firing every day, failing together on the
+# same days), chasing (STRONG-tagged extended-bar entries performed WORST), and
+# a large dead-trade bucket (44% of trades time-exited near breakeven). Each
+# flag can be flipped independently so the backtest can measure its own
+# contribution. All default ON — turn any OFF to isolate its effect or revert.
+#
+# NOTE: these deliberately make the live agent DIVERGE from the pre-existing
+# backtest baseline. They are mirrored into top10_backtest/engine.py so the
+# same rules can be validated over multi-year history before being trusted.
+
+# ── #6 Minimum entry time: no entries on the opening candle(s) ──
+# The single highest-impact, most defensible fix from the live-evidence review.
+# 42% of the first month's trades fired on the 09:15 opening candle and lost
+# ~Rs 1.46L — essentially the ENTIRE month's loss — at a 31% win rate, while
+# 09:20-09:40 entries were near breakeven. The opening candle is gap/liquidity-
+# sweep noise; fading or breaking out of it with a fixed % stop gets run over.
+# Refusing entries before this time takes the month from -Rs 2.2L to ~breakeven
+# on its own (a structural, generalizable rule — not hindsight strategy-picking).
+# base.py has a 09:30 warmup but only some strategies honour it; this gate
+# enforces it uniformly across all 10, in both the live agent and the backtest.
+TOP10_MIN_ENTRY_ENABLED = True
+TOP10_MIN_ENTRY_TIME    = time(9, 30)
+
+# ── #3 Regime gate: restrict strategy CLASS by the Nifty day-type ──
+# Momentum strategies only on trend days (aligned with the trend direction),
+# reversion strategies only on chop days; "trap" strategies always allowed.
+# Before the decision time the regime is UNKNOWN and every strategy is allowed
+# (many strategies legitimately fire in the 09:20-09:40 window, before an
+# index day-type can be read).
+# DISABLED after live-evidence review: on the 179 real live trades, the index was
+# flat chop every day (Nifty moved <1% daily all month) so this gate read CHOP
+# throughout and never engaged the actual stock-level bleed; 78% of signals also
+# fire before the decision time (UNKNOWN = allowed). Kept in code, off by default.
+TOP10_REGIME_GATE_ENABLED  = False
+TOP10_REGIME_DECISION_TIME = time(9, 45)  # regime UNKNOWN (all allowed) before this
+TOP10_REGIME_OR_BARS       = 3            # Nifty opening range = first 3 x 5-min bars (09:15-09:30)
+TOP10_REGIME_ATR_BARS      = 12           # trailing bars for the range-expansion baseline
+TOP10_REGIME_ATR_EXPANSION = 1.10         # current true range must exceed this x trailing avg to confirm a trend
+# strategy -> class. MOMENTUM: favoured on trend days (direction-aligned).
+# REVERSION: favoured on chop days. AGNOSTIC: the trapped-trader setups, always allowed.
+TOP10_STRATEGY_CLASS = {
+    "ORB-15":          "MOMENTUM",
+    "SUPERTREND":      "MOMENTUM",
+    "REL-STR":         "MOMENTUM",
+    "INTRADAY-STRUCT": "MOMENTUM",
+    "VWAP-REV":        "REVERSION",
+    "RSI-EXT":         "REVERSION",
+    "PIN-BAR":         "REVERSION",
+    "VPOC":            "REVERSION",
+    "FAILED-BO":       "AGNOSTIC",
+    "FAILED-BD":       "AGNOSTIC",
+}
+
+# ── #4 Pullback entry: require a retest instead of chasing the extended bar ──
+# After a signal fires, don't enter at the (often extended) signal bar. Wait
+# for price to retrace a fraction of the entry->stop distance back toward the
+# stop (a pullback) within a few bars, and enter there — a better price and a
+# tighter, better-located stop. If the pullback never comes, skip the trade
+# (that's the anti-chasing benefit — no entry at the top of the move).
+# DISABLED after live-evidence review: applied to the 179 real live trades it
+# threw away ~half (no retest came) and the trades that DID retest had a worse
+# win rate (26.7% vs 39%) — "wait for a pullback toward the stop" selects for
+# setups that immediately went against you, which more often continue to the
+# stop. Net worse than the time-stop alone. Kept in code, off by default.
+TOP10_PULLBACK_ENABLED  = False
+TOP10_PULLBACK_FRACTION = 0.33  # retrace >= this fraction of entry->stop back toward the stop
+TOP10_PULLBACK_MAX_BARS = 6     # ...within this many bars after the signal bar, else skip
+
+# ── #5 Mid-session time-stop: cut trades going nowhere ──
+# If a position isn't at least +MIN_R "R" of favourable excursion by TIMESTOP_BARS
+# bars after entry, flatten it — free the capital rather than drift to the 15:15
+# square-off near breakeven. R = entry-to-stop distance. This is a capital-
+# velocity / variance control, not itself an alpha source.
+# DISABLED after the combined live review: the time-stop's apparent benefit
+# (cutting the all-trades loss in half) was really the 09:15 opening-candle
+# effect in disguise — it was killing the same bad early trades. Once entries
+# are filtered to >= 09:30 (#6 above), the time-stop HURTS (-Rs 15k -> -Rs 31k
+# on the filtered set) because it cuts trades that would have recovered. The
+# entry-time filter is the cleaner substitute. Kept in code, off by default.
+TOP10_TIMESTOP_ENABLED = False
+TOP10_TIMESTOP_BARS    = 12    # bars after entry to evaluate (12 x 5-min = 60 min)
+TOP10_TIMESTOP_MIN_R   = 0.5   # flatten if favourable excursion < this many R by then
+
+# ─────────────────────────────────────────────
 # TRANSACTION COST MODEL
 # ─────────────────────────────────────────────
 BROKERAGE_PER_LEG  = 20          # Rs 20 per order (Rs 40 round trip)

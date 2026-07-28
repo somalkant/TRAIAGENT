@@ -36,7 +36,15 @@ from datetime import date, datetime, timedelta, time as dtime
 
 import pytz
 
-from config.settings import TOP10_FILL_TOLERANCE_PCT, TOP10_MIN_FILL_RATIO
+from dataclasses import replace
+
+from config.settings import (
+    TOP10_FILL_TOLERANCE_PCT, TOP10_MIN_FILL_RATIO,
+    TOP10_MIN_ENTRY_ENABLED, TOP10_MIN_ENTRY_TIME,
+    TOP10_REGIME_GATE_ENABLED,
+    TOP10_PULLBACK_ENABLED, TOP10_PULLBACK_FRACTION, TOP10_PULLBACK_MAX_BARS,
+    TOP10_TIMESTOP_ENABLED, TOP10_TIMESTOP_BARS, TOP10_TIMESTOP_MIN_R,
+)
 from live.instrument_map import load_instrument_map, NIFTY50_TOKEN
 from live.data_manager import LiveDataManager
 from live.fill_check import check_fill, simulate_fill
@@ -51,6 +59,8 @@ from top10_backtest.strategies import TOP10_STRATEGIES, TOP10_NAMES
 from top10_backtest.universe import long_universe, short_universe
 from top10_backtest.capital import size
 from top10_backtest.strength import classify_strength
+from top10_backtest.regime import classify_regime, strategy_allowed
+from top10_backtest.entry_filter import pullback_level
 
 log = logging.getLogger(__name__)
 
@@ -262,6 +272,7 @@ def main():
                 log.info(f"RECOVERED open SHORT [{name}]: {s['short']['symbol']} — monitoring for exit")
 
     symbol_registry = _build_symbol_side_registry(today, state)
+    pending: dict = {}   # (strategy, side) -> pending pullback entry awaiting its retest (#4)
 
     # ── 7. Ticker WebSocket setup ────────────────────────────────────────────
     tokens     = dm.instrument_tokens
@@ -314,7 +325,7 @@ def main():
     # ── 8. Main scheduling loop ──────────────────────────────────────────────
     try:
         _run_market_loop(_ws_holder, _last_tick, _make_ticker, dm, state, halted,
-                         long_syms, short_syms, today, symbol_registry)
+                         long_syms, short_syms, today, symbol_registry, pending)
     except KeyboardInterrupt:
         log.info("Interrupted by user")
     finally:
@@ -339,7 +350,7 @@ _TICKER_STALE_SECS = 300
 def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                      dm: LiveDataManager, state: Top10AgentState,
                      halted: dict, long_syms: set, short_syms: set, today: date,
-                     symbol_registry: SymbolSideRegistry) -> None:
+                     symbol_registry: SymbolSideRegistry, pending: dict) -> None:
     while True:
         now   = _now_ist()
         now_t = now.time()
@@ -387,23 +398,48 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
         # ── Scan each of the 10 strategies independently ─────────────────────
         if now_t < NO_ENTRY:
             nifty_today = dm.get_nifty_today()
+            regime_cache: dict = {}   # signal_time -> regime, one read per distinct time this cycle
+
+            # #4 pullback: promote any pending entry whose retest has now printed
+            if TOP10_PULLBACK_ENABLED and pending:
+                _process_pending_entries(pending, state, dm, symbol_registry, now_t)
+
             any_scanned = False
             for strategy in TOP10_STRATEGIES:
                 name = strategy.name
                 want_long  = (not state.get_placed(name, "LONG")
-                              and (name, "LONG") not in halted)
+                              and (name, "LONG") not in halted
+                              and (name, "LONG") not in pending)
                 want_short = (not state.get_placed(name, "SHORT")
-                              and (name, "SHORT") not in halted)
+                              and (name, "SHORT") not in halted
+                              and (name, "SHORT") not in pending)
                 if not want_long and not want_short:
                     continue
                 any_scanned = True
 
                 long_candidates, short_candidates = _scan_strategy_live(
-                    strategy, dm, long_syms, short_syms, nifty_today, today, want_long, want_short
+                    strategy, dm, long_syms, short_syms, nifty_today, today,
+                    want_long, want_short, regime_cache
                 )
                 for side, candidates in (("LONG", long_candidates), ("SHORT", short_candidates)):
                     if not candidates:
                         continue
+                    if TOP10_PULLBACK_ENABLED:
+                        # Don't chase the extended bar — latch the setup and wait
+                        # for a retest (handled bar-by-bar by _process_pending_entries).
+                        cand = _first_exclusive_candidate(candidates, side, symbol_registry, name)
+                        if cand is None:
+                            continue
+                        symbol, _today_5min, sig, strength = cand
+                        level = round(pullback_level(sig.entry, sig.stop, sig.direction,
+                                                     TOP10_PULLBACK_FRACTION), 2)
+                        pending[(name, side)] = {"symbol": symbol, "sig": sig, "strength": strength,
+                                                 "level": level, "bars_left": TOP10_PULLBACK_MAX_BARS}
+                        log.info(f"  PULLBACK PENDING [{side}] {name}: {symbol} | signal @ "
+                                 f"Rs {sig.entry:.2f} — waiting for retest to Rs {level:.2f} "
+                                 f"(<= {TOP10_PULLBACK_MAX_BARS} bars, else skip)")
+                        continue
+
                     picked = _pick_fillable_candidate(dm, name, side, candidates, symbol_registry)
                     if picked is None:
                         log.info(f"  {now_t.strftime('%H:%M')} — {name} {side}: no candidate cleared "
@@ -424,8 +460,28 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
             break
 
 
+def _before_min_entry_live(signal_time: str) -> bool:
+    """True if the signal fired before TOP10_MIN_ENTRY_TIME (the opening candle
+    gate, #6). Enforced uniformly across all 10 strategies."""
+    if not signal_time:
+        return False
+    try:
+        h, m = map(int, signal_time.split(":"))
+    except Exception:
+        return False
+    return dtime(h, m) < TOP10_MIN_ENTRY_TIME
+
+
+def _regime_at_live(nifty_today, at_time: str, cache: dict) -> str:
+    """Memoized regime read for a given signal time within one bar cycle."""
+    if at_time not in cache:
+        cache[at_time] = classify_regime(nifty_today, at_time)
+    return cache[at_time]
+
+
 def _scan_strategy_live(strategy, dm: LiveDataManager, long_syms: set, short_syms: set,
-                        nifty_today, trade_date: date, want_long: bool, want_short: bool):
+                        nifty_today, trade_date: date, want_long: bool, want_short: bool,
+                        regime_cache: dict):
     """
     Mirrors top10_backtest/engine.py::_scan_strategy, but pulling today/history/
     prev_day from LiveDataManager instead of preloaded slices. A BUY signal only
@@ -433,6 +489,12 @@ def _scan_strategy_live(strategy, dm: LiveDataManager, long_syms: set, short_sym
     it's in the SHORT (F&O) universe. Returns the FULL chronologically-sorted
     candidate list per side (not just the first) so the depth gate below can
     fall through to the next candidate if the first one is too thin to fill.
+
+    The #3 regime gate runs here (same as the backtest): a signal is dropped if
+    its strategy class isn't allowed under the Nifty day-type read at the
+    signal time. The #4 pullback transform is NOT applied here — live cannot see
+    future bars, so it is handled bar-by-bar via the pending-entry mechanism in
+    the market loop (see _process_pending_entries).
     """
     active = (long_syms if want_long else set()) | (short_syms if want_short else set())
     long_candidates, short_candidates = [], []
@@ -452,6 +514,15 @@ def _scan_strategy_live(strategy, dm: LiveDataManager, long_syms: set, short_sym
         sig = strategy.generate_signal(today_5min, history_5min, prev_day, nifty_today, trade_date)
         if not sig.is_valid:
             continue
+
+        if TOP10_MIN_ENTRY_ENABLED and _before_min_entry_live(sig.signal_time):
+            continue
+
+        if TOP10_REGIME_GATE_ENABLED:
+            side_str = "LONG" if sig.direction == 1 else "SHORT"
+            reg = _regime_at_live(nifty_today, sig.signal_time, regime_cache)
+            if not strategy_allowed(strategy.name, side_str, reg):
+                continue
 
         strength = classify_strength(sig.direction, today_5min, history_5min, sig.signal_time)
 
@@ -489,6 +560,82 @@ def _pick_fillable_candidate(dm: LiveDataManager, strategy_name: str, side: str,
         log.info(f"  SKIPPED [{side}] {strategy_name}: {symbol} | only {fc['filled_qty']}/{qty} "
                  f"({ratio*100:.0f}%) fillable near Rs {sig.entry:.2f} — trying next candidate")
     return None
+
+
+def _first_exclusive_candidate(candidates: list, side: str, symbol_registry: SymbolSideRegistry,
+                               strategy_name: str):
+    """First candidate (chronological) whose (symbol, side) isn't already claimed
+    by another strategy today. Used by the pullback path, which defers the depth
+    gate until the retest actually prints (unlike _pick_fillable_candidate, which
+    gates immediately at the signal price)."""
+    for cand in candidates:
+        symbol = cand[0]
+        if symbol_registry.is_available(symbol, side, strategy_name):
+            return cand
+    return None
+
+
+def _pullback_reached(today_5min, level: float, direction: int) -> bool:
+    """Whether the just-closed bar retested the pullback level in the trade's
+    favour (traded down to it for a LONG, up to it for a SHORT)."""
+    if today_5min is None or today_5min.empty:
+        return False
+    bar = today_5min.iloc[-1]
+    return (bar["low"] <= level) if direction == 1 else (bar["high"] >= level)
+
+
+def _process_pending_entries(pending: dict, state: Top10AgentState, dm: LiveDataManager,
+                             symbol_registry: SymbolSideRegistry, now_t) -> None:
+    """
+    #4 pullback: for each latched setup awaiting its retest, if the just-closed
+    bar reached the pullback level, run the (deferred) depth gate at that better
+    price and place the trade; otherwise age it out. Entries that never get their
+    retest within TOP10_PULLBACK_MAX_BARS are dropped — the anti-chasing benefit.
+    """
+    for key in list(pending.keys()):
+        strategy_name, side = key
+        p = pending[key]
+
+        if state.get_placed(strategy_name, side):   # slot resolved elsewhere
+            del pending[key]
+            continue
+
+        symbol    = p["symbol"]
+        level     = p["level"]
+        direction = 1 if side == "LONG" else -1
+        today_5min = dm.get_today(symbol)
+
+        if _pullback_reached(today_5min, level, direction):
+            if not symbol_registry.is_available(symbol, side, strategy_name):
+                log.info(f"  PULLBACK DROP [{side}] {strategy_name}: {symbol} | "
+                         f"{side} taken by another strategy before the retest")
+                del pending[key]
+                continue
+            qty, notional = size(level)
+            if qty <= 0:
+                del pending[key]
+                continue
+            fc = check_fill(dm, symbol, level, qty, side, tolerance_pct=TOP10_FILL_TOLERANCE_PCT)
+            ratio = fc["filled_qty"] / qty if qty else 0.0
+            if fc["fillable"] is None or ratio >= TOP10_MIN_FILL_RATIO:
+                adj_sig = replace(p["sig"], entry=level,
+                                  signal_time=now_t.strftime("%H:%M"))
+                picked = (symbol, today_5min, adj_sig, p["strength"], qty, notional, fc)
+                log.info(f"  PULLBACK FILLED [{side}] {strategy_name}: {symbol} | retest reached "
+                         f"Rs {level:.2f} — placing")
+                _place_trade(state, strategy_name, side, picked, now_t)
+                symbol_registry.claim(symbol, side, strategy_name)
+                del pending[key]
+                continue
+            # retest reached but too thin to fill — keep waiting until expiry
+            log.info(f"  PULLBACK THIN [{side}] {strategy_name}: {symbol} | retest Rs {level:.2f} "
+                     f"only {fc['filled_qty']}/{qty} fillable — holding")
+
+        p["bars_left"] -= 1
+        if p["bars_left"] <= 0:
+            log.info(f"  PULLBACK EXPIRED [{side}] {strategy_name}: {p['symbol']} | "
+                     f"no retest to Rs {p['level']:.2f} in window — skipped (avoided chasing)")
+            del pending[key]
 
 
 def _place_trade(state: Top10AgentState, strategy_name: str, side: str, picked: tuple, now_t) -> None:
@@ -679,13 +826,44 @@ def _exit_fill_check(dm: LiveDataManager, strategy_name: str, side: str, symbol:
     return fallback_price, best_qty if best_qty > 0 else shares
 
 
+def _timestop_hit(rec: dict, side: str, last_price: float, now: datetime) -> bool:
+    """
+    #5 mid-session time-stop: True once a position is at least TOP10_TIMESTOP_BARS
+    bars past its entry AND hasn't reached +TOP10_TIMESTOP_MIN_R "R" of favourable
+    excursion (R = entry-to-stop distance). Cuts trades going nowhere so the
+    capital/risk slot is freed rather than drifting to the 15:15 square-off.
+    """
+    entry_time = rec.get("entry_time")
+    if not entry_time:
+        return False
+    try:
+        h, m = map(int, str(entry_time).split(":"))
+    except Exception:
+        return False
+    entry_dt = now.replace(hour=h, minute=m, second=0, microsecond=0)
+    elapsed_min = (now - entry_dt).total_seconds() / 60.0
+    if elapsed_min < TOP10_TIMESTOP_BARS * 5:
+        return False
+
+    entry = float(rec["signal"]["entry"])
+    stop  = float(rec["signal"]["stop"])
+    risk  = abs(entry - stop)
+    if risk <= 0:
+        return False
+    favorable = (last_price - entry) if side == "LONG" else (entry - last_price)
+    return favorable < TOP10_TIMESTOP_MIN_R * risk
+
+
 def _check_exit_all(state: Top10AgentState, dm: LiveDataManager, today: date) -> None:
     """
     Called on every tick batch. Target checked before stop, same order as the
     backtest's _simulate_outcome — no profit-lock, matching the backtest exactly.
+    The #5 mid-session time-stop is checked last (after target/stop), so a trade
+    that hits its target/stop right at the checkpoint still exits for that reason.
     """
-    now_str = _now_ist().strftime("%H:%M")
-    changed = False
+    now      = _now_ist()
+    now_str  = now.strftime("%H:%M")
+    changed  = False
 
     for strategy_name, side, rec in state.iter_open():
         symbol = rec["symbol"]
@@ -715,6 +893,14 @@ def _check_exit_all(state: Top10AgentState, dm: LiveDataManager, today: date) ->
             actual_price, filled_qty = _exit_fill_check(dm, strategy_name, side, symbol, stop, rec["shares"])
             log_closed_trade(today, strategy_name, side, rec, exit_price=actual_price,
                              exit_reason="STOP_HIT", exit_time=now_str, exit_qty_filled=filled_qty)
+            changed = True
+        elif TOP10_TIMESTOP_ENABLED and _timestop_hit(rec, side, last_price, now):
+            log.info(f"TIME STOP [{side}] {strategy_name}: {symbol} @ {last_price:.2f} | "
+                     f"not at +{TOP10_TIMESTOP_MIN_R}R after {TOP10_TIMESTOP_BARS} bars — flattening")
+            state.close(strategy_name, side)
+            actual_price, filled_qty = _exit_fill_check(dm, strategy_name, side, symbol, last_price, rec["shares"])
+            log_closed_trade(today, strategy_name, side, rec, exit_price=actual_price,
+                             exit_reason="TIME_STOP", exit_time=now_str, exit_qty_filled=filled_qty)
             changed = True
 
     if changed:

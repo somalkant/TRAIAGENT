@@ -11,13 +11,31 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import date
+from datetime import date, time as dtime
 
 import pandas as pd
 from tqdm import tqdm
 
-from config.settings import STOCKS_DIR, INDEX_DIR, CHECKPOINT_DIR
-from backtester.engine import _simulate_outcome, _get_today, _get_prev_day_ohlc
+from config.settings import (
+    STOCKS_DIR, INDEX_DIR, CHECKPOINT_DIR,
+    TOP10_MIN_ENTRY_ENABLED, TOP10_MIN_ENTRY_TIME,
+    TOP10_REGIME_GATE_ENABLED,
+    TOP10_PULLBACK_ENABLED, TOP10_PULLBACK_FRACTION, TOP10_PULLBACK_MAX_BARS,
+    TOP10_TIMESTOP_ENABLED, TOP10_TIMESTOP_BARS, TOP10_TIMESTOP_MIN_R,
+)
+
+
+def _before_min_entry(signal_time: str) -> bool:
+    """True if the signal fired before TOP10_MIN_ENTRY_TIME (e.g. the 09:15
+    opening candle) — those entries are dropped when the #6 gate is on."""
+    if not signal_time:
+        return False
+    try:
+        h, m = map(int, signal_time.split(":"))
+    except Exception:
+        return False
+    return dtime(h, m) < TOP10_MIN_ENTRY_TIME
+from backtester.engine import _get_today, _get_prev_day_ohlc
 from backtester.cost_model import net_pnl
 
 from top10_backtest.strategies import TOP10_STRATEGIES, TOP10_NAMES
@@ -25,6 +43,9 @@ from top10_backtest.universe import long_universe, short_universe
 from top10_backtest.capital import size, StrategyLedger
 from top10_backtest.costs import cost_breakdown
 from top10_backtest.output import append_trades
+from top10_backtest.regime import classify_regime, strategy_allowed
+from top10_backtest.entry_filter import apply_pullback
+from top10_backtest.simulate import simulate_outcome_top10
 
 log = logging.getLogger(__name__)
 
@@ -65,9 +86,10 @@ def run(start_date: date, end_date: date, resume: bool = True) -> None:
             # as the tie-break when two strategies would otherwise want the same
             # (symbol, side) the same day.
             taken: dict[tuple[str, str], str] = {}
+            regime_cache: dict[str, str] = {}   # signal_time -> regime, computed once/day
             for strategy in TOP10_STRATEGIES:
                 long_candidates, short_candidates = _scan_strategy(
-                    strategy, symbol_slices, long_syms, short_syms, nifty_today, trade_date
+                    strategy, symbol_slices, long_syms, short_syms, nifty_today, trade_date, regime_cache
                 )
                 for side, candidates in (("LONG", long_candidates), ("SHORT", short_candidates)):
                     pick = _first_available(candidates, side, taken)
@@ -113,13 +135,27 @@ def _build_symbol_slices(all_data: dict, active: set[str], trade_date: date) -> 
     return slices
 
 
+def _regime_at(nifty_today: pd.DataFrame, at_time: str, cache: dict[str, str]) -> str:
+    """Memoized regime read for a given signal time within one day."""
+    if at_time not in cache:
+        cache[at_time] = classify_regime(nifty_today, at_time)
+    return cache[at_time]
+
+
 def _scan_strategy(strategy, symbol_slices: dict, long_syms: set[str], short_syms: set[str],
-                    nifty_today: pd.DataFrame, trade_date: date):
+                    nifty_today: pd.DataFrame, trade_date: date, regime_cache: dict[str, str]):
     """
     Runs the strategy once per active symbol. A BUY signal only counts if the
     symbol is in the LONG universe; a SELL signal only counts if it's in the
     SHORT (F&O) universe — a signal on a symbol outside the relevant universe
     is not tradeable under this test's rules and is discarded.
+
+    Two post-signal methodology filters (each behind its own config flag) run
+    here so their effect is validated the same way live sees it:
+      #3 regime gate — drop the signal if its strategy class isn't allowed under
+         the Nifty day-type read at the signal time.
+      #4 pullback entry — replace the (often extended) signal with a retest
+         entry at a better price, or drop it if the pullback never comes.
 
     Returns the full chronologically-sorted candidate list per side (not just
     the first) so cross-strategy (symbol, side) exclusivity in run() can fall
@@ -137,9 +173,29 @@ def _scan_strategy(strategy, symbol_slices: dict, long_syms: set[str], short_sym
         if not sig.is_valid:
             continue
 
-        if sig.direction == 1 and eligible_long:
+        if TOP10_MIN_ENTRY_ENABLED and _before_min_entry(sig.signal_time):
+            continue
+
+        if sig.direction == 1 and not eligible_long:
+            continue
+        if sig.direction == -1 and not eligible_short:
+            continue
+        side = "LONG" if sig.direction == 1 else "SHORT"
+
+        if TOP10_REGIME_GATE_ENABLED:
+            reg = _regime_at(nifty_today, sig.signal_time, regime_cache)
+            if not strategy_allowed(strategy.name, side, reg):
+                continue
+
+        if TOP10_PULLBACK_ENABLED:
+            adjusted = apply_pullback(sig, today, TOP10_PULLBACK_FRACTION, TOP10_PULLBACK_MAX_BARS)
+            if adjusted is None:
+                continue
+            sig = adjusted
+
+        if sig.direction == 1:
             long_candidates.append((symbol, today, sig))
-        elif sig.direction == -1 and eligible_short:
+        else:
             short_candidates.append((symbol, today, sig))
 
     key = lambda c: (c[2].signal_time or "99:99", c[0])
@@ -157,7 +213,12 @@ def _first_available(candidates: list, side: str, taken: dict[tuple[str, str], s
 
 def _build_trade_row(trade_date: date, side: str, strategy_name: str, symbol: str,
                       today_5min: pd.DataFrame, sig) -> dict | None:
-    outcome = _simulate_outcome(sig, today_5min)
+    outcome = simulate_outcome_top10(
+        sig, today_5min,
+        timestop_enabled=TOP10_TIMESTOP_ENABLED,
+        timestop_bars=TOP10_TIMESTOP_BARS,
+        timestop_min_r=TOP10_TIMESTOP_MIN_R,
+    )
     qty, notional = size(sig.entry)
     if qty <= 0:
         return None

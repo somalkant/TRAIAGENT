@@ -16,7 +16,7 @@ SHORT — the static F&O-eligible stock list (config/fno_symbols.csv) intersecte
 """
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, time
 from functools import lru_cache
 
 import pandas as pd
@@ -26,15 +26,40 @@ from config.settings import BASE_DIR
 LONG_TURNOVER_MIN_CR = 300.0
 FNO_LIST_FILE = BASE_DIR / "config" / "fno_symbols.csv"
 
+_LOOKBACK_DAYS  = 20
+_SESSION_START  = time(9, 15)
+_SESSION_END    = time(15, 25)   # last 5-min bar of a 09:15-15:30 session starts at 15:25
+# Generous bar-count pre-filter before the precise date-based selection below — bounds
+# the scan for performance on symbols with years of history. Real sessions run ~75
+# bars/day; this comfortably covers _LOOKBACK_DAYS even if some days in between carry
+# extra (e.g. stray post-close) bars that the session-hours filter will drop anyway.
+_PREFILTER_BARS = 40 * 90
+
 
 def long_universe(all_data: dict[str, pd.DataFrame], trade_date: date,
                    threshold_cr: float = LONG_TURNOVER_MIN_CR) -> set[str]:
-    """Symbols with >= threshold_cr median 20-day turnover, using only history before trade_date."""
+    """
+    Symbols with >= threshold_cr median 20-day turnover, using only history before
+    trade_date. Selects by actual trading-day count, not raw bar count — a fixed
+    `.tail(20 * 75)` bar slice silently drifts (fewer real days captured, inflated
+    per-day turnover) if any day in the window ever carries more than the normal
+    ~75 session bars, which happened for real in June 2026 (stray post-close bars
+    doubled reported turnover on two dates and flipped LONG/SHORT eligibility for
+    several stocks). Restricting to session hours before grouping by date makes
+    this robust to that class of data glitch regardless of its cause.
+    """
     eligible = set()
     for symbol, df in all_data.items():
-        recent = df[df["datetime"].dt.date < trade_date].tail(20 * 75)
-        if recent.empty:
+        prior = df[df["datetime"].dt.date < trade_date].tail(_PREFILTER_BARS)
+        if prior.empty:
             continue
+        dt = prior["datetime"]
+        session = prior[(dt.dt.time >= _SESSION_START) & (dt.dt.time <= _SESSION_END)]
+        if session.empty:
+            continue
+        session_dates = session["datetime"].dt.date
+        last_n_days = sorted(session_dates.unique())[-_LOOKBACK_DAYS:]
+        recent = session[session_dates.isin(last_n_days)]
         daily_turnover = (recent["close"] * recent["volume"]).groupby(recent["datetime"].dt.date).sum()
         if daily_turnover.empty:
             continue
