@@ -70,8 +70,9 @@ def _to_ist(series: pd.Series) -> pd.Series:
 
 from config.settings import (
     WEIGHTS_FILE, PROFIT_LOCK_ENABLED, PROFIT_LOCK_TRIGGER_PCT, PROFIT_LOCK_TRAIL_PCT,
-    NEWS_ENABLED,
+    PROFIT_LOCK_RIDE_PAST_TARGET, NEWS_ENABLED,
 )
+from backtester.cost_model import net_pnl
 from live.instrument_map import load_instrument_map, NIFTY50_TOKEN
 from live.data_manager import LiveDataManager
 from live.live_engine import scan_once
@@ -702,6 +703,33 @@ def _update_profit_lock(rec: dict, direction: str, last_price: float) -> None:
                      f"stop {cur_stop:.2f} -> {trail_stop:.2f}")
 
 
+def _log_profit_ride(rec: dict, direction: str, target: float, exit_price: float) -> None:
+    """
+    Verification log for the ride-past-target rule: when a profit-locked trade
+    exits on the trailing stop (or 3:15 square-off), report what the DROPPED fixed
+    target would have booked vs what riding the trail actually booked. Only emitted
+    when the price actually reached the dropped target (i.e. the rule changed the
+    outcome — otherwise old and new exits are identical). Lets us confirm the edge
+    on the live tick feed, not just the backtest.
+    """
+    if not (PROFIT_LOCK_RIDE_PAST_TARGET and rec.get("_profit_locked")):
+        return
+    peak    = float(rec.get("_peak_price", exit_price))
+    reached = (peak >= target) if direction == "LONG" else (peak <= target)
+    if not reached:
+        return
+    entry_px = float(rec.get("_avg_fill_price") or rec["signal"]["entry"])
+    di       = 1 if direction == "LONG" else -1
+    shares   = int(rec["shares"])
+    old_pnl  = net_pnl(entry_px, target,     shares, direction=di)   # would-be dropped-target exit
+    new_pnl  = net_pnl(entry_px, exit_price, shares, direction=di)   # actually rode the trail
+    log.info(
+        f"PROFIT-RIDE [{direction}]: {rec['symbol']} | dropped target {target:.2f} "
+        f"(would-be Rs {old_pnl:+,.0f}) -> rode trail to {exit_price:.2f} "
+        f"(Rs {new_pnl:+,.0f}) | delta Rs {new_pnl - old_pnl:+,.0f}"
+    )
+
+
 def _exit_ref_price(dm: LiveDataManager, symbol: str, direction: str,
                     fallback_price: float) -> tuple[float, str]:
     """
@@ -779,6 +807,13 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
             target_hit = ref_price <= target
             stop_hit   = ref_price >= stop
 
+        # Ride-past-target: once profit-lock has engaged (+1% reached, _profit_locked
+        # set in _update_profit_lock on the same tick), DROP the researched fixed
+        # target and exit ONLY on the ratcheted trailing stop (or 3:15 square-off) —
+        # let a still-trending winner run past its target instead of capping it.
+        if PROFIT_LOCK_RIDE_PAST_TARGET and rec.get("_profit_locked"):
+            target_hit = False
+
         if target_hit:
             log.info(f"TARGET HIT [{direction}]: {symbol} @ {ref_price:.2f} "
                      f"(ltp={last_price:.2f}, src={ref_source}) (target={target:.2f})")
@@ -794,6 +829,7 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
             if close_fn(rec):
                 _verify_exit_fill(dm, rec, stop, exit_reason)
                 log_closed_trade(today, rec, exit_price=stop, exit_reason=exit_reason, exit_time=now_str)
+                _log_profit_ride(rec, direction, target, stop)
                 changed = True
         elif ref_source == "book":
             # The corroboration guard at work: LTP alone would have triggered
@@ -837,6 +873,7 @@ def _force_time_exit(state: AgentState, dm: LiveDataManager,
         if close_fn(rec):
             _verify_exit_fill(dm, rec, last_price, "TIME_EXIT")
             log_closed_trade(today, rec, exit_price=last_price, exit_reason="TIME_EXIT", exit_time=exit_time)
+            _log_profit_ride(rec, direction, float(rec["signal"]["target"]), last_price)
 
     save_open_trade(today, None, None)
 

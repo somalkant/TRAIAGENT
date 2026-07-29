@@ -239,6 +239,15 @@ OVERLAP_TIGHT_THRESHOLD = 0.5
 PROFIT_LOCK_ENABLED     = True
 PROFIT_LOCK_TRIGGER_PCT = 1.0
 PROFIT_LOCK_TRAIL_PCT   = 0.5
+# Ride-past-target (from 2026-07-29): once profit-lock has engaged (+1% reached),
+# DROP the researched fixed target and exit ONLY on the trailing stop (or 3:15
+# square-off). Rationale: the fixed target caps a still-trending winner — DIVISLAB
+# 2026-07-29 hit target 7635 and was closed while the stock ran on to 7785.
+# Replaying 54 paper trades on the live-candle feed: dropping the target and riding
+# the 0.5% trail improved net P&L from -29,838 to +16,009 (longs +16k->+43k; shorts
+# bleed less but stay negative — a selection problem, not an exit one). Applies to
+# LONG and SHORT (profit-lock is bidirectional). Toggle off to restore the hard target.
+PROFIT_LOCK_RIDE_PAST_TARGET = True
 
 # 6. Volatility-normalized position sizing (live only, from 2026-07-20).
 #    Replaying the 42 live trades showed actual rupee-risk per trade ranged
