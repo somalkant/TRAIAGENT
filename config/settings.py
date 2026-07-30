@@ -249,6 +249,19 @@ PROFIT_LOCK_TRAIL_PCT   = 0.5
 # LONG and SHORT (profit-lock is bidirectional). Toggle off to restore the hard target.
 PROFIT_LOCK_RIDE_PAST_TARGET = True
 
+# ─────────────────────────────────────────────────────────────────────────────
+# FEED RELIABILITY (live only, from 2026-07-29)
+# The exit path (_exit_ref_price) prefers the order-book best bid/ask over the raw
+# LTP to reject single-tick wicks. But the depth feed can FREEZE while the LTP
+# keeps flowing (seen live: ACUTAAS 2026-07-29 — GrowwFeed depth stuck at a stale
+# best-ask for hours during a NATS outage, so profit-lock could not ratchet down
+# and could have held through a real stop). If the depth hasn't updated within
+# DEPTH_STALE_SEC, treat it as unavailable and fall back to the fresh LTP.
+DEPTH_STALE_SEC = 30
+# Monitor staleness warning: flag when the LTP is unchanged for this many
+# consecutive 5-min bars (raised from an effective 2 — too twitchy on quiet names).
+STALE_TICK_BARS = 4
+
 # 6. Volatility-normalized position sizing (live only, from 2026-07-20).
 #    Replaying the 42 live trades showed actual rupee-risk per trade ranged
 #    Rs 179 -> Rs 31,167 (the 5L notional cap binds almost always, making the

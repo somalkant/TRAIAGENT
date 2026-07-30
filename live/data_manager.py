@@ -13,6 +13,7 @@ Live candles (intraday):
 """
 
 import logging
+import time
 from datetime import date, datetime, time as dtime
 
 import pandas as pd
@@ -65,6 +66,9 @@ class LiveDataManager:
         # Per-price-level market depth from GrowwFeed (updated on every depth tick)
         # {"RELIANCE": {"buy": [{price, qty}, ...], "sell": [{price, qty}, ...]}, ...}
         self._market_depth: dict[str, dict] = {}
+        # Monotonic time of the last depth update per symbol — lets exit decisions
+        # detect a frozen depth feed (LTP can keep flowing while depth is stale).
+        self._depth_updated_at: dict[str, float] = {}
 
     # ── startup ──────────────────────────────────────────────────────────────
 
@@ -164,6 +168,7 @@ class LiveDataManager:
                     "buy":  _norm(kite_depth.get("buy",  [])),
                     "sell": _norm(kite_depth.get("sell", [])),
                 }
+                self._depth_updated_at[symbol] = time.monotonic()
 
     # ── bar close (called by agent scheduler every 5 minutes) ────────────────
 
@@ -229,15 +234,28 @@ class LiveDataManager:
                 "buy":  depth_tick.get("buy_levels",  []),
                 "sell": depth_tick.get("sell_levels", []),
             }
+            self._depth_updated_at[symbol] = time.monotonic()
 
-    def get_depth(self, symbol: str) -> dict | None:
+    def get_depth(self, symbol: str, max_age_sec: float | None = None) -> dict | None:
         """
         Latest per-price-level market depth from GrowwFeed StocksMarketDepthProto.
         Returns {"buy": [{price, qty}, ...], "sell": [{price, qty}, ...]} or None.
         buy  levels: sorted best-bid-first (highest price first).
         sell levels: sorted best-ask-first (lowest  price first).
+
+        If max_age_sec is given, returns None when the depth hasn't updated within
+        that many seconds. The depth channel can freeze while the LTP keeps flowing
+        (ACUTAAS 2026-07-29); a stale book must not drive exit / profit-lock
+        decisions, so exit callers pass max_age_sec to fall back to the fresh LTP.
         """
-        return self._market_depth.get(symbol)
+        depth = self._market_depth.get(symbol)
+        if depth is None:
+            return None
+        if max_age_sec is not None:
+            ts = self._depth_updated_at.get(symbol)
+            if ts is None or (time.monotonic() - ts) > max_age_sec:
+                return None
+        return depth
 
     @property
     def instrument_tokens(self) -> list[int]:

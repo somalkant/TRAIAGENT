@@ -71,6 +71,7 @@ def _to_ist(series: pd.Series) -> pd.Series:
 from config.settings import (
     WEIGHTS_FILE, PROFIT_LOCK_ENABLED, PROFIT_LOCK_TRIGGER_PCT, PROFIT_LOCK_TRAIL_PCT,
     PROFIT_LOCK_RIDE_PAST_TARGET, NEWS_ENABLED,
+    DEPTH_STALE_SEC, STALE_TICK_BARS,
 )
 from backtester.cost_model import net_pnl
 from live.instrument_map import load_instrument_map, NIFTY50_TOKEN
@@ -633,14 +634,17 @@ def _log_trade_monitor(state: AgentState, dm: LiveDataManager) -> None:
         stop   = float(rec["signal"]["stop"])
         shares = rec["shares"]
 
-        # Staleness detector: warn if price unchanged for 2+ consecutive bars
+        # Staleness detector: warn only when the LTP is unchanged for
+        # STALE_TICK_BARS+ consecutive bars. Quiet names print an unchanged LTP for
+        # a bar or two normally, so 2 bars was too twitchy.
         prev_price, stale_count = _monitor_last_seen.get(symbol, (None, 0))
         if prev_price is not None and last_price == prev_price:
             stale_count += 1
         else:
             stale_count = 0
         _monitor_last_seen[symbol] = (last_price, stale_count)
-        stale_tag = f"  *** STALE TICK — price unchanged for {stale_count + 1} bars ***" if stale_count >= 1 else ""
+        _stale    = stale_count >= STALE_TICK_BARS - 1
+        stale_tag = f"  *** STALE TICK — price unchanged for {stale_count + 1} bars ***" if _stale else ""
 
         if direction == "LONG":
             pnl       = round((last_price - entry) * shares, 2)
@@ -658,7 +662,7 @@ def _log_trade_monitor(state: AgentState, dm: LiveDataManager) -> None:
             f"P&L Rs {pnl:+,.0f} ({pnl_pct:+.2f}%) | "
             f"to_target={to_target:+.2f}% to_stop={to_stop:+.2f}%{stale_tag}"
         )
-        if stale_count >= 1:
+        if _stale:
             log.warning(f"  STALE TICK [{symbol}]: WebSocket may have dropped — exit checks unreliable")
 
 
@@ -746,7 +750,10 @@ def _exit_ref_price(dm: LiveDataManager, symbol: str, direction: str,
     stop, but the book's best bid at that same instant was 1051.60 (above the
     stop) — a real sell there would not have been stopped out.
     """
-    depth = dm.get_depth(symbol) if hasattr(dm, "get_depth") else None
+    # max_age_sec: ignore a frozen depth feed and fall back to the fresh LTP —
+    # a book stuck for >DEPTH_STALE_SEC must not drive exits/profit-lock (ACUTAAS
+    # 2026-07-29: depth frozen for hours while the LTP kept moving).
+    depth = dm.get_depth(symbol, max_age_sec=DEPTH_STALE_SEC) if hasattr(dm, "get_depth") else None
     if depth:
         book_key = "buy" if direction == "LONG" else "sell"
         levels = depth.get(book_key) or []
