@@ -69,6 +69,10 @@ class LiveDataManager:
         # Monotonic time of the last depth update per symbol — lets exit decisions
         # detect a frozen depth feed (LTP can keep flowing while depth is stale).
         self._depth_updated_at: dict[str, float] = {}
+        # On-demand REST quote fetcher (broker.fetch_quote) + per-symbol rate-limit
+        # clock — used to refresh a frozen streamed book without a live stream.
+        self._quote_fetcher = None
+        self._last_quote_fetch: dict[str, float] = {}
 
     # ── startup ──────────────────────────────────────────────────────────────
 
@@ -235,6 +239,40 @@ class LiveDataManager:
                 "sell": depth_tick.get("sell_levels", []),
             }
             self._depth_updated_at[symbol] = time.monotonic()
+
+    def set_quote_fetcher(self, fn) -> None:
+        """Wire an on-demand REST quote fetcher: fn(trading_symbol) -> {last_price, buy, sell} | None."""
+        self._quote_fetcher = fn
+
+    def refresh_depth_on_demand(self, symbol: str, min_interval_sec: float = 2.0) -> bool:
+        """
+        Pull a FRESH REST quote for `symbol` and update the depth cache in place.
+        Rate-limited to at most once per `min_interval_sec` per symbol (the caller
+        may invoke it on every tick). Returns True iff a fresh book was applied.
+
+        Used when the streamed depth has frozen (feed outage) so exit / profit-lock
+        decisions still see a live order book instead of a stale one — get_quote is
+        a REST call that survives a NATS outage.
+        """
+        if self._quote_fetcher is None:
+            return False
+        now = time.monotonic()
+        if now - self._last_quote_fetch.get(symbol, 0.0) < min_interval_sec:
+            return False
+        self._last_quote_fetch[symbol] = now
+        try:
+            q = self._quote_fetcher(symbol)
+        except Exception as e:
+            log.debug(f"on-demand quote fetch failed for {symbol}: {e}")
+            return False
+        if not q:
+            return False
+        buy, sell = q.get("buy") or [], q.get("sell") or []
+        if buy or sell:
+            self._market_depth[symbol]     = {"buy": buy, "sell": sell}
+            self._depth_updated_at[symbol] = now
+            return True
+        return False
 
     def get_depth(self, symbol: str, max_age_sec: float | None = None) -> dict | None:
         """

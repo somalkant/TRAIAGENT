@@ -301,6 +301,62 @@ class GrowwTickerAdapter:
     def set_mode(self, mode, tokens) -> None:
         pass
 
+    def fetch_quote(self, trading_symbol: str) -> dict | None:
+        """
+        On-demand REST quote (fresh LTP + order-book depth) for one symbol.
+
+        Returns {"last_price": float|None, "buy": [{price, qty}, ...],
+                 "sell": [{price, qty}, ...]} or None on any failure/empty book.
+        buy sorted best-bid-first, sell sorted best-ask-first (matching the
+        streamed-depth convention).
+
+        This is a REST call (GrowwAPI.get_quote) that works even when the NATS
+        stream is down — the exit path uses it to refresh a FROZEN streamed book
+        so a dead feed can neither veto a real stop nor book a fill at a stale
+        price (ACUTAAS 2026-07-29). Defensive: any parse mismatch returns None,
+        so the caller falls back to the LTP rather than acting on bad data.
+        """
+        from growwapi import GrowwAPI
+        try:
+            q = self._client.get_quote(trading_symbol, GrowwAPI.EXCHANGE_NSE, GrowwAPI.SEGMENT_CASH)
+        except Exception as e:
+            log.debug(f"fetch_quote({trading_symbol}) failed: {e}")
+            return None
+        if not isinstance(q, dict):
+            return None
+
+        depth = q.get("depth") or {}
+
+        def _levels(side: str) -> list[dict]:
+            out = []
+            for lvl in (depth.get(side) or []):
+                if isinstance(lvl, dict):
+                    p   = lvl.get("price") or lvl.get(f"{side}_price")
+                    qty = (lvl.get("quantity") or lvl.get("qty")
+                           or lvl.get(f"{side}_quantity") or 0)
+                elif isinstance(lvl, (list, tuple)) and len(lvl) >= 2:
+                    p, qty = lvl[0], lvl[1]
+                else:
+                    continue
+                try:
+                    p = float(p or 0); qty = float(qty or 0)
+                except (TypeError, ValueError):
+                    continue
+                if p > 0:
+                    out.append({"price": p, "qty": qty})
+            return out
+
+        buy  = sorted(_levels("buy"),  key=lambda x: x["price"], reverse=True)
+        sell = sorted(_levels("sell"), key=lambda x: x["price"])
+        ltp  = q.get("last_price")
+        if not buy and not sell and not ltp:
+            return None
+        return {
+            "last_price": float(ltp) if ltp else None,
+            "buy":  buy,
+            "sell": sell,
+        }
+
     def connect(self, threaded: bool = True) -> None:
         self._running = True
         # Fire on_connect FIRST — live agent calls subscribe() inside this callback,

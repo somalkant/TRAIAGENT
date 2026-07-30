@@ -320,6 +320,10 @@ def main():
         new_ws.on_error   = on_error
         if hasattr(new_ws, "on_depth"):
             new_ws.on_depth = on_depth
+        # Wire the on-demand REST quote fetcher — the exit path uses it to refresh a
+        # frozen streamed book (Groww exposes fetch_quote; Kite ticker doesn't).
+        if hasattr(new_ws, "fetch_quote"):
+            dm.set_quote_fetcher(new_ws.fetch_quote)
         new_ws.connect(threaded=True)
         return new_ws
 
@@ -750,10 +754,14 @@ def _exit_ref_price(dm: LiveDataManager, symbol: str, direction: str,
     stop, but the book's best bid at that same instant was 1051.60 (above the
     stop) — a real sell there would not have been stopped out.
     """
-    # max_age_sec: ignore a frozen depth feed and fall back to the fresh LTP —
-    # a book stuck for >DEPTH_STALE_SEC must not drive exits/profit-lock (ACUTAAS
-    # 2026-07-29: depth frozen for hours while the LTP kept moving).
+    # max_age_sec: ignore a frozen depth feed (ACUTAAS 2026-07-29: depth frozen for
+    # hours while the LTP kept moving). If the streamed book is stale, pull a fresh
+    # REST quote on demand (rate-limited) so we get a LIVE book — get_quote survives
+    # a NATS outage. Only if that also fails do we fall back to the LTP.
     depth = dm.get_depth(symbol, max_age_sec=DEPTH_STALE_SEC) if hasattr(dm, "get_depth") else None
+    if depth is None and hasattr(dm, "refresh_depth_on_demand"):
+        if dm.refresh_depth_on_demand(symbol):
+            depth = dm.get_depth(symbol, max_age_sec=DEPTH_STALE_SEC)
     if depth:
         book_key = "buy" if direction == "LONG" else "sell"
         levels = depth.get(book_key) or []
@@ -899,6 +907,15 @@ def _verify_exit_fill(dm: LiveDataManager, rec: dict, exit_price: float,
     this logs whether the exit would really have completed, and stamps the result
     on the rec so it lands in live_paper_trades.csv (exit_fill_status column).
     """
+    # Don't verify against a stale book — it reports an impossible fill (ACUTAAS
+    # 2026-07-29: asks shown at 3184 while the price was 3226). The exit-decision
+    # path already tried an on-demand refresh; if depth is still stale here, mark
+    # the fill unverified rather than confirming a fake level.
+    if hasattr(dm, "get_depth") and dm.get_depth(rec["symbol"], max_age_sec=DEPTH_STALE_SEC) is None:
+        rec["_exit_fill_status"] = "DEPTH_STALE"
+        log.warning(f"EXIT FILL   [{rec.get('direction', 'LONG')}]: {rec['symbol']} | "
+                    f"depth stale/unavailable — exit booked at {exit_price:.2f}, fill unverified")
+        return
     try:
         fc = check_exit_fill(dm, rec["symbol"], exit_price, int(rec["shares"]),
                              rec.get("direction", "LONG"), exit_reason)
