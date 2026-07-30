@@ -39,6 +39,7 @@ from config.settings import (
     MAX_POSITION_SIZE, ATR_RISK_BUDGET_RS, ATR_PERIOD_DAYS,
     STOP_VIABILITY_ENABLED, MIN_STOP_ATR_RATIO, MIN_STOP_ATR_RATIO_OPEN,
     STOP_VIABILITY_OPEN_UNTIL,
+    STOP_CAP_ENABLED, STOP_CAP_PCT,
 )
 from strategies import ALL_STRATEGIES
 from weights.regime import get_regime_modifiers, get_direction_bias
@@ -353,6 +354,29 @@ def _find_live_candidate(
             entry_time = now_ist.strftime("%H:%M")
 
             dirn_str = "LONG" if direction == +1 else "SHORT"
+
+            # ── Final SL cap ──────────────────────────────────────────────────
+            # Everything is decided (entry, target, strategy stop, and the SIZE
+            # above — sized from the STRATEGY stop, left untouched). As the last
+            # step before entry, if the stop is farther than STOP_CAP_PCT from
+            # entry, tighten ONLY the stop to STOP_CAP_PCT and recompute RR. This
+            # caps the max loss; size stays as budgeted, so actual risk lands
+            # below the budget. Both directions (mostly bites the ~2% short stops).
+            if STOP_CAP_ENABLED:
+                stop_dist_pct = abs(best_sig.stop - best_sig.entry) / best_sig.entry * 100
+                if stop_dist_pct > STOP_CAP_PCT:
+                    _old_stop = best_sig.stop
+                    if direction == +1:
+                        best_sig.stop = round(best_sig.entry * (1 - STOP_CAP_PCT / 100), 2)
+                        best_sig.rr   = round((best_sig.target - best_sig.entry) / (best_sig.entry - best_sig.stop), 2)
+                    else:
+                        best_sig.stop = round(best_sig.entry * (1 + STOP_CAP_PCT / 100), 2)
+                        best_sig.rr   = round((best_sig.entry - best_sig.target) / (best_sig.stop - best_sig.entry), 2)
+                    log.info(
+                        f"  SL CAP [{dirn_str}]: {symbol} stop {_old_stop:.2f} ({stop_dist_pct:.2f}%) "
+                        f"-> {best_sig.stop:.2f} ({STOP_CAP_PCT:.1f}%) | RR now {best_sig.rr:.2f} (size unchanged)"
+                    )
+
             log.info(
                 f"SIGNAL [{dirn_str}]: {symbol} | driver={best_sig.strategy} | "
                 f"signal_time={best_sig.signal_time} entry_time={entry_time} (age={sig_age_min or 0:.0f}m) | "

@@ -293,6 +293,19 @@ MIN_STOP_ATR_RATIO        = 0.20        # skip if stop% < 0.20 x ATR% (rest of s
 MIN_STOP_ATR_RATIO_OPEN   = 0.30        # stricter in the opening high-noise window
 STOP_VIABILITY_OPEN_UNTIL = time(9, 45) # "opening window" cutoff (IST)
 
+# 8. Final SL cap (from 2026-07-30). AFTER everything is decided (entry, target,
+#    strategy SL, and — critically — the position SIZE, which is computed from
+#    the STRATEGY stop and left untouched), tighten ONLY the stop to STOP_CAP_PCT
+#    if it sits farther than that from entry. Caps the max loss without changing
+#    entry/target/size — actual risk ends up BELOW the sizer's budget, which is
+#    fine. Replaying 26 paper shorts: the big losses were all ~2% stops
+#    (JPPOWER/TECHM/THERMAX ~-10.7k each); a 1.5% cap trims ~Rs 7.5k off the short
+#    book. Applies to both directions (long stops rarely exceed 1.5%, so it mostly
+#    bites shorts). MAX_STOP_DISTANCE_PCT already rejects stops > 2%, so this only
+#    tightens the (1.5%, 2%] band.
+STOP_CAP_ENABLED = True
+STOP_CAP_PCT     = 1.5
+
 # ─────────────────────────────────────────────────────────────────────────────
 # NEWS SIGNAL (Phase 2.7 — MONITOR ONLY, added 2026-07-22)
 # Pulls yesterday/today headlines for the traded symbol at entry time and asks
