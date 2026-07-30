@@ -834,9 +834,14 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
             log.info(f"STOP HIT [{direction}]: {symbol} @ {ref_price:.2f} "
                      f"(ltp={last_price:.2f}, src={ref_source}) (stop={stop:.2f}){locked_tag}")
             if close_fn(rec):
-                _verify_exit_fill(dm, rec, stop, exit_reason)
-                log_closed_trade(today, rec, exit_price=stop, exit_reason=exit_reason, exit_time=now_str)
-                _log_profit_ride(rec, direction, target, stop)
+                # A stop is a MARKET exit — book at the price actually available now
+                # (ref_price = best bid/ask, or the fresh LTP when the book is stale),
+                # NOT the stop trigger level. On a gap/squeeze the real cover fills
+                # past the stop; booking at `stop` would optimistically hide that
+                # slippage. ref_price is at or beyond the stop by construction here.
+                _verify_exit_fill(dm, rec, ref_price, exit_reason)
+                log_closed_trade(today, rec, exit_price=ref_price, exit_reason=exit_reason, exit_time=now_str)
+                _log_profit_ride(rec, direction, target, ref_price)
                 changed = True
         elif ref_source == "book":
             # The corroboration guard at work: LTP alone would have triggered
