@@ -40,11 +40,13 @@ from config.settings import (
     STOP_VIABILITY_ENABLED, MIN_STOP_ATR_RATIO, MIN_STOP_ATR_RATIO_OPEN,
     STOP_VIABILITY_OPEN_UNTIL,
     STOP_CAP_ENABLED, STOP_CAP_PCT,
+    FILL_GATE_ENABLED, FILL_SLIP_GATE_PCT,
 )
 from strategies import ALL_STRATEGIES
 from weights.regime import get_regime_modifiers, get_direction_bias
 from watchlist.pre_filter import PreMarketFilter
 from live.data_manager import LiveDataManager
+from live.fill_check import check_fill
 
 log = logging.getLogger(__name__)
 
@@ -354,6 +356,42 @@ def _find_live_candidate(
             entry_time = now_ist.strftime("%H:%M")
 
             dirn_str = "LONG" if direction == +1 else "SHORT"
+
+            # ── Fill gate: cross the spread at the real book price, or skip ────
+            # A real trader crosses a tight spread to get filled and walks away
+            # from a wide one. Walk the book for the full `shares`: if it can't
+            # be absorbed (illiquid) or crossing costs more than FILL_SLIP_GATE_PCT
+            # (wide spread), skip — the next-best candidate gets the slot. Else
+            # book the entry at the actual crossed fill price (not the LTP) and
+            # recompute RR. Depth unavailable -> keep the LTP entry, don't block.
+            if FILL_GATE_ENABLED:
+                fc0 = check_fill(data_manager, symbol, best_sig.entry, shares, dirn_str)
+                if fc0["status"] != "DEPTH_UNAVAILABLE":
+                    if fc0["best_price"] is None or fc0["best_qty"] < shares:
+                        log.info(f"  SKIP [fill] {symbol} [{dirn_str}]: book absorbs only "
+                                 f"{fc0['best_qty']}/{shares} even at market — illiquid, "
+                                 f"next candidate gets the slot")
+                        continue
+                    fill_px  = round(fc0["best_avg"], 2)
+                    slip_pct = abs(fill_px - best_sig.entry) / best_sig.entry * 100
+                    if slip_pct > FILL_SLIP_GATE_PCT:
+                        log.info(f"  SKIP [fill] {symbol} [{dirn_str}]: crossing the spread costs "
+                                 f"{slip_pct:.2f}% (fill {fill_px:.2f} vs LTP {best_sig.entry:.2f}) "
+                                 f"> gate {FILL_SLIP_GATE_PCT:.2f}% — spread too wide, skipping")
+                        continue
+                    if fill_px != best_sig.entry:
+                        _ltp = best_sig.entry
+                        best_sig.entry = fill_px          # cross the spread -> book the real fill
+                        if direction == +1:
+                            best_sig.rr = round((best_sig.target - best_sig.entry) / (best_sig.entry - best_sig.stop), 2)
+                        else:
+                            best_sig.rr = round((best_sig.entry - best_sig.target) / (best_sig.stop - best_sig.entry), 2)
+                        if best_sig.rr < MIN_RISK_REWARD:
+                            log.info(f"  SKIP [fill] {symbol} [{dirn_str}]: RR fell to {best_sig.rr:.2f} "
+                                     f"after crossing spread to {fill_px:.2f} — skipping")
+                            continue
+                        log.info(f"  FILL [{dirn_str}]: {symbol} crossed spread {_ltp:.2f} -> {fill_px:.2f} "
+                                 f"(slip {slip_pct:.2f}%) | entry booked at {fill_px:.2f}, RR now {best_sig.rr:.2f}")
 
             # ── Final SL cap ──────────────────────────────────────────────────
             # Everything is decided (entry, target, strategy stop, and the SIZE

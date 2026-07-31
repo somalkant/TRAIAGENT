@@ -306,6 +306,19 @@ STOP_VIABILITY_OPEN_UNTIL = time(9, 45) # "opening window" cutoff (IST)
 STOP_CAP_ENABLED = True
 STOP_CAP_PCT     = 1.5
 
+# 9. Fill gate (from 2026-07-31). Do what a real trader does: after the trade is
+#    selected and sized, fill the FULL size at the price the order book can
+#    actually absorb it (crossing the spread) and book the entry THERE, not at
+#    the LTP. If the book can't absorb the full size (illiquid), or crossing the
+#    spread costs more than FILL_SLIP_GATE_PCT (wide spread), SKIP this candidate
+#    and let the next-best take the slot — same "next candidate" behaviour as the
+#    viability gate. Fixes the diagnostic-only fill check that used to book
+#    un-fillable trades (MAZDOCK 2026-07-31: 0/213 fillable at the entry, booked
+#    anyway at the signal price). Depth unavailable -> fall back to the LTP entry
+#    (can't verify, don't block).
+FILL_GATE_ENABLED  = True
+FILL_SLIP_GATE_PCT = 0.20        # max spread-crossing cost (LTP -> real fill %) to still take the trade
+
 # ─────────────────────────────────────────────────────────────────────────────
 # NEWS SIGNAL (Phase 2.7 — MONITOR ONLY, added 2026-07-22)
 # Pulls yesterday/today headlines for the traded symbol at entry time and asks
