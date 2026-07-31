@@ -19,12 +19,12 @@ What it does each day:
       - run scan_once() across watchlist
       - If a recommendation passes all filters → log entry, monitor for exit
 
-  EXIT MONITORING (after trade is placed → 3:15 PM)
+  EXIT MONITORING (after trade is placed → 2:50 PM)
     - KiteTicker on_ticks() checks live price against target / stop
     - TARGET_HIT or STOP_HIT → log closed trade immediately
-    - 3:15 PM TIME_EXIT → log at last traded price
+    - 2:50 PM TIME_EXIT → log at last traded price
 
-  POST-MARKET (3:15 PM)
+  POST-MARKET (2:50 PM)
     - Print day summary
     - Disconnect KiteTicker
     - Exit
@@ -96,7 +96,7 @@ log = logging.getLogger(__name__)
 IST         = pytz.timezone("Asia/Kolkata")
 MARKET_OPEN = dtime(9, 15)
 NO_ENTRY    = dtime(14, 0)    # no new positions after 2:00 PM
-SQUARE_OFF  = dtime(15, 15)   # force exit at 3:15 PM
+SQUARE_OFF  = dtime(14, 50)   # force exit at 2:50 PM
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -364,7 +364,7 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
       - If no trade yet and time < 2 PM: runs scan_once()
       - If signal found: saves and monitors it
       - Checks ticker staleness — reconnects if no tick for 5+ minutes
-      - At 3:15 PM: forces TIME_EXIT and exits loop
+      - At 2:50 PM: forces TIME_EXIT and exits loop
     """
     while True:
         now     = _now_ist()
@@ -488,7 +488,7 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
             _settle_fills(state, dm, now_t)
             _log_trade_monitor(state, dm)
 
-        # Intraday 3:15 PM check
+        # Intraday 2:50 PM check
         if now_t >= SQUARE_OFF:
             _force_time_exit(state, dm, today, now_t.strftime("%H:%M"))
             break
@@ -714,7 +714,7 @@ def _update_profit_lock(rec: dict, direction: str, last_price: float) -> None:
 def _log_profit_ride(rec: dict, direction: str, target: float, exit_price: float) -> None:
     """
     Verification log for the ride-past-target rule: when a profit-locked trade
-    exits on the trailing stop (or 3:15 square-off), report what the DROPPED fixed
+    exits on the trailing stop (or 2:50 square-off), report what the DROPPED fixed
     target would have booked vs what riding the trail actually booked. Only emitted
     when the price actually reached the dropped target (i.e. the rule changed the
     outcome — otherwise old and new exits are identical). Lets us confirm the edge
@@ -824,7 +824,7 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
 
         # Ride-past-target: once profit-lock has engaged (+1% reached, _profit_locked
         # set in _update_profit_lock on the same tick), DROP the researched fixed
-        # target and exit ONLY on the ratcheted trailing stop (or 3:15 square-off) —
+        # target and exit ONLY on the ratcheted trailing stop (or 2:50 square-off) —
         # let a still-trending winner run past its target instead of capping it.
         if PROFIT_LOCK_RIDE_PAST_TARGET and rec.get("_profit_locked"):
             target_hit = False
@@ -874,7 +874,7 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
 
 def _force_time_exit(state: AgentState, dm: LiveDataManager,
                      today: date, exit_time: str) -> None:
-    """Force-close all open positions at 3:15 PM."""
+    """Force-close all open positions at 2:50 PM."""
     long_rec, short_rec, long_placed, short_placed = state.snapshot()
     if not long_placed and not short_placed:
         log.info("No trade was placed today — no exit needed")
@@ -889,7 +889,7 @@ def _force_time_exit(state: AgentState, dm: LiveDataManager,
         if last_price is None:
             last_price = float(rec["signal"]["entry"])
             log.warning(f"  No live price for {symbol} — using entry price as exit")
-        log.info(f"TIME EXIT [{direction}]: {symbol} @ {last_price:.2f} (3:15 PM square-off)")
+        log.info(f"TIME EXIT [{direction}]: {symbol} @ {last_price:.2f} (2:50 PM square-off)")
         if close_fn(rec):
             _verify_exit_fill(dm, rec, last_price, "TIME_EXIT")
             log_closed_trade(today, rec, exit_price=last_price, exit_reason="TIME_EXIT", exit_time=exit_time)

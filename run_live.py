@@ -8,7 +8,7 @@ What it does:
   1. Prevents Windows from sleeping all day
   2. Asks which broker to use (Zerodha, Groww, or any future broker)
   3. Runs the broker's authentication flow (login URL, request_token exchange, etc.)
-  4. Starts the live paper trading agent — runs until 3:15 PM
+  4. Starts the live paper trading agent — runs until 2:50 PM
 
 Logs to logs/live_YYYY-MM-DD.log and to the terminal simultaneously.
 

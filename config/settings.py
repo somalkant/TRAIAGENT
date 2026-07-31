@@ -46,7 +46,7 @@ DAILY_LOSS_LIMIT      =   40_000    # Rs 40,000  — pause all recommendations t
 MONTHLY_LOSS_LIMIT    =  1_00_000   # Rs 1,00,000 — pause system, flag for review
 
 NO_ENTRY_AFTER        = time(14, 0)  # 2:00 PM IST — no new positions after this
-SQUARE_OFF_TARGET     = time(15, 15) # 3:15 PM IST — close all positions
+SQUARE_OFF_TARGET     = time(14, 50) # 2:50 PM IST — close all positions
 
 # ─────────────────────────────────────────────
 # TRANSACTION COST MODEL
@@ -240,7 +240,7 @@ PROFIT_LOCK_ENABLED     = True
 PROFIT_LOCK_TRIGGER_PCT = 1.0
 PROFIT_LOCK_TRAIL_PCT   = 0.5
 # Ride-past-target (from 2026-07-29): once profit-lock has engaged (+1% reached),
-# DROP the researched fixed target and exit ONLY on the trailing stop (or 3:15
+# DROP the researched fixed target and exit ONLY on the trailing stop (or 2:50
 # square-off). Rationale: the fixed target caps a still-trending winner — DIVISLAB
 # 2026-07-29 hit target 7635 and was closed while the stock ran on to 7785.
 # Replaying 54 paper trades on the live-candle feed: dropping the target and riding
