@@ -66,6 +66,10 @@ class LiveDataManager:
         # Per-price-level market depth from GrowwFeed (updated on every depth tick)
         # {"RELIANCE": {"buy": [{price, qty}, ...], "sell": [{price, qty}, ...]}, ...}
         self._market_depth: dict[str, dict] = {}
+
+        # Data-quality guard: detect a broken volume feed (bars closing with 0 volume)
+        self._zero_vol_bars     = 0
+        self._vol_health_warned = False
         # Monotonic time of the last depth update per symbol — lets exit decisions
         # detect a frozen depth feed (LTP can keep flowing while depth is stale).
         self._depth_updated_at: dict[str, float] = {}
@@ -178,11 +182,39 @@ class LiveDataManager:
 
     def close_bar(self, bar_dt) -> None:
         """Close the 5-min bar across all builders. Call at :00, :05, :10, ... minutes."""
+        closed_rows = []
         for builder in self._builders.values():
-            builder.close_bar(bar_dt)
+            row = builder.close_bar(bar_dt)
+            if row is not None:
+                closed_rows.append(row)
         self._nifty_builder.close_bar(bar_dt)
+        self._check_volume_health(closed_rows)
         # Persist bars so a restart can resume from this point
         save_candles(date.today(), {**self._builders, "NIFTY50": self._nifty_builder})
+
+    def _check_volume_health(self, closed_rows: list[dict]) -> None:
+        """
+        Data-quality guard: warn (once) if stock bars keep closing with zero volume
+        during market hours. Groww's streamed live-price feed omits volume, so the
+        GrowwTickerAdapter volume poller (REST get_quote) must fill it; if that
+        breaks, volume strategies (VOL-SPIKE, VWAP*) silently stop firing. This
+        surfaces the gap instead of letting it persist unnoticed.
+        """
+        now_t = datetime.now(_IST).time()
+        if not (_MARKET_OPEN_T <= now_t <= dtime(15, 30)) or not closed_rows:
+            return
+        if any(r.get("volume", 0) > 0 for r in closed_rows):
+            self._zero_vol_bars = 0
+            return
+        self._zero_vol_bars += 1
+        if self._zero_vol_bars >= 2 and not self._vol_health_warned:
+            self._vol_health_warned = True
+            log.warning(
+                f"DATA QUALITY: {len(closed_rows)} stock bars closed with ZERO volume "
+                f"for {self._zero_vol_bars} consecutive bars during market hours — the "
+                f"volume feed is broken. Volume strategies (VOL-SPIKE, VWAP*) are "
+                f"disabled until fixed (check GrowwTickerAdapter volume poller)."
+            )
 
     def resume_from_checkpoint(self, today: date) -> None:
         """

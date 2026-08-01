@@ -270,6 +270,12 @@ class GrowwTickerAdapter:
     _WATCHDOG_POLL_SECS    = 10
     _REBUILD_COOLDOWN_SECS = 30    # min gap between rebuild attempts
 
+    # Groww's streamed live-price (LTP) topic delivers price but leaves the proto
+    # `volume` field at 0 — so streamed ticks carry no volume. We refresh cumulative
+    # day-volume via REST get_quote and stamp it onto each tick (see _on_feed_tick).
+    _VOL_POLL_SECS         = 30    # refresh cumulative day-volume this often (market hours)
+    _VOL_POLL_WORKERS      = 12    # concurrent get_quote calls per refresh
+
     def __init__(self, api_key: str, access_token: str):
         from growwapi import GrowwAPI
         _install_nats_log_filter()
@@ -285,6 +291,9 @@ class GrowwTickerAdapter:
         self._last_stock_tick  : float                        = time.monotonic()
         self._last_rebuild     : float                        = 0.0
         self._rebuild_lock                                    = threading.Lock()
+        self._cum_vol          : dict[int, int]              = {}    # token -> cumulative day volume (REST get_quote)
+        self._vol_thread       : Optional[threading.Thread]  = None
+        self._ws_volume_seen   : bool                         = False # True once streamed feed ever carries volume
 
         self.on_connect = None
         self.on_ticks   = None
@@ -462,6 +471,14 @@ class GrowwTickerAdapter:
             log.info(f"GrowwFeed: watchdog active (rebuild after "
                      f"{self._WATCHDOG_SILENCE_SECS}s tick silence)")
 
+        if self._vol_thread is None or not self._vol_thread.is_alive():
+            self._vol_thread = threading.Thread(
+                target=self._volume_poll_loop, daemon=True, name="groww-volume-poll"
+            )
+            self._vol_thread.start()
+            log.info(f"GrowwFeed: volume poller active (REST get_quote every "
+                     f"{self._VOL_POLL_SECS}s — streamed feed omits volume)")
+
     def _watchdog_loop(self) -> None:
         """
         Rebuild the NATS feed after a sustained tick outage.
@@ -514,6 +531,56 @@ class GrowwTickerAdapter:
                     except Exception:
                         pass   # old connection is already dead — best-effort cleanup
 
+    # ── Volume top-up (streamed feed omits volume) ───────────────────────────
+    def _volume_poll_loop(self) -> None:
+        """
+        Refresh cumulative day-volume via REST during market hours.
+
+        The Groww live-price websocket delivers price only (proto `volume` == 0),
+        so this poller is the sole volume source. It runs every _VOL_POLL_SECS;
+        _on_feed_tick stamps the latest cumulative value onto each streamed tick,
+        and CandleBuilder derives per-bar volume from the monotonic deltas.
+        """
+        import pytz
+        from datetime import time as dtime
+        ist = pytz.timezone("Asia/Kolkata")
+        while self._running:
+            try:
+                now_t = datetime.now(ist).time()
+                if dtime(9, 15) <= now_t <= dtime(15, 30):
+                    self._refresh_volumes()
+            except Exception as e:
+                log.debug(f"volume poll loop error: {e}")
+            time.sleep(self._VOL_POLL_SECS)
+
+    def _refresh_volumes(self) -> None:
+        """Fetch cumulative day volume for all subscribed stock tokens via get_quote."""
+        from concurrent.futures import ThreadPoolExecutor
+        from growwapi import GrowwAPI
+        tokens = [t for t in self._subscribed
+                  if t != _NIFTY50_TOKEN and t in self._token_to_groww]
+        if not tokens:
+            return
+
+        def _one(token: int) -> None:
+            groww_key = self._token_to_groww.get(token, "")
+            sym = groww_key.split("_", 1)[1] if "_" in groww_key else groww_key
+            if not sym:
+                return
+            try:
+                q = self._client.get_quote(sym, GrowwAPI.EXCHANGE_NSE, GrowwAPI.SEGMENT_CASH)
+                v = int((q or {}).get("volume") or 0)
+                if v > 0:
+                    self._cum_vol[token] = v   # dict item set is atomic under the GIL
+            except Exception as e:
+                log.debug(f"volume refresh {sym}: {e}")
+
+        try:
+            with ThreadPoolExecutor(max_workers=self._VOL_POLL_WORKERS) as ex:
+                list(ex.map(_one, tokens))
+        except Exception as e:
+            log.debug(f"volume refresh pool error: {e}")
+
     def _on_feed_tick(self, meta: dict) -> None:
         """
         Called by GrowwFeed on each LTP update (one instrument per call).
@@ -535,7 +602,17 @@ class GrowwTickerAdapter:
             tick_data = all_ltp.get(exchange, {}).get(segment, {}).get(token_str, {})
 
             ltp       = float(tick_data.get("ltp")      or 0)
-            vol       = int(tick_data.get("volume")    or 0)
+            # Groww's streamed live-price proto leaves `volume` at 0. Prefer streamed
+            # volume if it ever becomes populated (point 3); otherwise use the REST
+            # get_quote value refreshed by the volume poller (point 2).
+            ws_vol    = int(tick_data.get("volume")    or 0)
+            if ws_vol > 0:
+                if not self._ws_volume_seen:
+                    self._ws_volume_seen = True
+                    log.info("GrowwFeed: streamed live-price feed now carries volume — using it directly")
+                vol = ws_vol
+            else:
+                vol = self._cum_vol.get(int_token, 0)
             bid_qty   = int(tick_data.get("bidQty")    or 0)
             offer_qty = int(tick_data.get("offerQty")  or 0)
 
@@ -638,7 +715,8 @@ class GrowwTickerAdapter:
                             ticks.append({
                                 "instrument_token": token,
                                 "last_price":       ltp,
-                                "volume_traded":    vol,
+                                # get_ltp omits volume too — fall back to the polled quote value
+                                "volume_traded":    self._cum_vol.get(token, vol),
                             })
 
                 if has_nifty:
