@@ -7,13 +7,13 @@
 #   ./scripts/ec2_setup.sh
 #
 # Assumes:
-#   - EC2 instance has an IAM role with s3:GetObject on amzn-s3-somal-bucket
+#   - EC2 instance has an IAM role with s3:GetObject on amzn-s3-somal-bucket-mumbai
 #   - Git repo already cloned into this directory
 #   - You will fill in .env manually after this script runs
 
 set -e   # exit immediately on any error
 
-S3_BUCKET="${1:-amzn-s3-somal-bucket}"
+S3_BUCKET="${1:-amzn-s3-somal-bucket-mumbai}"
 S3_PREFIX="${2:-tradingagent}"
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 

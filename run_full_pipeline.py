@@ -210,7 +210,7 @@ def _upload_results_to_s3(python: str, pipeline_log: Path) -> None:
     log.info("")
     log.info("Uploading results to S3...")
 
-    bucket = "amzn-s3-somal-bucket"
+    bucket = "amzn-s3-somal-bucket-mumbai"
     prefix = "tradingagent"
 
     # Use aws cli (already installed on EC2 via ec2_setup.sh)

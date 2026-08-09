@@ -2,17 +2,17 @@
 S3 sync for trading agent historical data (data/stocks/ + data/index/).
 
 Upload from local machine (one-time, ~1.7 GB):
-    python -m data_pipeline.s3_sync upload --bucket amzn-s3-somal-bucket --prefix tradingagent
+    python -m data_pipeline.s3_sync upload --bucket amzn-s3-somal-bucket-mumbai --prefix tradingagent
 
 Download on EC2 (one-time setup):
-    python -m data_pipeline.s3_sync download --bucket amzn-s3-somal-bucket --prefix tradingagent
+    python -m data_pipeline.s3_sync download --bucket amzn-s3-somal-bucket-mumbai --prefix tradingagent
 
 Status check:
-    python -m data_pipeline.s3_sync status --bucket amzn-s3-somal-bucket --prefix tradingagent
+    python -m data_pipeline.s3_sync status --bucket amzn-s3-somal-bucket-mumbai --prefix tradingagent
 
 S3 layout:
-    s3://amzn-s3-somal-bucket/tradingagent/data/stocks/2016/RELIANCE.parquet
-    s3://amzn-s3-somal-bucket/tradingagent/data/index/2016/NIFTY50.parquet
+    s3://amzn-s3-somal-bucket-mumbai/tradingagent/data/stocks/2016/RELIANCE.parquet
+    s3://amzn-s3-somal-bucket-mumbai/tradingagent/data/index/2016/NIFTY50.parquet
 
 Credentials:
   - EC2:   attach an IAM role with s3:GetObject + s3:PutObject on the bucket (no keys needed)
@@ -34,7 +34,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s  %(levelname)s  %(me
 
 MAX_WORKERS = 16   # parallel S3 transfers; S3 is I/O bound so threading scales well
 
-S3_BUCKET  = "amzn-s3-somal-bucket"
+S3_BUCKET  = "amzn-s3-somal-bucket-mumbai"  # migrated from amzn-s3-somal-bucket (us-east-1) 2026-08-09
 S3_PREFIX  = "tradingagent"           # folder inside the bucket
 
 
