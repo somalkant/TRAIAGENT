@@ -80,6 +80,7 @@ from live.live_engine import scan_once
 from live.paper_logger import (
     save_open_trade, load_open_trade, log_closed_trade
 )
+from live.email_report import send_eod_email
 from live.news_signal import assess_news, company_name_for
 from live.risk_guard import check_risk_limits, write_eod_risk_check
 from live.fill_check import check_fill, simulate_fill, check_exit_fill
@@ -345,7 +346,15 @@ def main():
     _print_summary(state, today)
 
     # ── 10. Post-market EOD data download ────────────────────────────────────
-    _run_eod_download(kite, imap, today)
+    eod_result = _run_eod_download(kite, imap, today)
+
+    # ── 11. Email the EOD report ─────────────────────────────────────────────
+    # Off by default; enable via EMAIL_ENABLED='true' in .env. send_eod_email
+    # never raises, but wrap anyway so nothing can disturb a clean shutdown.
+    try:
+        send_eod_email(today, eod_result=eod_result)
+    except Exception as e:
+        log.error(f"EOD email step failed (non-fatal): {e}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1158,12 +1167,15 @@ def _fill_parquet_gaps(kite, imap: dict, today: date) -> None:
         log.warning(f"Gap-fill failed (non-fatal): {e}")
 
 
-def _run_eod_download(kite, imap: dict, today: date) -> None:
+def _run_eod_download(kite, imap: dict, today: date) -> dict | None:
     """
     Download today's 5-min bars for all 500 universe stocks after market close.
     Waits until 15:31 IST if called early (e.g. manual stop before close).
     imap is passed to download_eod so Groww exchange_tokens are used when
     running with --broker groww (no dependency on Zerodha tokens from universe.csv).
+
+    Returns the download result dict ({'completed', 'failed'}) so the EOD email
+    can report it, or None if the download failed.
     """
     from data_pipeline.downloader import download_eod
 
@@ -1185,10 +1197,13 @@ def _run_eod_download(kite, imap: dict, today: date) -> None:
             f"{result['failed']} failed. Parquet files updated for {today}."
         )
         log.info("  Tomorrow's agent will load today's bars as history automatically.")
+        log.info("=" * 65)
+        return result
     except Exception as e:
         log.error(f"  EOD download failed: {e}")
         log.error("  Run manually: python -c \"from data_pipeline.downloader import download_eod; ...\"")
-    log.info("=" * 65)
+        log.info("=" * 65)
+        return None
 
 
 if __name__ == "__main__":
