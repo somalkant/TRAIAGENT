@@ -77,6 +77,12 @@ class LiveDataManager:
         # clock — used to refresh a frozen streamed book without a live stream.
         self._quote_fetcher = None
         self._last_quote_fetch: dict[str, float] = {}
+        # REST-verified last price for open positions — the streamed LTP can lag/freeze
+        # for a symbol while REST get_quote stays accurate (VBL 2026-08-19: stream ~₹1
+        # high at 14:50). refresh_depth_on_demand() stamps this; get_fresh_price()
+        # prefers it so the monitor + exit decisions track the real market.
+        self._rest_price: dict[str, float]    = {}
+        self._rest_price_at: dict[str, float] = {}
 
     # ── startup ──────────────────────────────────────────────────────────────
 
@@ -299,12 +305,28 @@ class LiveDataManager:
             return False
         if not q:
             return False
+        lp = q.get("last_price")
+        if lp and float(lp) > 0:
+            self._rest_price[symbol]    = float(lp)
+            self._rest_price_at[symbol] = now
         buy, sell = q.get("buy") or [], q.get("sell") or []
         if buy or sell:
             self._market_depth[symbol]     = {"buy": buy, "sell": sell}
             self._depth_updated_at[symbol] = now
             return True
-        return False
+        return bool(lp and float(lp) > 0)
+
+    def get_fresh_price(self, symbol: str, max_age_sec: float = 6.0) -> float | None:
+        """
+        Best available live price for an OPEN position: the REST-verified price if it
+        was refreshed within max_age_sec, else the streamed LTP. The position poller
+        keeps _rest_price fresh (~3s), so this tracks the real market even when the
+        streamed feed lags or freezes for the symbol.
+        """
+        ts = self._rest_price_at.get(symbol)
+        if ts is not None and (time.monotonic() - ts) <= max_age_sec:
+            return self._rest_price[symbol]
+        return self.get_last_price(symbol)
 
     def get_depth(self, symbol: str, max_age_sec: float | None = None) -> dict | None:
         """

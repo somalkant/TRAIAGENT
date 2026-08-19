@@ -303,7 +303,8 @@ def main():
             for tick in ticks:
                 dm.on_tick(tick)
             if state.is_long_open() or state.is_short_open():
-                _check_exit(state, dm, today)
+                with _exit_lock:
+                    _check_exit(state, dm, today)
 
         def on_depth(_ws, depth_ticks):
             for dtick in depth_ticks:
@@ -329,6 +330,14 @@ def main():
         return new_ws
 
     _ws_holder[0] = _make_ticker()
+
+    # Near-live exit safety net: a lagging/frozen Groww stream can show an open
+    # position ~₹1 off the real market (VBL 2026-08-19, stream ~₹1 high at the exit).
+    # This thread REST-refreshes the open position(s) every few seconds and re-runs
+    # the exit check off that fresh price, so stops/targets/square-off track the real
+    # market even when ticks stall. Daemon; falls back to the stream if REST fails.
+    threading.Thread(target=_position_price_loop, args=(state, dm, today),
+                     daemon=True, name="position-price-poll").start()
 
     log.info("Waiting for market open (9:15 AM IST)...")
 
@@ -362,6 +371,8 @@ def main():
 # ─────────────────────────────────────────────────────────────────────────────
 
 _TICKER_STALE_SECS = 300   # warn + reconnect if no tick for 5 minutes during market hours
+_POS_POLL_SECS     = 3     # REST-refresh open positions + re-check exits this often (near-live)
+_exit_lock = threading.Lock()   # serialise _check_exit across the tick thread and the position poller
 
 def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
                      dm: LiveDataManager, state: AgentState,
@@ -639,7 +650,7 @@ def _log_trade_monitor(state: AgentState, dm: LiveDataManager) -> None:
             continue
         symbol     = rec["symbol"]
         direction  = rec.get("direction", "LONG")
-        last_price = dm.get_last_price(symbol)
+        last_price = dm.get_fresh_price(symbol)   # REST-verified when fresh, else streamed LTP
         if last_price is None:
             continue
         entry  = float(rec["signal"]["entry"])
@@ -779,6 +790,30 @@ def _exit_ref_price(dm: LiveDataManager, symbol: str, direction: str,
     return fallback_price, "ltp"
 
 
+def _position_price_loop(state: AgentState, dm: LiveDataManager, today: date) -> None:
+    """
+    Near-live exit safety net. Every _POS_POLL_SECS during market hours, for each
+    OPEN position: pull a fresh REST quote (refreshes _rest_price + order book) and
+    re-run the exit check off it. Ensures stops/targets/square-off act on the real
+    market even when the streamed feed lags or freezes for a symbol — the streamed
+    LTP can drift ~₹1 with fresh timestamps, which the arrival-staleness guard misses.
+    Daemon thread; never raises (worst case it does nothing and the tick path runs).
+    """
+    while True:
+        try:
+            now_t = _now_ist().time()
+            if MARKET_OPEN <= now_t <= SQUARE_OFF and (state.is_long_open() or state.is_short_open()):
+                long_rec, short_rec, _, _ = state.snapshot()
+                for rec in (long_rec, short_rec):
+                    if rec and hasattr(dm, "refresh_depth_on_demand"):
+                        dm.refresh_depth_on_demand(rec["symbol"], min_interval_sec=0.0)
+                with _exit_lock:
+                    _check_exit(state, dm, today)
+        except Exception as e:
+            log.debug(f"position price poll: {e}")
+        time_mod.sleep(_POS_POLL_SECS)
+
+
 def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
     """
     Called on every tick (from broker WebSocket callback).
@@ -795,7 +830,7 @@ def _check_exit(state: AgentState, dm: LiveDataManager, today: date) -> None:
         symbol    = rec["symbol"]
         direction = rec.get("direction", "LONG")
         target    = float(rec["signal"]["target"])
-        last_price = dm.get_last_price(symbol)
+        last_price = dm.get_fresh_price(symbol)   # REST-verified when fresh, else streamed LTP
         if last_price is None:
             continue
 
@@ -894,7 +929,9 @@ def _force_time_exit(state: AgentState, dm: LiveDataManager,
             continue
         symbol    = rec["symbol"]
         direction = rec.get("direction", "LONG")
-        last_price = dm.get_last_price(symbol)
+        if hasattr(dm, "refresh_depth_on_demand"):
+            dm.refresh_depth_on_demand(symbol, min_interval_sec=0.0)   # fresh REST book+price for the square-off fill
+        last_price = dm.get_fresh_price(symbol) if hasattr(dm, "get_fresh_price") else dm.get_last_price(symbol)
         if last_price is None:
             last_price = float(rec["signal"]["entry"])
             log.warning(f"  No live price for {symbol} — using entry price as exit")
