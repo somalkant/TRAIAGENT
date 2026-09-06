@@ -300,11 +300,20 @@ STOP_VIABILITY_OPEN_UNTIL = time(9, 45) # "opening window" cutoff (IST)
 #    entry/target/size — actual risk ends up BELOW the sizer's budget, which is
 #    fine. Replaying 26 paper shorts: the big losses were all ~2% stops
 #    (JPPOWER/TECHM/THERMAX ~-10.7k each); a 1.5% cap trims ~Rs 7.5k off the short
-#    book. Applies to both directions (long stops rarely exceed 1.5%, so it mostly
-#    bites shorts). MAX_STOP_DISTANCE_PCT already rejects stops > 2%, so this only
-#    tightens the (1.5%, 2%] band.
+#    book. Applies to both directions. MAX_STOP_DISTANCE_PCT already rejects
+#    stops > 2%.
+#
+#    Tightened 1.5% -> 1.0% on 2026-09-06. Replaying all 108 live paper trades
+#    (2026-06-15..09-04) on their own entry-day 5-min bars, holding entry/size/
+#    target fixed and moving ONLY the stop: net PnL -1,10,025 -> -36,173
+#    (+73,852). The whole gain comes from the 36 trades whose stop sat wider than
+#    1% (those lost -1,14,073; the other 72 were ~flat at +4,048). At the median
+#    2.2% ATR a 1% stop is 0.45x ATR — still clear of the STOP_VIABILITY floor
+#    (0.20x, 0.30x in the open window), so this does not push signals into the
+#    reject band. Sizing is unaffected: it is computed from the STRATEGY stop
+#    above and left untouched, so realised risk lands below the sizer's budget.
 STOP_CAP_ENABLED = True
-STOP_CAP_PCT     = 1.5
+STOP_CAP_PCT     = 1.0
 
 # 9. Fill gate (from 2026-07-31). Do what a real trader does: after the trade is
 #    selected and sized, fill the FULL size at the price the order book can
