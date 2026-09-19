@@ -44,3 +44,10 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Generated analysis outputs (large; re-create with analysis/run_replay and scripts/run_causal_backtest)
+reports/causal/
+reports/gap_analysis/replay/
+reports/gap_analysis/features.parquet
+reports/*.log
+data/trade_logs/ec2_snapshot/
