@@ -545,34 +545,22 @@ def _strip_tz(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _append_parquet(path: Path, df: pd.DataFrame) -> None:
-    """Append new rows to a Parquet file, or create it if it doesn't exist."""
-    df = _strip_tz(df)
-    table = pa.Table.from_pandas(df, preserve_index=False)
+    """Merge new rows into a Parquet file (or create it), always writing the canonical format
+    (data_pipeline.bars): naive IST, regular-session bars 09:15-15:25 only, sorted, one row per
+    timestamp — freshly downloaded rows replace stored rows with the same timestamp.
+
+    Merging happens in pandas, never via an Arrow schema cast: casting naive rows onto a stored
+    tz-aware schema is what silently shifted every EOD append by +5:30 before 2026-07-21."""
+    from data_pipeline.bars import normalize_bars
+    new_df = normalize_bars(_strip_tz(df))
     if path.exists():
-        existing = pq.read_table(path)
-        existing_df = _strip_tz(existing.to_pandas())
-        existing = pa.Table.from_pandas(existing_df, preserve_index=False)
-        # Cast new table to match the existing file's schema exactly.
-        # Kite sometimes returns integer prices for whole-number stocks,
-        # which causes an int64 vs double mismatch on concat.
-        try:
-            table = table.cast(existing.schema)
-        except Exception:
-            # Fallback: unify via pandas (handles edge-case type promotions)
-            merged_df = (pd.concat([existing_df, df])
-                         .drop_duplicates(subset=["datetime"])
-                         .sort_values("datetime")
-                         .reset_index(drop=True))
-            for col in ["open", "high", "low", "close"]:
-                merged_df[col] = merged_df[col].astype(float)
-            merged_df["volume"] = merged_df["volume"].astype("int64")
-            pq.write_table(pa.Table.from_pandas(merged_df, preserve_index=False), path, compression="snappy")
-            return
-        merged   = pa.concat_tables([existing, table])
-        merged_df = merged.to_pandas().drop_duplicates(subset=["datetime"]).sort_values("datetime")
-        pq.write_table(pa.Table.from_pandas(merged_df, preserve_index=False), path, compression="snappy")
+        existing_df = pq.read_table(path).to_pandas()
+        merged_df = normalize_bars(pd.concat([normalize_bars(existing_df), new_df], ignore_index=True), keep="last")
     else:
-        pq.write_table(table, path, compression="snappy")
+        merged_df = new_df
+    if merged_df is None or merged_df.empty:
+        return
+    pq.write_table(pa.Table.from_pandas(merged_df, preserve_index=False), path, compression="snappy")
 
 
 def _make_date_chunks(from_date: date, to_date: date, chunk_days: int) -> list[tuple]:

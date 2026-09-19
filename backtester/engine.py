@@ -46,6 +46,7 @@ from backtester.cost_model import net_pnl
 from weights.adaptive import update_weights
 from weights.regime import get_regime_modifiers, get_direction_bias
 from watchlist.pre_filter import PreMarketFilter
+from data_pipeline.bars import normalize_bars
 
 log = logging.getLogger(__name__)
 
@@ -498,8 +499,9 @@ def _preload_data(year: int) -> tuple[dict, pd.DataFrame | None]:
             continue
         for f in yr_dir.glob("*.parquet"):
             try:
-                df = pd.read_parquet(f)
-                df["datetime"] = pd.to_datetime(df["datetime"])
+                # Canonical bars (naive IST, session only). Mixing tz-aware (Kite, <=2025) and naive
+                # (Groww, 2026) files used to raise inside this try and silently drop the whole year.
+                df = normalize_bars(pd.read_parquet(f))
                 stem = f.stem
                 if stem in all_data:
                     combined = pd.concat([all_data[stem], df])
@@ -509,16 +511,14 @@ def _preload_data(year: int) -> tuple[dict, pd.DataFrame | None]:
                     all_data[stem] = combined
                 else:
                     all_data[stem] = df
-            except Exception:
-                pass
+            except Exception as e:
+                log.error(f"_preload_data: could not load {f} — {type(e).__name__}: {e}")
 
     nifty_dfs = []
     for y in [year - 1, year]:
         nf = INDEX_DIR / str(y) / "NIFTY50.parquet"
         if nf.exists():
-            df = pd.read_parquet(nf)
-            df["datetime"] = pd.to_datetime(df["datetime"])
-            nifty_dfs.append(df)
+            nifty_dfs.append(normalize_bars(pd.read_parquet(nf)))
     nifty = None
     if nifty_dfs:
         nifty = (pd.concat(nifty_dfs)
