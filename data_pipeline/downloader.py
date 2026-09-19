@@ -85,6 +85,7 @@ def download_eod(
     total     = len(universe)
     completed = 0
     failed    = []
+    unmapped  = []
 
     log.info(f"EOD download — {today} — {total} stocks"
              + (" [Groww tokens]" if imap is not None else " [Zerodha tokens]"))
@@ -95,7 +96,7 @@ def download_eod(
         if imap is not None:
             token = imap.get(symbol)
             if token is None:
-                log.debug(f"  {symbol}: not in broker instrument map — skipping")
+                unmapped.append(symbol)
                 continue
             token = int(token)
         else:
@@ -118,6 +119,9 @@ def download_eod(
     log.info("  EOD: downloading INDIA VIX...")
     _download_index(kite, "INDIA VIX", 264969, from_date, to_date, "INDIAVIX", index_dir)
 
+    if unmapped:
+        log.warning(f"  EOD: {len(unmapped)} universe stocks are not in the broker's instrument map and were "
+                    f"NOT updated (renamed/delisted?): {unmapped[:10]}{'...' if len(unmapped) > 10 else ''}")
     if failed:
         log.warning(f"  EOD: {len(failed)} stocks failed — {failed[:10]}{'...' if len(failed) > 10 else ''}")
     log.info(f"EOD download complete — {completed}/{total} stocks saved for {today}")

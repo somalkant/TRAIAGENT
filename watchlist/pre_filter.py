@@ -52,6 +52,7 @@ class PreMarketFilter:
     """
     WATCHLIST_SIZE = 200    # stocks passed to Stage 2 intraday scanner (100 bull + 100 bear)
     MIN_DAYS       = 22     # minimum trading days of history to participate
+    STALE_HISTORY_DAYS = 10 # skip stocks whose last bar is older than this (calendar days)
 
     # Score weights
     W_TREND   = 2.0         # daily trend alignment — strongest context signal
@@ -73,9 +74,15 @@ class PreMarketFilter:
         """
         results = []
 
+        stale = []
         for symbol, df in all_data.items():
             history = df[df["datetime"].dt.date < trade_date]
             if history.empty:
+                continue
+            # A stock whose data stopped updating (delisted / renamed / missing from the broker's
+            # instrument map — JBCHEPHARM since 2026-07-16) must not take a watchlist slot.
+            if (trade_date - history["datetime"].iloc[-1].date()).days > self.STALE_HISTORY_DAYS:
+                stale.append(symbol)
                 continue
 
             entry = self._score_stock(symbol, history)
@@ -95,6 +102,7 @@ class PreMarketFilter:
             f"Pre-market {trade_date}: {len(all_data)} stocks → "
             f"{len(results)} liquid+signal ({len(bullish)} bull / {len(bearish)} bear) "
             f"→ {len(watchlist)} watchlist"
+            + (f" (skipped {len(stale)} with stale data: {', '.join(stale[:5])})" if stale else "")
         )
         return watchlist
 
