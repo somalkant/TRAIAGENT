@@ -409,24 +409,32 @@ def trades_frame(results: list[dict]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def verify_no_lookahead(results: list[dict], cfg: Config = Config(), sample: int = 15, seed: int = 0) -> pd.DataFrame:
+def _verify_one(args) -> dict:
+    day, t, cfg_dict = args
+    import warnings
+    warnings.filterwarnings("ignore")
+    cfg = Config(**cfg_dict)
+    d = date.fromisoformat(day)
+    syms = universe()
+    again = simulate_day(Store([d], syms), d, cfg, load_weights(cfg.weights), syms, cutoff_bar=t["decision_bar"])["trade"]
+    return dict(date=day, symbol=t["symbol"], entry_time=t["entry_time"], entry=t["entry"],
+                rerun_symbol=again and again["symbol"], rerun_entry_time=again and again["entry_time"],
+                rerun_entry=again and again["entry"],
+                identical=bool(again) and again["symbol"] == t["symbol"]
+                and again["entry_time"] == t["entry_time"] and abs(again["entry"] - t["entry"]) < 1e-6)
+
+
+def verify_no_lookahead(results: list[dict], cfg: Config = Config(), sample: int = 15, seed: int = 0,
+                        workers: int = 8) -> pd.DataFrame:
     """For a sample of traded days: re-run the day with EVERY bar after the decision bar deleted.
     If the engine used any future bar, the decision (stock, entry time, entry price) would change."""
     import random
+    from multiprocessing import get_context
     traded = [r for r in results if r.get("trade")]
     random.seed(seed)
     pick = random.sample(traded, min(sample, len(traded)))
-    weights = load_weights(cfg.weights)
-    syms = universe()
-    rows = []
-    for r in pick:
-        d = date.fromisoformat(r["date"])
-        store = Store([d], syms)
-        t = r["trade"]
-        again = simulate_day(store, d, cfg, weights, syms, cutoff_bar=t["decision_bar"])["trade"]
-        rows.append(dict(date=r["date"], symbol=t["symbol"], entry_time=t["entry_time"], entry=t["entry"],
-                         rerun_symbol=again and again["symbol"], rerun_entry_time=again and again["entry_time"],
-                         rerun_entry=again and again["entry"],
-                         identical=bool(again) and again["symbol"] == t["symbol"]
-                         and again["entry_time"] == t["entry_time"] and abs(again["entry"] - t["entry"]) < 1e-6))
-    return pd.DataFrame(rows)
+    jobs = [(r["date"], {k: r["trade"][k] for k in ("symbol", "entry_time", "entry", "decision_bar")}, asdict(cfg))
+            for r in pick]
+    with get_context("spawn").Pool(min(workers, len(jobs)) or 1) as pool:
+        rows = pool.map(_verify_one, jobs)
+    return pd.DataFrame(rows).sort_values("date").reset_index(drop=True)
