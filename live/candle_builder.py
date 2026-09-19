@@ -39,6 +39,12 @@ class CandleBuilder:
             self._closed = list(bars)
             self._vol_synced = False   # trigger re-baseline on first incoming tick
 
+    def replace_closed(self, bars: list[dict]) -> None:
+        """Replace the CLOSED bars with authoritative ones (the exchange's official 5-min candles).
+        The bar currently being built from ticks is left untouched."""
+        with self._lock:
+            self._closed = list(bars)
+
     @property
     def closed_bars(self) -> list[dict]:
         """Raw closed bar list for checkpointing (shallow copy)."""

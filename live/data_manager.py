@@ -17,6 +17,8 @@ import time
 from datetime import date, datetime, time as dtime
 
 import pandas as pd
+
+from data_pipeline.bars import normalize_bars
 import pytz
 
 from config.settings import STOCKS_DIR, INDEX_DIR
@@ -84,6 +86,88 @@ class LiveDataManager:
         self._rest_price: dict[str, float]    = {}
         self._rest_price_at: dict[str, float] = {}
 
+    # ── official-candle reconciliation (live / backtest data parity) ─────────
+
+    def attach_official_source(self, client) -> None:
+        """client: the broker client (historical_data(), as used by the EOD download)."""
+        self._official_client = client
+
+    @property
+    def has_official_source(self) -> bool:
+        return getattr(self, "_official_client", None) is not None
+
+    def reconcile_official(self, upto_label: datetime, budget_sec: float = 40.0,
+                           workers: int = 8, max_rps: float = 10.0) -> dict:
+        """
+        Replace each watchlist symbol's (and NIFTY's) closed live bars with the exchange's official
+        5-min candles up to and including `upto_label` (the bar that just closed), so strategies compute
+        on the same bars as the backtest / EOD parquet. A symbol keeps its tick-built bars if the API
+        fails, returns nothing, or has not yet published the `upto_label` candle within `budget_sec`.
+        Returns stats for the log line.
+        """
+        import threading
+        from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
+        client = getattr(self, "_official_client", None)
+        stats = {"n": 0, "ok": 0, "fallback": 0, "zero_vol_fixed": 0, "open_fixed": 0, "secs": 0.0}
+        if client is None:
+            return stats
+        t0 = time.monotonic()
+        day_start = upto_label.replace(hour=9, minute=15, second=0, microsecond=0)
+        to_dt = upto_label.replace(second=0, microsecond=0) + pd.Timedelta(minutes=4, seconds=59)
+        lock, last_call = threading.Lock(), [0.0]
+
+        def _throttle():
+            with lock:
+                gap = 1.0 / max_rps - (time.monotonic() - last_call[0])
+                if gap > 0:
+                    time.sleep(gap)
+                last_call[0] = time.monotonic()
+
+        def _fetch(name: str, token: int):
+            _throttle()
+            raw = client.historical_data(instrument_token=token, from_date=day_start, to_date=to_dt, interval="5minute")
+            if not raw:
+                return name, None
+            df = pd.DataFrame(raw).rename(columns={"date": "datetime"})
+            df = normalize_bars(df[["datetime", "open", "high", "low", "close", "volume"]])
+            df = df[df["datetime"] <= upto_label]
+            if df.empty or df["datetime"].iloc[-1] != upto_label:
+                return name, None                          # the just-closed candle is not published yet
+            return name, df.to_dict("records")
+
+        jobs = {s: self._imap[s] for s in self.symbols if s in self._imap}
+        jobs["__NIFTY__"] = NIFTY50_TOKEN
+        stats["n"] = len(jobs)
+        ex = ThreadPoolExecutor(max_workers=workers)
+        futures = {ex.submit(_fetch, name, tok): name for name, tok in jobs.items()}
+        pending = set(futures)
+        while pending and time.monotonic() - t0 < budget_sec:
+            done, pending = wait(pending, timeout=max(0.1, budget_sec - (time.monotonic() - t0)),
+                                 return_when=FIRST_COMPLETED)
+            for f in done:
+                try:
+                    name, bars = f.result()
+                except Exception as e:
+                    log.debug(f"official bars {futures[f]}: {e}")
+                    stats["fallback"] += 1
+                    continue
+                if not bars:
+                    stats["fallback"] += 1
+                    continue
+                builder = self._nifty_builder if name == "__NIFTY__" else self._builders.get(name)
+                if builder is None:
+                    continue
+                old = builder.closed_bars
+                stats["zero_vol_fixed"] += sum(1 for b in old if b.get("volume", 0) == 0)
+                if old and bars and abs(float(old[0]["open"]) - float(bars[0]["open"])) > 1e-9:
+                    stats["open_fixed"] += 1
+                builder.replace_closed(bars)
+                stats["ok"] += 1
+        stats["fallback"] += len(pending)                  # not finished within the budget
+        ex.shutdown(wait=False, cancel_futures=True)
+        stats["secs"] = round(time.monotonic() - t0, 1)
+        return stats
+
     # ── startup ──────────────────────────────────────────────────────────────
 
     def load_history_from_parquet(self) -> None:
@@ -104,8 +188,7 @@ class LiveDataManager:
                 if not path.exists():
                     continue
                 try:
-                    df = pd.read_parquet(path)
-                    df["datetime"] = _to_ist(df["datetime"])
+                    df = normalize_bars(pd.read_parquet(path))   # naive IST, 09:15-15:25 bars only
                     dfs.append(df)
                 except Exception as e:
                     log.warning(f"  {symbol} {yr}: read failed — {e}")
@@ -133,8 +216,7 @@ class LiveDataManager:
             path = INDEX_DIR / str(yr) / "NIFTY50.parquet"
             if path.exists():
                 try:
-                    df = pd.read_parquet(path)
-                    df["datetime"] = _to_ist(df["datetime"])
+                    df = normalize_bars(pd.read_parquet(path))   # naive IST, 09:15-15:25 bars only
                     dfs.append(df)
                 except Exception:
                     pass

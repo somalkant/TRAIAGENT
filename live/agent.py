@@ -54,6 +54,8 @@ import pytz
 
 import pandas as pd
 
+from data_pipeline.bars import normalize_bars
+
 _IST = pytz.timezone("Asia/Kolkata")
 
 def _to_ist(series: pd.Series) -> pd.Series:
@@ -72,6 +74,7 @@ from config.settings import (
     WEIGHTS_FILE, PROFIT_LOCK_ENABLED, PROFIT_LOCK_TRIGGER_PCT, PROFIT_LOCK_TRAIL_PCT,
     PROFIT_LOCK_RIDE_PAST_TARGET, NEWS_ENABLED,
     DEPTH_STALE_SEC, STALE_TICK_BARS,
+    OFFICIAL_BARS_ENABLED, OFFICIAL_BARS_WORKERS, OFFICIAL_BARS_MAX_RPS, OFFICIAL_BARS_BUDGET_SEC,
 )
 from backtester.cost_model import net_pnl
 from live.instrument_map import load_instrument_map, NIFTY50_TOKEN
@@ -226,6 +229,8 @@ def main():
 
     # ── 5. Data manager — reuse already-loaded history, don't reload from parquet ──
     dm = LiveDataManager(symbols=wl_symbols, imap=imap)
+    if OFFICIAL_BARS_ENABLED:
+        dm.attach_official_source(kite)     # scans compute on the exchange's official 5-min candles
     for sym in wl_symbols:
         if sym in all_history:
             dm._history[sym] = all_history[sym]
@@ -437,6 +442,21 @@ def _run_market_loop(ws_holder: list, last_tick: list, make_ticker,
             continue  # first wake at 09:15 gives bar_label=09:10 (pre-open) — skip it
         dm.close_bar(bar_label)
         log.debug(f"Bar closed: {bar_label.strftime('%H:%M')}")
+
+        # Data parity with the backtest: before scanning, replace the tick-built bars with the
+        # exchange's official candles (the tick stream has no volume and misses the auction open).
+        _l_snap, _s_snap, _l_placed, _s_placed = state.snapshot()
+        _scan_due = now_t < NO_ENTRY and ((_l_snap is None and not _l_placed) or (_s_snap is None and not _s_placed))
+        if OFFICIAL_BARS_ENABLED and _scan_due and dm.has_official_source:
+            try:
+                st = dm.reconcile_official(bar_label, budget_sec=OFFICIAL_BARS_BUDGET_SEC,
+                                           workers=OFFICIAL_BARS_WORKERS, max_rps=OFFICIAL_BARS_MAX_RPS)
+                log.info(f"OFFICIAL BARS {bar_label.strftime('%H:%M')}: {st['ok']}/{st['n']} symbols from the "
+                         f"exchange candles in {st['secs']}s | kept live-built bars: {st['fallback']} | "
+                         f"zero-volume bars replaced: {st['zero_vol_fixed']} | opening bar corrected: {st['open_fixed']}")
+            except Exception as e:
+                log.warning(f"OFFICIAL BARS {bar_label.strftime('%H:%M')}: reconciliation failed ({e}) — "
+                            f"scanning on live-built bars")
 
         # Scan per-direction — one trade per direction per day (matches backtester rule)
         long_snap, short_snap, long_placed, short_placed = state.snapshot()
@@ -1062,8 +1082,7 @@ def _load_history_for_symbols(symbols: list[str], today: date) -> dict:
             path = STOCKS_DIR / str(yr) / f"{symbol}.parquet"
             if path.exists():
                 try:
-                    df = pd.read_parquet(path)
-                    df["datetime"] = _to_ist(df["datetime"])
+                    df = normalize_bars(pd.read_parquet(path))   # naive IST, 09:15-15:25 bars only
                     dfs.append(df)
                 except Exception:
                     pass

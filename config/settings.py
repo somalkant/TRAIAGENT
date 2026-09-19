@@ -262,6 +262,18 @@ DEPTH_STALE_SEC = 30
 # consecutive 5-min bars (raised from an effective 2 — too twitchy on quiet names).
 STALE_TICK_BARS = 4
 
+# Official-candle reconciliation (live, from 2026-09-19). Live used to compute every signal on 5-min bars
+# built from its own tick stream. Groww's price stream carries no volume (a 30 s REST poll filled it:
+# 92% zero-volume bars in July 2026, ~20% still in September) and the 09:15 bar opened at the first tick
+# seen, not the auction open — so live was not computing on the bars the backtest uses. At every bar close
+# the closed bars of each watchlist symbol are now replaced with the exchange's official 5-min candles
+# (the same historical API the EOD parquet download uses). Any symbol not returned within the budget keeps
+# its tick-built bars. See notebooks/05 section 4.
+OFFICIAL_BARS_ENABLED     = True
+OFFICIAL_BARS_WORKERS     = 8       # concurrent candle requests
+OFFICIAL_BARS_MAX_RPS     = 10.0    # overall request rate cap (shared across workers)
+OFFICIAL_BARS_BUDGET_SEC  = 40.0    # stop waiting after this; unfinished symbols keep live-built bars
+
 # 6. Volatility-normalized position sizing (live only, from 2026-07-20).
 #    Replaying the 42 live trades showed actual rupee-risk per trade ranged
 #    Rs 179 -> Rs 31,167 (the 5L notional cap binds almost always, making the
