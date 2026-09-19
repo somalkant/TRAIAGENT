@@ -36,8 +36,26 @@ leaves −₹45,704. With a +1% target against a −1% stop, the breakeven hit r
 **27.8%** → expectancy **−0.286% of notional per trade**. Projected over ~22 trades in 30 sessions at ₹2L:
 **−₹12,845 (−6.4% of the account)**, 1sd band −₹20,741 … −₹4,950 — i.e. essentially every outcome is a loss.
 
+**No take-profit level fixes this.** Sweeping the target from 0.30% to 2.00%, holding entry, size, stop and the
+eventual exit unchanged (so every simulated exit lies inside the observed price path):
+
+| target | 0.30% | 0.50% | 0.75% | **0.85%** | 1.00% | 1.50% | 2.00% | as-is |
+|---|---|---|---|---|---|---|---|---|
+| all 66 LONG | −55,507 | −45,658 | −28,161 | **−21,032** | −23,798 | −33,357 | −56,011 | −37,921 |
+| era C (36) | −48,379 | −42,656 | **−30,552** | −31,228 | −45,704 | −60,698 | −61,599 | −61,599 |
+
+The curve is a shallow U with its floor around 0.75–0.85%, and **the floor is still a loss** (−₹12,007 at ₹2L
+per position on the full sample; −₹14,970 on era C). Low targets are hit often but a 0.30% gross win nets only
+~0.15% after costs while the losers still give up ~1%; high targets almost never trigger. The reason is the
+underlying move size: the median LONG trade runs just **+0.69%** in our favour (**+0.59%** in era C), and only
+27.8% of era-C trades reach +1% at all.
+
+Method validation: bar-derived MFE ≥ 1% agreed with the live `profit_locked` flag on **100% of 46** trades where
+both exist; MFE came from bars for 64 of 66 trades (the 2 exceptions are ~2-minute trades inside a single bar).
+
 **Conclusion: build stages 0–3 (they make the paper run honest and cost nothing), but entry selection has to
-improve before real money goes in. The execution layer changes how orders reach the market, not the edge.**
+improve before real money goes in. The execution layer changes how orders reach the market, not the edge — and
+neither does the target. This is an entry-quality problem.**
 
 ---
 
