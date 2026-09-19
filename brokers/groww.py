@@ -41,7 +41,9 @@ _NIFTY50_TOKEN     = 256265
 # Groww uses "NSE_NIFTY 50" as the exchange+symbol key for the index
 _NIFTY_GROWW_KEY   = "NSE_NIFTY 50"
 # Nifty50 groww_symbol (used by get_historical_candles)
-_NIFTY_GROWW_SYM   = "NSE_NIFTY 50"
+# Historical-candle symbol for the NIFTY 50 index ("Exchange-TradingSymbol"). "NSE_NIFTY 50" (the feed key)
+# is rejected by get_historical_candles — every EOD / backfill NIFTY request failed with it (verified 2026-09-19).
+_NIFTY_GROWW_SYM   = "NSE-NIFTY"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -163,12 +165,12 @@ class GrowwClientAdapter:
                         raw_dt = c.get("timestamp") or c.get("date") or c.get("time") or ""
                         o, h, l, cl, vol = (float(c.get("open", 0)), float(c.get("high", 0)),
                                             float(c.get("low", 0)), float(c.get("close", 0)),
-                                            int(c.get("volume", 0)))
+                                            int(c.get("volume") or 0))     # indices report None
                     elif isinstance(c, (list, tuple)) and len(c) >= 5:
                         # Array format: [timestamp, open, high, low, close, volume]
                         raw_dt = c[0]
                         o, h, l, cl = float(c[1]), float(c[2]), float(c[3]), float(c[4])
-                        vol = int(c[5]) if len(c) > 5 else 0
+                        vol = int(c[5] or 0) if len(c) > 5 else 0   # indices report None
                     else:
                         continue
 

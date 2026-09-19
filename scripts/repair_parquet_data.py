@@ -3,7 +3,7 @@ Repair every stored 5-min bar file into the canonical format (data_pipeline/bars
 optionally, re-download days that are damaged beyond local repair.
 
 What it fixes (found 2026-09-19, see notebooks/05):
-  * tz-aware files (the Kite bulk history, and the 2026 index files) -> naive IST, so years can be
+  * tz-aware files (the Kite bulk history) -> naive IST, so years can be
     concatenated (the backtester silently dropped all of 2026 because of the mix);
   * bars outside the 09:15-15:25 session -> removed: junk +5:30 copies left by the pre-07-21 append
     bug on 06-24 / 06-25 / 06-29 / 07-16, and pre-open / post-close bars the API returned on
@@ -12,6 +12,10 @@ What it fixes (found 2026-09-19, see notebooks/05):
 What it can only DETECT locally (needs the broker API — run with --redownload on EC2):
   * days whose afternoon bars were overwritten by +5:30 copies of the morning (14:45-14:55 identical
     to 09:15-09:25), and session days with fewer than 70 bars.
+
+data/index is NOT touched unless --include-index: those files are shared with the FnOAgent project
+(~/TradingAgent -> ~/TRAIAGENT) and written by its live_sync in its own tz-aware format; TRAIAGENT
+normalises them on read instead.
 
 Usage:
     python scripts/repair_parquet_data.py --dry-run            # report only (default years: all)
@@ -108,13 +112,16 @@ def main() -> None:
     ap.add_argument("--redownload", action="store_true", help="re-fetch damaged days via the broker API")
     ap.add_argument("--include-short-days", action="store_true", help="also re-fetch days with <70 bars")
     ap.add_argument("--broker", default="groww")
+    ap.add_argument("--include-index", action="store_true",
+                    help="also rewrite data/index files. Off by default: they are shared with FnOAgent "
+                         "(~/TradingAgent symlink), which writes them in its own format")
     a = ap.parse_args()
 
     years = (sorted({p.name for p in STOCKS_DIR.iterdir() if p.is_dir()} | {p.name for p in INDEX_DIR.iterdir() if p.is_dir()})
              if a.years == "all" else a.years.split(","))
     rows = []
     for y in years:
-        for base in (STOCKS_DIR, INDEX_DIR):
+        for base in ((STOCKS_DIR, INDEX_DIR) if a.include_index else (STOCKS_DIR,)):
             files = sorted((base / y).glob("*.parquet")) if (base / y).exists() else []
             for f in files:
                 try:

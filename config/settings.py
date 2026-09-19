@@ -269,6 +269,10 @@ STALE_TICK_BARS = 4
 # the closed bars of each watchlist symbol are now replaced with the exchange's official 5-min candles
 # (the same historical API the EOD parquet download uses). Any symbol not returned within the budget keeps
 # its tick-built bars. See notebooks/05 section 4.
+# data/index/*.parquet is shared with the FnOAgent project (the ~/TradingAgent symlink points here) and
+# written by its live_sync in its own format. TRAIAGENT's EOD must not also write it.
+EOD_WRITE_INDEX           = False
+
 OFFICIAL_BARS_ENABLED     = True
 OFFICIAL_BARS_WORKERS     = 8       # concurrent candle requests
 OFFICIAL_BARS_MAX_RPS     = 10.0    # overall request rate cap (shared across workers)

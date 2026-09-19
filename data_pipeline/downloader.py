@@ -111,13 +111,27 @@ def download_eod(
         else:
             failed.append(symbol)
 
-    # Download NIFTY50 — works for both Zerodha and Groww (special-cased in GrowwClientAdapter)
-    log.info("  EOD: downloading NIFTY50 index...")
-    _download_index(kite, "NIFTY 50", 256265, from_date, to_date, "NIFTY50", index_dir)
-
-    # INDIA VIX — Zerodha only; Groww returns empty silently (no error)
-    log.info("  EOD: downloading INDIA VIX...")
-    _download_index(kite, "INDIA VIX", 264969, from_date, to_date, "INDIAVIX", index_dir)
+    # Index files (NIFTY50 / BANKNIFTY50 / INDIAVIX) are written by the FnOAgent project's live_sync,
+    # which shares this data folder through the ~/TradingAgent symlink and keeps them in its own tz-aware
+    # format. TRAIAGENT only reads them (normalised on read), so it must not write them too. Enable
+    # EOD_WRITE_INDEX only on a machine where nothing else maintains them.
+    from config.settings import EOD_WRITE_INDEX
+    if EOD_WRITE_INDEX:
+        log.info("  EOD: downloading NIFTY50 index...")
+        _download_index(kite, "NIFTY 50", 256265, from_date, to_date, "NIFTY50", index_dir)
+        log.info("  EOD: downloading INDIA VIX...")
+        _download_index(kite, "INDIA VIX", 264969, from_date, to_date, "INDIAVIX", index_dir)
+    else:
+        nifty = index_dir / "NIFTY50.parquet"
+        last = None
+        if nifty.exists():
+            from data_pipeline.bars import normalize_bars
+            last = normalize_bars(pd.read_parquet(nifty, columns=["datetime", "open", "high", "low", "close", "volume"]))["datetime"].max()
+        if last is None or last.date() < today:
+            log.warning(f"  EOD: NIFTY50 index file last bar is {last} — expected {today}. It is maintained by "
+                        f"FnOAgent live_sync; check that FnOAgent ran (or set EOD_WRITE_INDEX=True).")
+        else:
+            log.info(f"  EOD: NIFTY50 index up to date ({last}), maintained by FnOAgent")
 
     if unmapped:
         log.warning(f"  EOD: {len(unmapped)} universe stocks are not in the broker's instrument map and were "
