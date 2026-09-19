@@ -53,6 +53,23 @@ underlying move size: the median LONG trade runs just **+0.69%** in our favour (
 Method validation: bar-derived MFE ≥ 1% agreed with the live `profit_locked` flag on **100% of 46** trades where
 both exist; MFE came from bars for 64 of 66 trades (the 2 exceptions are ~2-minute trades inside a single bar).
 
+**Correction — the sweep above understates the proposed policy.** It held each trade's *actual* stop, and many
+were tighter than 1% (0.3–0.8%), so trades that a 1% stop would have kept alive were counted as stopped out.
+A full re-simulation with the stop reset to **1%** on the whole day's path (T = target first, S = stop first,
+Q = neither → 2:50 PM price) is the right model for the proposed policy. It reproduces a table built in an
+earlier session on all 57 of its rows, and extends it to 66 (`reports/long_target_table_66.csv`):
+
+| 1% stop + target | 0.9% | 0.7% | 0.5% | as logged |
+|---|---|---|---|---|
+| all 66 LONG | **−15,600** | −22,796 | −39,469 | −37,921 |
+| since 07-29 (36) | **−21,944** | −28,490 | −37,441 | −61,599 |
+| Sept 07–18 (9) | **+3,257** | −799 | −3,174 | −10,970 |
+| win rate (all 66) | 53.0% | 57.6% | 65.2% | 37.9% |
+
+So 0.9% target + 1% stop is the best tested and better than the sweep suggested — but **still negative**, even at
+a 53% win rate, because the payoff is lopsided after costs: a 0.9% target nets ≈ +₹3,760 on a ₹5L position while a
+1% stop costs ≈ −₹5,700. Breakeven needs ~60% winners. The +₹3,257 in September is 9 trades — too few to lean on.
+
 **Conclusion: build stages 0–3 (they make the paper run honest and cost nothing), but entry selection has to
 improve before real money goes in. The execution layer changes how orders reach the market, not the edge — and
 neither does the target. This is an entry-quality problem.**
