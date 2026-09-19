@@ -1,7 +1,16 @@
-"""
-Phase 2 / Phase 2B Testing Runner — frozen weights, 1 trade/day, strict forward-only.
+r"""
+Backtest runner.
 
-Usage:
+DEFAULT (since 2026-09-19): the CAUSAL engine (backtester/causal_engine.py) — the live system's LONG logic
+replayed one 5-min bar at a time with no look-ahead, entry at the close of the confirming bar, 1% stop:
+    .\venv\Scripts\python.exe run_testing.py 2025
+    .\venv\Scripts\python.exe run_testing.py 2026 --workers 8
+Writes data/trade_logs/causal_trades_<year>.csv (day results cached in reports/causal/).
+
+--legacy runs the original full-day engine below. Its results contain look-ahead: it ranks stocks on the
+whole day's votes and books entries at the strategy level (see notebooks/05). Kept for comparison only.
+
+Legacy usage:
     .\\venv\\Scripts\\python.exe run_testing.py 2023
     .\\venv\\Scripts\\python.exe run_testing.py 2024
     .\\venv\\Scripts\\python.exe run_testing.py all        # 2023 through 2026
@@ -60,7 +69,36 @@ def _setup_logging(year: int, log_dir: Path | None = None) -> Path:
 
 
 # ── main ──────────────────────────────────────────────────────────────────────
+def _run_causal(year_arg: str) -> None:
+    from datetime import date
+    project_root = Path(__file__).parent
+    if str(project_root) not in sys.path:
+        sys.path.insert(0, str(project_root))
+    from backtester.causal_engine import Config, run_period, trades_frame
+    workers = int(sys.argv[sys.argv.index("--workers") + 1]) if "--workers" in sys.argv else 8
+    years = range(2023, date.today().year + 1) if year_arg == "all" else [int(year_arg)]
+    for y in years:
+        end = min(date(y, 12, 31), date.today())
+        res = run_period(date(y, 1, 1), end, Config(), workers=workers)
+        T = trades_frame(res)
+        out = project_root / "data" / "trade_logs" / f"causal_trades_{y}.csv"
+        if len(T):
+            T.drop(columns=["skipped_before", "stop_path"], errors="ignore").to_csv(out, index=False)
+            net_pct = (T.pnl_rs / (T.entry * T.qty) * 100)
+            print(f"{y}: {len(res)} days, {len(T)} LONG trades, win {100*(T.pnl_rs>0).mean():.1f}%, "
+                  f"net Rs {T.pnl_rs.sum():,.0f} at Rs 2L/trade ({net_pct.mean():+.3f}% per trade) -> {out}")
+        else:
+            print(f"{y}: {len(res)} days, no trades")
+
+
 def main():
+    if len(sys.argv) >= 2 and "--legacy" not in sys.argv:
+        _run_causal(sys.argv[1])
+        return
+    if "--legacy" in sys.argv:
+        sys.argv.remove("--legacy")
+        print("WARNING: legacy engine — ranks on the whole day's votes and enters at the strategy level "
+              "(look-ahead). Use for comparison only; see notebooks/05.")
     if len(sys.argv) < 2:
         print("Usage: python run_testing.py <year|all> [--wf-window N] [--no-pre-filter]")
         print("  e.g: python run_testing.py 2023")
